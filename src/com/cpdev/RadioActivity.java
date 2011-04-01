@@ -21,16 +21,16 @@ public class RadioActivity extends Activity {
         setContentView(R.layout.main);
     }
 
-    public void setStatus(String message){
+    public void setStatus(String message) {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(message);
     }
 
-    public void playClick(View playButton){
-        setStatus("Play clicked");
+    public void playClick(View playButton) {
+        setStatus("Play...clicked");
     }
 
-    public void recordClick(View recordButton){
-        setStatus("Record clicked");
+    public void recordClick(View recordButton) {
+        setStatus("Record...clicked");
     }
 }
