@@ -32,7 +32,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Android 2.3.3 Platform" level="application" />
+    <orderEntry type="library" exported="" scope="PROVIDED" name="Android 2.3.3 Platform" level="application" />
   </component>
 </module>
 
