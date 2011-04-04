@@ -27,10 +27,10 @@ public class RadioActivity extends Activity {
     }
 
     public void playClick(View playButton) {
-        setStatus("Play...clicked");
+        setStatus("Play...clicked, so now do something");
     }
 
     public void recordClick(View recordButton) {
-        setStatus("Record...clicked");
+        setStatus("Record...clicked, oh dear stopped now");
     }
 }
