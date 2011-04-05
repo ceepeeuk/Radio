@@ -28,7 +28,6 @@ public class RadioActivity extends Activity {
 
         if (playingNow) {
             setStatus("Stopping...");
-            //mediaPlayer.stop();
             stopService(intent);
             setPlayButtonText("Play");
             playingNow = false;

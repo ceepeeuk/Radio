@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b6156ec8-a2ae-4002-920e-d03b4b42a2ac" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/cpdev/R.java" afterPath="$PROJECT_DIR$/gen/com/cpdev/R.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/cpdev/RadioActivity.java" afterPath="$PROJECT_DIR$/src/com/cpdev/RadioActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/cpdev/RadioService.java" afterPath="$PROJECT_DIR$/src/com/cpdev/RadioService.java" />
     </list>
     <ignored path="Radio.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,7 +31,7 @@
   </component>
   <component name="DebuggerManager">
     <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java" line="15" class="com.cpdev.RadioService" package="com.cpdev">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java" line="14" class="com.cpdev.RadioService" package="com.cpdev">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -47,7 +44,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java" line="27" class="com.cpdev.RadioService" package="com.cpdev">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java" line="26" class="com.cpdev.RadioService" package="com.cpdev">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -60,7 +57,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java" line="19" class="com.cpdev.RadioService" package="com.cpdev">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java" line="18" class="com.cpdev.RadioService" package="com.cpdev">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -123,37 +120,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RadioActivity.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="RadioActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/cpdev/RadioActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="64" selection-start="611" selection-end="611" vertical-scroll-proportion="0.4390244">
-              <folding />
+            <state line="36" column="12" selection-start="989" selection-end="989" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RadioService.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="RadioService.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="4" selection-start="466" selection-end="466" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Handler.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar:///Volumes/Macintosh HD/Users/chris/dev/android-sdk-mac_86/platforms/android-10/android.jar!/android/os/Handler.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="16" selection-start="585" selection-end="585" vertical-scroll-proportion="-7.72">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Looper.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar:///Volumes/Macintosh HD/Users/chris/dev/android-sdk-mac_86/platforms/android-10/android.jar!/android/os/Looper.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="16" selection-start="777" selection-end="777" vertical-scroll-proportion="-10.56">
+            <state line="30" column="0" selection-start="725" selection-end="725" vertical-scroll-proportion="0.58536583">
               <folding />
             </state>
           </provider>
@@ -558,7 +539,7 @@
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Basic async playing rinse url...now working!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Service now working" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -576,6 +557,7 @@
     <MESSAGE value="Basic playing rinse url" />
     <MESSAGE value="Basic async playing rinse url" />
     <MESSAGE value="Basic async playing rinse url...now working!" />
+    <MESSAGE value="Service now working" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -625,13 +607,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar:///Volumes/Macintosh HD/Users/chris/dev/android-sdk-mac_86/platforms/android-10/android.jar!/android/os/Handler.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="16" selection-start="585" selection-end="585" vertical-scroll-proportion="-7.72">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Volumes/Macintosh HD/Users/chris/dev/android-sdk-mac_86/platforms/android-10/android.jar!/android/os/Looper.class">
       <provider selected="true" editor-type-id="text-editor">
         <state line="22" column="16" selection-start="777" selection-end="777" vertical-scroll-proportion="-10.56">
@@ -639,16 +614,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java">
+    <entry file="file://$PROJECT_DIR$/src/com/cpdev/RadioActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="4" selection-start="466" selection-end="466" vertical-scroll-proportion="0.0">
+        <state line="36" column="12" selection-start="989" selection-end="989" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Volumes/Macintosh HD/Users/chris/dev/android-sdk-mac_86/platforms/android-10/android.jar!/android/os/Handler.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="16" selection-start="585" selection-end="585" vertical-scroll-proportion="0.41327623">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/cpdev/RadioActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/com/cpdev/RadioService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="64" selection-start="611" selection-end="611" vertical-scroll-proportion="0.4390244">
+        <state line="30" column="0" selection-start="725" selection-end="725" vertical-scroll-proportion="0.58536583">
           <folding />
         </state>
       </provider>
