@@ -11,6 +11,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <service android:name=".RadioService"/>
+        <service android:name=".RadioService">
+            <intent-filter>
+                <action android:name="com.cpdev.RadioService"/>
+            </intent-filter>
+        </service>
     </application>
 </manifest> 

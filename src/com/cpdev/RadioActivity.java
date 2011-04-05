@@ -24,22 +24,30 @@ public class RadioActivity extends Activity {
     }
 
     public void playClick(View playButton) {
+        Intent intent = new Intent("com.cpdev.RadioService");
+
         if (playingNow) {
             setStatus("Stopping...");
             //mediaPlayer.stop();
-            stopService(new Intent("com.cpdev.RadioService"));
-            //btnPlay.setText(R.string.btn_play);
+            stopService(intent);
+            setPlayButtonText("Play");
             playingNow = false;
         } else {
             setStatus("Starting..");
-            startService(new Intent("com.cpdev.RadioService"));
+            startService(intent);
             setStatus("Playing...");
+            setPlayButtonText("Stop");
             playingNow = true;
         }
     }
 
     public void recordClick(View recordButton) {
         setStatus("Recording...");
+    }
+
+    public void setPlayButtonText(String newText) {
+        Button playButton = (Button) findViewById(R.id.play);
+        playButton.setText(newText);
     }
 
 
