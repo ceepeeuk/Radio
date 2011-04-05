@@ -15,14 +15,11 @@ public class RadioActivity extends Activity {
     Button btnPlay;
     Button btnRecord;
     AsyncPlayer mediaPlayer;
+    boolean playingNow = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Button btnPlay = (Button) findViewById(R.id.play);
-        Button btnRecord = (Button) findViewById(R.id.play);
-
         setContentView(R.layout.main);
     }
 
@@ -32,18 +29,21 @@ public class RadioActivity extends Activity {
     }
 
     public void playClick(View playButton) {
-        setStatus("Starting..");
-        mediaPlayer = new AsyncPlayer("");
-        mediaPlayer.play(this, Uri.parse("http://podcast.dgen.net:8000/rinseradio"), false, STREAM_MUSIC);
-        setStatus("Playing...");
-    }
+        btnPlay = (Button) findViewById(R.id.play);
 
-    public void stopClick(View playButton) {
-        if (mediaPlayer != null) {
+        if (playingNow) {
+            setStatus("Stopping...");
             mediaPlayer.stop();
+            btnPlay.setText(R.string.btn_play);
+            playingNow = false;
+        } else {
+            setStatus("Starting..");
+            mediaPlayer = new AsyncPlayer("");
+            mediaPlayer.play(this, Uri.parse("http://podcast.dgen.net:8000/rinseradio"), false, STREAM_MUSIC);
+            setStatus("Playing...");
+            btnPlay.setText(R.string.btn_stop);
+            playingNow = true;
         }
-
-        setStatus("Stopped...");
     }
 
     public void recordClick(View recordButton) {
