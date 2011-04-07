@@ -4,4 +4,5 @@
     <string name="btn_play">Play</string>
     <string name="btn_stop">Stop</string>
     <string name="btn_record">Record</string>
+    <string name="string">+ percent +</string>
 </resources>

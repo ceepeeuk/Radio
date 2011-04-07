@@ -32,5 +32,6 @@ public final class R {
         public static final int btn_play = 0x7f040001;
         public static final int btn_record = 0x7f040003;
         public static final int btn_stop = 0x7f040002;
+        public static final int string = 0x7f040004;
     }
 }
