@@ -22,8 +22,8 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
 
     public void onDestroy() {
         if (mediaPlayer != null) {
-            mediaPlayer.release();
             mediaPlayer.stop();
+            mediaPlayer.release();
         }
     }
 
@@ -50,6 +50,7 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
                 mediaPlayer.setDataSource(rinseUri);
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.prepare();
+                mediaPlayer.setOnBufferingUpdateListener(this);
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         mediaPlayer.start();
