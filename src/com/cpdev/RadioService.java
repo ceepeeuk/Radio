@@ -2,20 +2,22 @@ package com.cpdev;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.AsyncPlayer;
-import android.net.Uri;
+import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.util.Log;
 
-import static android.media.AudioManager.STREAM_MUSIC;
+import java.io.IOException;
 
-public class RadioService extends Service {
-    AsyncPlayer mediaPlayer;
+public class RadioService extends Service implements MediaPlayer.OnBufferingUpdateListener {
+    MediaPlayer mediaPlayer;
+    String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
+    private static final String TAG = "RadioService";
 
     public void onCreate() {
-        mediaPlayer = new AsyncPlayer("");
     }
 
     public void onDestroy() {
+        mediaPlayer.release();
         mediaPlayer.stop();
     }
 
@@ -24,7 +26,21 @@ public class RadioService extends Service {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mediaPlayer.play(this, Uri.parse("http://podcast.dgen.net:8000/rinseradio"), false, STREAM_MUSIC);
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(rinseUri);
+            mediaPlayer.setOnBufferingUpdateListener(this);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        //mediaPlayer.play(this, Uri.parse("http://podcast.dgen.net:8000/rinseradio"), false, STREAM_MUSIC);
         return START_STICKY;
+    }
+
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+        Log.i(TAG, "Buffering = " + i + "%");
     }
 }
