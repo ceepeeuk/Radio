@@ -22,7 +22,9 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
 
     public void onDestroy() {
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
             mediaPlayer.release();
         }
     }
@@ -41,16 +43,19 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
         Log.i(TAG, "Buffering = " + i + "%");
     }
 
-    private class RadioServiceTask extends AsyncTask<String, Integer, Long> implements MediaPlayer.OnBufferingUpdateListener {
+    private class RadioServiceTask extends AsyncTask<String, Integer, Long> implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
         @Override
         protected Long doInBackground(String... strings) {
             try {
                 mediaPlayer = new MediaPlayer();
+
                 mediaPlayer.setDataSource(rinseUri);
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mediaPlayer.prepare();
                 mediaPlayer.setOnBufferingUpdateListener(this);
+                mediaPlayer.setOnErrorListener(this);
+                mediaPlayer.prepare();
+
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         mediaPlayer.start();
@@ -66,13 +71,13 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
             return null;
         }
 
-        @Override
-        protected void onProgressUpdate(Integer... integers) {
-            Log.e(TAG, "Percentage: " + integers[0]);
-        }
-
         public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
             Log.i(TAG, "Buffering = " + i + "%");
+            Log.i(TAG, "GetCurrentPosition = " + mediaPlayer.getCurrentPosition() / 100);
+        }
+
+        public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+            return false;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 }
