@@ -8,16 +8,20 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class RadioService extends Service {
 
     MediaPlayer mediaPlayer;
     RadioActivity caller;
-    private static final String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
     private static final String TAG = "RadioService";
 
     private final IBinder mBinder = new RadioServiceBinder();
+
 
     public boolean alreadyPlaying() {
         if (mediaPlayer != null) {
@@ -55,8 +59,8 @@ public class RadioService extends Service {
         return mBinder;
     }
 
-    public void start(RadioActivity radioActivity) {
-        caller = radioActivity;
+    public void start(RadioActivity view, String streamUri) {
+        caller = view;
         try {
 
             if (mediaPlayer == null) {
@@ -67,6 +71,7 @@ public class RadioService extends Service {
                     Log.d(TAG, "On completion called");
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
+                        caller.updateUI(true);
                     }
                 }
             });
@@ -86,7 +91,7 @@ public class RadioService extends Service {
                 }
             });
 
-            mediaPlayer.setDataSource(rinseUri);
+            mediaPlayer.setDataSource(streamUri);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.prepareAsync();
 
@@ -102,6 +107,35 @@ public class RadioService extends Service {
             Log.e(TAG, "Error caught in play", ioe);
             ioe.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             mediaPlayer.reset();
+        }
+    }
+
+    public void record(RadioActivity view, String streamUri) {
+        caller = view;
+
+        URL url = null;
+        try {
+            url = new URL(streamUri);
+            InputStream inputStream = url.openStream();
+            Log.d(TAG, "url.openStream()");
+
+
+            String outputSource = "~/test.mp3";
+            FileOutputStream fileOutputStream = new FileOutputStream(outputSource);
+            Log.d(TAG, "FileOutputStream: " + outputSource);
+
+            int c;
+            int bytesRead = 0;
+
+            while ((c = inputStream.read()) != -1) {
+                Log.d(TAG, "bytesRead=" + bytesRead);
+                fileOutputStream.write(c);
+                bytesRead++;
+            }
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Uri malformed: " + streamUri, e);
+        } catch (IOException e) {
+            Log.e(TAG, "IOException", e);
         }
     }
 

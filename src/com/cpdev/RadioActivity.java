@@ -19,6 +19,8 @@ public class RadioActivity extends Activity {
     Button btnRecord;
     Intent intent = new Intent("com.cpdev.RadioService");
     private String TAG = "RadioActivity";
+    private static final String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,20 +54,24 @@ public class RadioActivity extends Activity {
             if (localService.alreadyPlaying()) {
                 Log.d(TAG, "Stopping play");
                 localService.stop();
-                setupUIForPlaying(false);
+                updateUI(false);
             } else {
                 Log.d(TAG, "Starting play");
-                localService.start(this);
-                setupUIForPlaying(true);
+                localService.start(this, rinseUri);
+                updateUI(true);
             }
         }
     }
 
+
     public void recordClick(View recordButton) {
-        setStatus("Recording...");
+        if (mBound) {
+            localService.record(this, rinseUri);
+        }
+        //setStatus("Recording...");
     }
 
-    public void setupUIForPlaying(boolean playingNow) {
+    public void updateUI(boolean playingNow) {
         if (playingNow) {
             setStatus("Buffering");
             setPlayButtonText("Stop");
@@ -91,7 +97,7 @@ public class RadioActivity extends Activity {
             RadioService.RadioServiceBinder binder = (RadioService.RadioServiceBinder) iBinder;
             localService = binder.getService();
             mBound = true;
-            setupUIForPlaying(localService.alreadyPlaying());
+            updateUI(localService.alreadyPlaying());
         }
 
         public void onServiceDisconnected(ComponentName componentName) {
