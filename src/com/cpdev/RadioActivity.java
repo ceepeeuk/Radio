@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ public class RadioActivity extends Activity {
     boolean mBound = false;
     Button btnRecord;
     Intent intent = new Intent("com.cpdev.RadioService");
+    private String TAG = "RadioActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,18 +47,14 @@ public class RadioActivity extends Activity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void setStatus(String message) {
-        TextView txtStatus = (TextView) findViewById(R.id.txt_status);
-        txtStatus.setText(message);
-    }
-
     public void playClick(View playButton) {
         if (mBound) {
             if (localService.alreadyPlaying()) {
+                Log.d(TAG, "Stopping play");
                 localService.stop();
                 setupUIForPlaying(false);
             } else {
-                startService(intent);
+                Log.d(TAG, "Starting play");
                 localService.start(this);
                 setupUIForPlaying(true);
             }
@@ -69,12 +67,17 @@ public class RadioActivity extends Activity {
 
     public void setupUIForPlaying(boolean playingNow) {
         if (playingNow) {
-            //setStatus("Playing");
+            setStatus("Buffering");
             setPlayButtonText("Stop");
         } else {
             setStatus("");
             setPlayButtonText("Play");
         }
+    }
+
+    public void setStatus(String message) {
+        TextView txtStatus = (TextView) findViewById(R.id.txt_status);
+        txtStatus.setText(message);
     }
 
     public void setPlayButtonText(String newText) {
@@ -83,6 +86,7 @@ public class RadioActivity extends Activity {
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
+
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             RadioService.RadioServiceBinder binder = (RadioService.RadioServiceBinder) iBinder;
             localService = binder.getService();

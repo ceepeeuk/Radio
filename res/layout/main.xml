@@ -20,7 +20,8 @@
             android:text="@string/btn_record"
             android:layout_x="0px"
             android:layout_y="200px"
-            android:onClick="recordClick">
+            android:onClick="recordClick"
+            android:enabled="false">
     </Button>
     <TextView
             android:id="@+id/lbl_status"

@@ -10,7 +10,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
-public class RadioService extends Service implements MediaPlayer.OnBufferingUpdateListener {
+public class RadioService extends Service {
 
     MediaPlayer mediaPlayer;
     RadioActivity caller;
@@ -21,6 +21,7 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
 
     public boolean alreadyPlaying() {
         if (mediaPlayer != null) {
+            Log.d(TAG, "mediaPlayer.getAudioSessionId: " + mediaPlayer.getAudioSessionId());
             return mediaPlayer.isPlaying();
         } else {
             return false;
@@ -31,9 +32,8 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
     public void onCreate() {
         super.onCreate();
         if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
+            mediaPlayer = SingletonMediaPlayer.getInstance();
         }
-        Log.d(TAG, "MediaPlayerAudioSessionId:" + mediaPlayer.getAudioSessionId());
     }
 
     @Override
@@ -47,8 +47,6 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
                 mediaPlayer.stop();
             }
             mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
         }
     }
 
@@ -62,12 +60,34 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
         try {
 
             if (mediaPlayer == null) {
-                mediaPlayer = new MediaPlayer();
+                mediaPlayer = SingletonMediaPlayer.getInstance();
             }
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    Log.d(TAG, "On completion called");
+                    if (mediaPlayer.isPlaying()) {    //should be false if error occurred
+                        mediaPlayer.start();
+                    }
+                }
+            });
+
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                    Log.e(TAG, "Damn error occurred");
+                    caller.setStatus("Error");
+                    return true;
+                }
+            });
+
+            mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+                public boolean onInfo(MediaPlayer mediaPlayer, int what, int extra) {
+                    Log.i(TAG, "onInfo called with: " + what);
+                    return true;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            });
 
             mediaPlayer.setDataSource(rinseUri);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setOnBufferingUpdateListener(this);
             mediaPlayer.prepareAsync();
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -76,17 +96,13 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
                     caller.setStatus("Playing");
                 }
             });
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
 
-    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
-        Log.d(TAG, "Buffering: " + i);
-        caller.setStatus("Buffering");
+
+        } catch (IOException ioe) {
+            Log.e(TAG, "Error caught in play", ioe);
+            ioe.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            mediaPlayer.reset();
+        }
     }
 
     public class RadioServiceBinder extends Binder {
@@ -95,3 +111,5 @@ public class RadioService extends Service implements MediaPlayer.OnBufferingUpda
         }
     }
 }
+
+
