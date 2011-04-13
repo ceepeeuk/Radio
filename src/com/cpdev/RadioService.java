@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +18,10 @@ import java.net.URL;
 
 public class RadioService extends Service {
 
+    private static final String folder = "/sdcard/Radio/";
+    private static final String TAG = "RadioService";
     MediaPlayer mediaPlayer;
     RadioActivity caller;
-    private static final String TAG = "RadioService";
 
     private final IBinder mBinder = new RadioServiceBinder();
 
@@ -112,17 +115,22 @@ public class RadioService extends Service {
 
     public void record(RadioActivity view, String streamUri) {
         caller = view;
-
         URL url = null;
+
         try {
             url = new URL(streamUri);
             InputStream inputStream = url.openStream();
             Log.d(TAG, "url.openStream()");
 
+            String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Radio";
 
-            String outputSource = "~/test.mp3";
+            if (!new File(recFolder).exists()) {
+                new File(recFolder).mkdir();
+            }
+
+            String outputSource = recFolder + File.separator + "test.mp3";
             FileOutputStream fileOutputStream = new FileOutputStream(outputSource);
-            Log.d(TAG, "FileOutputStream: " + outputSource);
+            Log.d(TAG, "FileOutputStream: " + fileOutputStream.toString());
 
             int c;
             int bytesRead = 0;
@@ -132,10 +140,14 @@ public class RadioService extends Service {
                 fileOutputStream.write(c);
                 bytesRead++;
             }
+
+            fileOutputStream.flush();
+            fileOutputStream.close();
+
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + streamUri, e);
         } catch (IOException e) {
-            Log.e(TAG, "IOException", e);
+            Log.e(TAG, "IOException: " + e.getMessage(), e);
         }
     }
 
