@@ -113,41 +113,55 @@ public class RadioService extends Service {
         }
     }
 
-    public void record(RadioActivity view, String streamUri) {
+    public void record(RadioActivity view, final String streamUri) {
         caller = view;
-        URL url = null;
+        Thread thread = new RecordingThread(streamUri);
+        thread.run();
+        //Singleton??
+    }
 
-        try {
-            url = new URL(streamUri);
-            InputStream inputStream = url.openStream();
-            Log.d(TAG, "url.openStream()");
+    public class RecordingThread extends Thread {
+        boolean continueRecording = true;
+        String _streamUri;
 
-            String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Radio";
+        public RecordingThread(String streamUri) {
+            _streamUri = streamUri;
+        }
 
-            if (!new File(recFolder).exists()) {
-                new File(recFolder).mkdir();
+        @Override
+        public void run() {
+            try {
+                URL url = new URL(_streamUri);
+                InputStream inputStream = url.openStream();
+                Log.d(TAG, "url.openStream()");
+
+                String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Radio";
+
+                if (!new File(recFolder).exists()) {
+                    new File(recFolder).mkdir();
+                }
+
+                String outputSource = recFolder + File.separator + "test.mp3";
+                FileOutputStream fileOutputStream = new FileOutputStream(outputSource);
+                Log.d(TAG, "FileOutputStream: " + fileOutputStream.toString());
+
+                int c;
+                int bytesRead = 0;
+
+                while ((c = inputStream.read()) != -1 && continueRecording) {
+                    Log.d(TAG, "bytesRead=" + bytesRead);
+                    fileOutputStream.write(c);
+                    bytesRead++;
+                }
+
+                fileOutputStream.flush();
+                fileOutputStream.close();
+
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "Uri malformed: " + _streamUri, e);
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage(), e);
             }
-
-            String outputSource = recFolder + File.separator + "test.mp3";
-            FileOutputStream fileOutputStream = new FileOutputStream(outputSource);
-            Log.d(TAG, "FileOutputStream: " + fileOutputStream.toString());
-
-            int c;
-            int bytesRead = 0;
-
-            while ((c = inputStream.read()) != -1) {
-                Log.d(TAG, "bytesRead=" + bytesRead);
-                fileOutputStream.write(c);
-                bytesRead++;
-            }
-
-            fileOutputStream.flush();
-            fileOutputStream.close();
-
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "Uri malformed: " + streamUri, e);
-        } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage(), e);
         }
     }
 
