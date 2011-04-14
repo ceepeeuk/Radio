@@ -61,6 +61,7 @@ public class PlayerService extends Service {
             if (mediaPlayer == null) {
                 mediaPlayer = SingletonMediaPlayer.getInstance();
             }
+
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     Log.d(TAG, "On completion called");
@@ -76,13 +77,6 @@ public class PlayerService extends Service {
                     Log.e(TAG, "Damn error occurred");
                     caller.setStatus("Error");
                     return true;
-                }
-            });
-
-            mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-                public boolean onInfo(MediaPlayer mediaPlayer, int what, int extra) {
-                    Log.i(TAG, "onInfo called with: " + what);
-                    return true;  //To change body of implemented methods use File | Settings | File Templates.
                 }
             });
 
