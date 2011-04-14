@@ -5,21 +5,14 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-public class RadioService extends Service {
+public class PlayerService extends Service {
 
-    private static final String folder = "/sdcard/Radio/";
-    private static final String TAG = "RadioService";
+    private static final String TAG = "PlayerService";
     MediaPlayer mediaPlayer;
     RadioActivity caller;
 
@@ -28,7 +21,6 @@ public class RadioService extends Service {
 
     public boolean alreadyPlaying() {
         if (mediaPlayer != null) {
-            Log.d(TAG, "mediaPlayer.getAudioSessionId: " + mediaPlayer.getAudioSessionId());
             return mediaPlayer.isPlaying();
         } else {
             return false;
@@ -48,7 +40,7 @@ public class RadioService extends Service {
         return START_STICKY;
     }
 
-    public void stop() {
+    public void stopPlaying() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
@@ -62,7 +54,7 @@ public class RadioService extends Service {
         return mBinder;
     }
 
-    public void start(RadioActivity view, String streamUri) {
+    public void startPlaying(RadioActivity view, String streamUri) {
         caller = view;
         try {
 
@@ -74,7 +66,7 @@ public class RadioService extends Service {
                     Log.d(TAG, "On completion called");
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
-                        caller.updateUI(true);
+                        caller.updateUIForPlaying(true);
                     }
                 }
             });
@@ -113,61 +105,9 @@ public class RadioService extends Service {
         }
     }
 
-    public void record(RadioActivity view, final String streamUri) {
-        caller = view;
-        Thread thread = new RecordingThread(streamUri);
-        thread.run();
-        //Singleton??
-    }
-
-    public class RecordingThread extends Thread {
-        boolean continueRecording = true;
-        String _streamUri;
-
-        public RecordingThread(String streamUri) {
-            _streamUri = streamUri;
-        }
-
-        @Override
-        public void run() {
-            try {
-                URL url = new URL(_streamUri);
-                InputStream inputStream = url.openStream();
-                Log.d(TAG, "url.openStream()");
-
-                String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Radio";
-
-                if (!new File(recFolder).exists()) {
-                    new File(recFolder).mkdir();
-                }
-
-                String outputSource = recFolder + File.separator + "test.mp3";
-                FileOutputStream fileOutputStream = new FileOutputStream(outputSource);
-                Log.d(TAG, "FileOutputStream: " + fileOutputStream.toString());
-
-                int c;
-                int bytesRead = 0;
-
-                while ((c = inputStream.read()) != -1 && continueRecording) {
-                    Log.d(TAG, "bytesRead=" + bytesRead);
-                    fileOutputStream.write(c);
-                    bytesRead++;
-                }
-
-                fileOutputStream.flush();
-                fileOutputStream.close();
-
-            } catch (MalformedURLException e) {
-                Log.e(TAG, "Uri malformed: " + _streamUri, e);
-            } catch (IOException e) {
-                Log.e(TAG, "IOException: " + e.getMessage(), e);
-            }
-        }
-    }
-
     public class RadioServiceBinder extends Binder {
-        RadioService getService() {
-            return RadioService.this;
+        PlayerService getService() {
+            return PlayerService.this;
         }
     }
 }

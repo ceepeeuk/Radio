@@ -14,10 +14,15 @@ import android.widget.TextView;
 
 public class RadioActivity extends Activity {
 
-    RadioService localService;
-    boolean mBound = false;
+    PlayerService playerService;
+    RecorderService recorderService;
+    boolean playerServiceBound = false;
+    boolean recorderServiceBound = false;
+    Intent playerIntent = new Intent("com.cpdev.PlayerService");
+    Intent recorderIntent = new Intent("com.cpdev.RecorderService");
+
     Button btnRecord;
-    Intent intent = new Intent("com.cpdev.RadioService");
+
     private String TAG = "RadioActivity";
     private static final String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
 
@@ -31,53 +36,79 @@ public class RadioActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
+        bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
+
+        if (playerServiceBound) {
+            unbindService(playerConnection);
+            playerServiceBound = false;
+        }
+
+        if (recorderServiceBound) {
+            unbindService(recorderConnection);
+            recorderServiceBound = false;
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void playClick(View playButton) {
-        if (mBound) {
-            if (localService.alreadyPlaying()) {
+        if (playerServiceBound) {
+            if (playerService.alreadyPlaying()) {
                 Log.d(TAG, "Stopping play");
-                localService.stop();
-                updateUI(false);
+                playerService.stopPlaying();
+                updateUIForPlaying(false);
             } else {
                 Log.d(TAG, "Starting play");
-                localService.start(this, rinseUri);
-                updateUI(true);
+                playerService.startPlaying(this, rinseUri);
+                updateUIForPlaying(true);
             }
         }
     }
 
 
     public void recordClick(View recordButton) {
-        if (mBound) {
-            localService.record(this, rinseUri);
+        if (recorderServiceBound) {
+            if (recorderService.alreadyRecording()) {
+                Log.d(TAG, "Stopping recording");
+                recorderService.stopRecording(this);
+                updateUIForRecording(false);
+            } else {
+                Log.d(TAG, "Starting recording");
+                recorderService.startRecording(this, rinseUri);
+                updateUIForRecording(true);
+            }
+            recorderService.startRecording(this, rinseUri);
         }
-        //setStatus("Recording...");
+        setStatus("Recording...");
     }
 
-    public void updateUI(boolean playingNow) {
+    public void updateUIForPlaying(boolean playingNow) {
         if (playingNow) {
             setStatus("Buffering");
             setPlayButtonText("Stop");
         } else {
             setStatus("");
             setPlayButtonText("Play");
+        }
+    }
+
+    public void updateUIForRecording(boolean recordingNow) {
+        if (recordingNow) {
+            setStatus("Buffering");
+            setRecordButtonText("Stop");
+        } else {
+            setStatus("");
+            setRecordButtonText("Record");
         }
     }
 
@@ -91,17 +122,36 @@ public class RadioActivity extends Activity {
         playButton.setText(newText);
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    public void setRecordButtonText(String newText) {
+        Button playButton = (Button) findViewById(R.id.record);
+        playButton.setText(newText);
+    }
+
+    private ServiceConnection playerConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            RadioService.RadioServiceBinder binder = (RadioService.RadioServiceBinder) iBinder;
-            localService = binder.getService();
-            mBound = true;
-            updateUI(localService.alreadyPlaying());
+            PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
+            playerService = binder.getService();
+            playerServiceBound = true;
+            updateUIForPlaying(playerService.alreadyPlaying());
         }
 
         public void onServiceDisconnected(ComponentName componentName) {
-            mBound = false;
+            playerServiceBound = false;
+        }
+    };
+
+    private ServiceConnection recorderConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            RecorderService.RecorderServiceBinder binder = (RecorderService.RecorderServiceBinder) iBinder;
+            recorderService = binder.getService();
+            recorderServiceBound = true;
+            updateUIForRecording(recorderService.alreadyRecording());
+        }
+
+        public void onServiceDisconnected(ComponentName componentName) {
+            recorderServiceBound = false;
         }
     };
 }
