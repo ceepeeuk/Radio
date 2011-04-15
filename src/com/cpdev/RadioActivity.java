@@ -87,9 +87,7 @@ public class RadioActivity extends Activity {
                 recorderService.startRecording(this, rinseUri);
                 updateUIForRecording(true);
             }
-            recorderService.startRecording(this, rinseUri);
         }
-        setStatus("Recording...");
     }
 
     public void updateUIForPlaying(boolean playingNow) {
@@ -104,7 +102,7 @@ public class RadioActivity extends Activity {
 
     public void updateUIForRecording(boolean recordingNow) {
         if (recordingNow) {
-            setStatus("Buffering");
+            setStatus("Recording");
             setRecordButtonText("Stop");
         } else {
             setStatus("");

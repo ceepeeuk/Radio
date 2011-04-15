@@ -2,7 +2,10 @@ package com.cpdev;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 
 import java.io.File;
@@ -36,24 +39,21 @@ public class RecorderService extends Service {
     }
 
     public void startRecording(RadioActivity view, String streamUri) {
-        Log.i(TAG, "RecorderService thread:  " + Looper.myLooper().getThread().getName());
         caller = view;
         caller.setStatus("Recording");
         recordingTask = new RecordingTask();
-        Log.i(TAG, "Starting recordingTask");
-        recordingTask.doInBackground(streamUri);
-        Log.i(TAG, "Completed starting recordingTask off");
+        recordingTask.execute(streamUri);
         recording = true;
     }
 
     public void stopRecording(RadioActivity view) {
+        Log.d(TAG, "Stopping recording");
         caller = view;
+        recording = false;
         if (recordingTask != null) {
             recordingTask.cancel(true);
-            recordingTask = null;
         }
-        view.setStatus("Cancelled recording");
-        recording = false;
+        view.setStatus("Stopped recording");
     }
 
     public boolean alreadyRecording() {
@@ -69,6 +69,7 @@ public class RecorderService extends Service {
     class RecordingTask extends AsyncTask<String, Void, Void> {
 
         FileOutputStream fileOutputStream;
+        InputStream inputStream;
         private boolean _recording;
 
         public boolean isRecording() {
@@ -81,11 +82,10 @@ public class RecorderService extends Service {
 
         @Override
         protected Void doInBackground(String... urls) {
-            Log.i(TAG, "RecordingTask thread: " + Looper.myLooper().getThread().getName());
             try {
                 URL url = new URL(urls[0]);
                 Log.d(TAG, "RecordingTask attempting to stream from: " + url);
-                InputStream inputStream = url.openStream();
+                inputStream = url.openStream();
 
                 String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Radio";
 
@@ -106,26 +106,33 @@ public class RecorderService extends Service {
                     bytesRead++;
                 }
 
-                Log.d(TAG, "Finished writing stream, " + bytesRead + " bytes written");
-
-                fileOutputStream.flush();
-                fileOutputStream.close();
+                Log.i(TAG, "Finished writing stream, " + bytesRead * 1024 * 1024 + " megabytes written");
 
             } catch (MalformedURLException e) {
                 Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
             } catch (IOException e) {
-                Log.e(TAG, "IOException: " + e.getMessage(), e);
+                e.printStackTrace();
+                // Expected when stream closes
+            } finally {
+                try {
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Error flushing and close output stream", e);
+                }
             }
             return null;
         }
 
         @Override
         public void onCancelled() {
-            try {
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                    Log.d(TAG, "Closed stream");
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to close input stream", e);
+                }
             }
         }
 
