@@ -17,6 +17,8 @@ import java.util.TimeZone;
 
 // Notes: Runs ok first time, but obviously as this is a singleton, cannot be executed again, need to handle this
 
+// Perhaps a singleton isn't what is needed, but keeping reference in App context?
+
 public class RecordingTask extends AsyncTask<String, Void, Void> {
 
     private static RecordingTask ourInstance = new RecordingTask();
