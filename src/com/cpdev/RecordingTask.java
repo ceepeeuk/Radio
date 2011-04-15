@@ -15,11 +15,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+// Notes: Runs ok first time, but obviously as this is a singleton, cannot be executed again, need to handle this
+
 public class RecordingTask extends AsyncTask<String, Void, Void> {
 
     private static RecordingTask ourInstance = new RecordingTask();
     private static final String TAG = "RecordingTask";
     private boolean recordingState = false;
+    private boolean cancelRecording = false;
 
     public static RecordingTask getInstance() {
         return ourInstance;
@@ -53,22 +56,25 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
             int c;
             int bytesRead = 0;
 
-            while ((c = inputStream.read()) != -1) {
+            while (!cancelRecording && (c = inputStream.read()) != -1) {
                 fileOutputStream.write(c);
                 bytesRead++;
             }
 
-            Log.d(TAG, "Finished writing stream, " + bytesRead * 1024 * 1024 + " megabytes written");
+            Log.d(TAG, "Finished writing stream, " + bytesRead / 1024 / 1024 + " megabytes written");
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
         } catch (IOException e) {
+            Log.e(TAG, "IOException: " + e.getMessage(), e);
             // Expected when stream closes
         } finally {
             try {
+                inputStream.close();
                 fileOutputStream.flush();
                 fileOutputStream.close();
                 recordingState = false;
+                cancelRecording = false;
             } catch (IOException e) {
                 Log.e(TAG, "Error flushing and close output stream", e);
             }
@@ -79,12 +85,9 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
     @Override
     public void onCancelled() {
         if (inputStream != null) {
-            try {
-                inputStream.close();
-                Log.d(TAG, "Closed stream");
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to close input stream", e);
-            }
+            //inputStream.close();
+            cancelRecording = true;
+            Log.d(TAG, "cancelRecording=true");
         }
     }
 
