@@ -30,12 +30,14 @@ public class RadioActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("TAG", "RadioActivity.onCreate() hash code:" + String.valueOf(this.hashCode()));
         setContentView(R.layout.main);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        Log.d("TAG", "RadioActivity.onStart() hash code:" + String.valueOf(this.hashCode()));
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
     }
