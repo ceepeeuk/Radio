@@ -14,14 +14,14 @@ import android.widget.TextView;
 
 public class RadioActivity extends Activity {
 
-    PlayerService playerService;
-    RecorderService recorderService;
-    boolean playerServiceBound = false;
-    boolean recorderServiceBound = false;
-    Intent playerIntent = new Intent("com.cpdev.PlayerService");
-    Intent recorderIntent = new Intent("com.cpdev.RecorderService");
+    private PlayerService playerService;
+    private RecorderService recorderService;
+    private boolean playerServiceBound = false;
+    private boolean recorderServiceBound = false;
+    private Intent playerIntent = new Intent("com.cpdev.PlayerService");
+    private Intent recorderIntent = new Intent("com.cpdev.RecorderService");
 
-    private String TAG = "RadioActivity";
+    private String TAG = "com.cpdev.RadioActivity";
     private static final String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
 
 
@@ -67,11 +67,11 @@ public class RadioActivity extends Activity {
             if (playerService.alreadyPlaying()) {
                 Log.d(TAG, "Stopping play");
                 playerService.stopPlaying();
-                updateUIForPlaying(false);
+                updateUIForPlaying(false, "Stopped");
             } else {
                 Log.d(TAG, "Starting play");
                 playerService.startPlaying(this, rinseUri);
-                updateUIForPlaying(true);
+                updateUIForPlaying(true, "Buffering");
             }
         }
     }
@@ -91,12 +91,12 @@ public class RadioActivity extends Activity {
         }
     }
 
-    public void updateUIForPlaying(boolean playingNow) {
+    public void updateUIForPlaying(boolean playingNow, String status) {
         if (playingNow) {
-            setStatus("Buffering");
+            setStatus(status);
             setPlayButtonText("Stop");
         } else {
-            setStatus("");
+            setStatus(status);
             setPlayButtonText("Play");
         }
     }
@@ -106,7 +106,6 @@ public class RadioActivity extends Activity {
             setStatus("Recording");
             setRecordButtonText("Stop");
         } else {
-            setStatus("");
             setRecordButtonText("Record");
         }
     }
@@ -114,6 +113,7 @@ public class RadioActivity extends Activity {
     public void setStatus(String message) {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(message);
+        Log.d(TAG, "Status set to: " + message);
     }
 
     public void setPlayButtonText(String newText) {
@@ -132,7 +132,11 @@ public class RadioActivity extends Activity {
             PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
             playerService = binder.getService();
             playerServiceBound = true;
-            updateUIForPlaying(playerService.alreadyPlaying());
+            if (playerService.alreadyPlaying()) {
+                updateUIForPlaying(true, "Playing");
+            } else {
+                updateUIForPlaying(false, "");
+            }
         }
 
         public void onServiceDisconnected(ComponentName componentName) {

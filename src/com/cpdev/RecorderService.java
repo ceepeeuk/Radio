@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class RecorderService extends Service {
 
-    private static final String TAG = "RecorderService";
+    private static final String TAG = "com.cpdev.RecorderService";
     private RadioActivity caller;
 
     private final IBinder mBinder = new RecorderServiceBinder();

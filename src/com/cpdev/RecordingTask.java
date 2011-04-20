@@ -17,7 +17,7 @@ import java.util.TimeZone;
 
 public class RecordingTask extends AsyncTask<String, Void, Void> {
 
-    private static final String TAG = "RecordingTask";
+    private static final String TAG = "com.cpdev.RecordingTask";
     private boolean recordingState = false;
     private boolean cancelRecording = false;
 

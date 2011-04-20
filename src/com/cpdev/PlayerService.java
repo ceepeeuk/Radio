@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class PlayerService extends Service {
 
-    private static final String TAG = "PlayerService";
+    private static final String TAG = "com.cpdev.PlayerService";
     RadioActivity caller;
 
     private final IBinder mBinder = new RadioServiceBinder();
@@ -21,8 +21,11 @@ public class PlayerService extends Service {
     public boolean alreadyPlaying() {
         MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
         if (mediaPlayer != null) {
-            return mediaPlayer.isPlaying();
+            boolean playing = mediaPlayer.isPlaying();
+            Log.i(TAG, "mediaPlayer.isPlaying() = " + playing);
+            return playing;
         } else {
+            Log.i(TAG, "mediaPlayer = null");
             return false;
         }
     }
@@ -77,7 +80,7 @@ public class PlayerService extends Service {
                     Log.d(TAG, "On completion called");
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
-                        caller.updateUIForPlaying(true);
+                        caller.updateUIForPlaying(true, "Playing");
                     }
                 }
             });
