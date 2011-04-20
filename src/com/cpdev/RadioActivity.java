@@ -61,6 +61,7 @@ public class RadioActivity extends Activity {
     public void onResume() {
         super.onResume();
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
+        bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void playClick(View playButton) {

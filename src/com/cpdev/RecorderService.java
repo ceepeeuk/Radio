@@ -10,15 +10,11 @@ public class RecorderService extends Service {
 
     private static final String TAG = "RecorderService";
     private RadioActivity caller;
-    private RecordingTask recordingTask;
 
     private final IBinder mBinder = new RecorderServiceBinder();
 
     @Override
     public IBinder onBind(Intent intent) {
-        if (recordingTask == null) {
-            recordingTask = RecordingTask.getInstance();
-        }
         return mBinder;
     }
 
@@ -30,19 +26,26 @@ public class RecorderService extends Service {
     public void startRecording(RadioActivity view, String streamUri) {
         caller = view;
         caller.setStatus("Recording");
-        recordingTask.execute(streamUri);
+        RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
+        radioApplication.getRecordingTask().execute(streamUri);
     }
 
     public void stopRecording(RadioActivity view) {
         Log.d(TAG, "Stopping recording");
         caller = view;
-        if (recordingTask != null) {
-            recordingTask.cancel(true);
-        }
+        RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
+        RecordingTask recordingTask = radioApplication.getRecordingTask();
+        recordingTask.cancel(true);
+
         view.setStatus("Stopped recording");
+
+        recordingTask = null;
+        radioApplication.setRecordingTask(recordingTask);
     }
 
     public boolean alreadyRecording() {
+        RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
+        RecordingTask recordingTask = radioApplication.getRecordingTask();
         return recordingTask.alreadyRecording();
     }
 
