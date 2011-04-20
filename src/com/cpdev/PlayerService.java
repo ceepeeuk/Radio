@@ -13,13 +13,13 @@ import java.io.IOException;
 public class PlayerService extends Service {
 
     private static final String TAG = "PlayerService";
-    MediaPlayer mediaPlayer;
     RadioActivity caller;
 
     private final IBinder mBinder = new RadioServiceBinder();
 
 
     public boolean alreadyPlaying() {
+        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
         if (mediaPlayer != null) {
             return mediaPlayer.isPlaying();
         } else {
@@ -29,10 +29,13 @@ public class PlayerService extends Service {
 
     @Override
     public void onCreate() {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
         super.onCreate();
         if (mediaPlayer == null) {
-            mediaPlayer = SingletonMediaPlayer.getInstance();
+            mediaPlayer = new MediaPlayer();
         }
+        radioApplication.setMediaPlayer(mediaPlayer);
     }
 
     @Override
@@ -41,6 +44,9 @@ public class PlayerService extends Service {
     }
 
     public void stopPlaying() {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
@@ -57,10 +63,13 @@ public class PlayerService extends Service {
 
     public void startPlaying(RadioActivity view, String streamUri) {
         caller = view;
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+
         try {
 
             if (mediaPlayer == null) {
-                mediaPlayer = SingletonMediaPlayer.getInstance();
+                mediaPlayer = new MediaPlayer();
             }
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -97,6 +106,8 @@ public class PlayerService extends Service {
             Log.e(TAG, "Error caught in play", ioe);
             ioe.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             mediaPlayer.reset();
+        } finally {
+            radioApplication.setMediaPlayer(mediaPlayer);
         }
     }
 

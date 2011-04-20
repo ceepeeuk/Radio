@@ -1,10 +1,11 @@
 package com.cpdev;
 
 import android.app.Application;
+import android.media.MediaPlayer;
 
 public class RadioApplication extends Application {
     private RecordingTask recordingTask;
-    private SingletonMediaPlayer singletonMediaPlayer;
+    private MediaPlayer mediaPlayer;
 
     public RecordingTask getRecordingTask() {
         if (recordingTask == null) {
@@ -17,11 +18,11 @@ public class RadioApplication extends Application {
         this.recordingTask = recordingTask;
     }
 
-    public SingletonMediaPlayer getSingletonMediaPlayer() {
-        return singletonMediaPlayer;
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
     }
 
-    public void setSingletonMediaPlayer(SingletonMediaPlayer singletonMediaPlayer) {
-        this.singletonMediaPlayer = singletonMediaPlayer;
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
     }
 }

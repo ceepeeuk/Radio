@@ -21,8 +21,6 @@ public class RadioActivity extends Activity {
     Intent playerIntent = new Intent("com.cpdev.PlayerService");
     Intent recorderIntent = new Intent("com.cpdev.RecorderService");
 
-    Button btnRecord;
-
     private String TAG = "RadioActivity";
     private static final String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
 

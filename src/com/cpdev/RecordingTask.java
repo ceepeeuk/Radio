@@ -17,13 +17,12 @@ import java.util.TimeZone;
 
 public class RecordingTask extends AsyncTask<String, Void, Void> {
 
-    private static RecordingTask ourInstance = new RecordingTask();
     private static final String TAG = "RecordingTask";
     private boolean recordingState = false;
     private boolean cancelRecording = false;
 
-    FileOutputStream fileOutputStream;
-    InputStream inputStream;
+    private FileOutputStream fileOutputStream;
+    private InputStream inputStream;
 
     @Override
     protected Void doInBackground(String... urls) {
