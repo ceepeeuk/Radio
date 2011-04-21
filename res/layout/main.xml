@@ -1,40 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout
-        android:id="@+id/lyt_widget"
+<LinearLayout
+        android:id="@+id/layout_main"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-    <Button
-            android:id="@+id/play"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        >
+    <EditText
+            android:id="@+id/txt_url"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_play"
-            android:layout_x="0px"
-            android:layout_y="100px"
-            android:onClick="playClick">
-    </Button>
-    <Button
-            android:id="@+id/record"
+            android:text=""
+            android:textSize="18sp"
+            >
+    </EditText>
+    <LinearLayout
+            android:id="@+id/layout_status"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_record"
-            android:layout_x="0px"
-            android:layout_y="200px"
-            android:onClick="recordClick">
-    </Button>
-    <TextView
-            android:id="@+id/lbl_status"
-            android:layout_width="wrap_content"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical">
+        <TextView
+                android:id="@+id/lbl_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status: "
+                android:layout_x="30px"
+                android:layout_y="300px"
+                >
+        </TextView>
+        <TextView
+                android:id="@+id/txt_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="80px"
+                android:layout_y="300px"
+                >
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+            android:id="@+id/layout_controls"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Status: "
-            android:layout_x="30px"
-            android:layout_y="300px">
-    </TextView>
-    <TextView
-            android:id="@+id/txt_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_x="80px"
-            android:layout_y="300px">
-    </TextView>
-</AbsoluteLayout>
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            >
+        <ImageButton
+                android:id="@+id/play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ic_btn_play"
+                >
+        </ImageButton>
+        <ImageButton
+                android:id="@+id/record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ic_btn_record"
+                >
+        </ImageButton>
+        <ImageButton
+                android:id="@+id/stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ic_btn_stop"
+                >
+        </ImageButton>
+    </LinearLayout>
+</LinearLayout>

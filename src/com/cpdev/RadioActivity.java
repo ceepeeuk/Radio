@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class RadioActivity extends Activity {
@@ -117,13 +116,13 @@ public class RadioActivity extends Activity {
     }
 
     public void setPlayButtonText(String newText) {
-        Button playButton = (Button) findViewById(R.id.play);
-        playButton.setText(newText);
+//        Button playButton = (Button) findViewById(R.id.play);
+//        playButton.setText(newText);
     }
 
     public void setRecordButtonText(String newText) {
-        Button playButton = (Button) findViewById(R.id.record);
-        playButton.setText(newText);
+//        Button playButton = (Button) findViewById(R.id.record);
+//        playButton.setText(newText);
     }
 
     private ServiceConnection playerConnection = new ServiceConnection() {
