@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 public class RadioActivity extends Activity {
 
@@ -110,9 +109,9 @@ public class RadioActivity extends Activity {
     }
 
     public void setStatus(String message) {
-        TextView txtStatus = (TextView) findViewById(R.id.txt_status);
-        txtStatus.setText(message);
-        Log.d(TAG, "Status set to: " + message);
+//        TextView txtStatus = (TextView) findViewById(R.id.txt_status);
+//        txtStatus.setText(message);
+//        Log.d(TAG, "Status set to: " + message);
     }
 
     public void setPlayButtonText(String newText) {
