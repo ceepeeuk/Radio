@@ -5,32 +5,39 @@
         android:layout_height="fill_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         >
+    <ImageButton
+            android:id="@+id/btn_go"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_btn_next"
+            >
+    </ImageButton>
     <EditText
             android:id="@+id/txt_url"
-            android:layout_width="243px"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="http://podcast.dgen.net:8000/rinseradio"
             android:textSize="18sp"
-            android:maxLines="1"
+            android:singleLine="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/btn_go"
             >
     </EditText>
-    <ImageButton
-            android:id="@+id/go"
+    <ListView
+            android:id="@+id/lst_favourites"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/widget30"
-            android:layout_alignParentRight="true"
-            android:background="@null"
-            android:src="@drawable/ic_btn_next">
-    </ImageButton>
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/txt_url"
+            >
+    </ListView>
     <TextView
             android:id="@+id/lbl_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Status: "
-            android:layout_below="@id/txt_url"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
             >
     </TextView>
     <TextView
@@ -38,44 +45,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/txt_url"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/lbl_status"
+            android:text="test"
             >
     </TextView>
-    <RelativeLayout
-            android:id="@+id/layout_controls"
+    <ProgressBar
+            android:id="@+id/progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
             android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/txt_status"
             >
-        <ImageButton
-                android:id="@+id/play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:src="@drawable/ic_btn_play"
-                android:layout_centerHorizontal="true"
-                android:padding="10px">
-        </ImageButton>
-        <ImageButton
-                android:id="@+id/stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:src="@drawable/ic_btn_stop"
-                android:layout_alignParentLeft="true"
-                android:padding="10px"
-                >
-        </ImageButton>
-        <ImageButton
-                android:id="@+id/record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:src="@drawable/ic_btn_record"
-                android:layout_alignParentRight="true"
-                android:padding="10px"
-                >
-        </ImageButton>
-    </RelativeLayout>
+    </ProgressBar>
 </RelativeLayout>
