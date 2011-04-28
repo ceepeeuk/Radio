@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class RadioActivity extends Activity {
 
@@ -26,16 +29,21 @@ public class RadioActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("TAG", "RadioActivity.onCreate() hash code:" + String.valueOf(this.hashCode()));
         setContentView(R.layout.main);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("TAG", "RadioActivity.onStart() hash code:" + String.valueOf(this.hashCode()));
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
+
+        ListView lstFavourites = (ListView) findViewById(R.id.lst_favourites);
+        ArrayAdapter<String> favArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1);
+        for (int i = 0; i < 10; i++) {
+            favArray.add("Favourite #" + i);
+        }
+        lstFavourites.setAdapter(favArray);
     }
 
     @Override
@@ -60,18 +68,24 @@ public class RadioActivity extends Activity {
         bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void playClick(View playButton) {
-        if (playerServiceBound) {
-            if (playerService.alreadyPlaying()) {
-                Log.d(TAG, "Stopping play");
-                playerService.stopPlaying();
-                updateUIForPlaying(false, "Stopped");
-            } else {
-                Log.d(TAG, "Starting play");
-                playerService.startPlaying(this, rinseUri);
-                updateUIForPlaying(true, "Buffering");
-            }
-        }
+    public void goClick(View view) {
+        showToast("goClick called");
+//        if (playerServiceBound) {
+//            if (playerService.alreadyPlaying()) {
+//                Log.d(TAG, "Stopping play");
+//                playerService.stopPlaying();
+//                updateUIForPlaying(false, "Stopped");
+//            } else {
+//                Log.d(TAG, "Starting play");
+//                playerService.startPlaying(this, rinseUri);
+//                updateUIForPlaying(true, "Buffering");
+//            }
+//        }
+    }
+
+    private void showToast(String message) {
+        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
 

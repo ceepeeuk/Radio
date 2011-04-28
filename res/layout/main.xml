@@ -12,6 +12,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_btn_next"
             android:scaleType="fitXY"
+            android:onClick="goClick"
             >
     </ImageButton>
     <EditText
