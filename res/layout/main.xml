@@ -11,6 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_btn_next"
+            android:scaleType="fitXY"
             >
     </ImageButton>
     <EditText
@@ -18,7 +19,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="http://podcast.dgen.net:8000/rinseradio"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:singleLine="true"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@id/btn_go"
@@ -50,12 +51,4 @@
             android:text="test"
             >
     </TextView>
-    <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@id/txt_status"
-            >
-    </ProgressBar>
 </RelativeLayout>

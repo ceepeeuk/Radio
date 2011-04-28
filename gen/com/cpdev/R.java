@@ -25,7 +25,6 @@ public final class R {
         public static final int layout_main = 0x7f050000;
         public static final int lbl_status = 0x7f050004;
         public static final int lst_favourites = 0x7f050003;
-        public static final int progress = 0x7f050006;
         public static final int txt_status = 0x7f050005;
         public static final int txt_url = 0x7f050002;
     }
