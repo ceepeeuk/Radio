@@ -10,7 +10,7 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_btn_next"
+            android:background="@drawable/ic_btn_next_bw"
             android:scaleType="fitXY"
             android:onClick="goClick"
             >

@@ -6,6 +6,8 @@ import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
@@ -21,6 +23,8 @@ public class RadioActivity extends Activity {
     private String TAG = "com.cpdev.RadioActivity";
     private final CharSequence[] items = {"Play", "Record", "Both"};
 
+    private static final int STOP_PLAYING = 0;
+    private static final int STOP_RECORDING = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,41 @@ public class RadioActivity extends Activity {
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, STOP_PLAYING, Menu.NONE, "Stop Playing");
+        menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
+        return (super.onCreateOptionsMenu(menu));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case STOP_PLAYING:
+                if (playerServiceBound && playerService.alreadyPlaying()) {
+                    if (recorderServiceBound && !recorderService.alreadyRecording()) {
+                        setStatus("Stopped playing");
+                    }
+                    playerService.stopPlaying();
+                }
+                return true;
+
+            case STOP_RECORDING:
+                if (recorderServiceBound && recorderService.alreadyRecording()) {
+                    if (playerServiceBound && !playerService.alreadyPlaying()) {
+                        setStatus("Stopped recording");
+                    }
+                    recorderService.stopRecording(this);
+                }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();

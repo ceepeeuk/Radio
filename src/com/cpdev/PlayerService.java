@@ -22,10 +22,8 @@ public class PlayerService extends Service {
         MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
         if (mediaPlayer != null) {
             boolean playing = mediaPlayer.isPlaying();
-            Log.i(TAG, "mediaPlayer.isPlaying() = " + playing);
             return playing;
         } else {
-            Log.i(TAG, "mediaPlayer = null");
             return false;
         }
     }
