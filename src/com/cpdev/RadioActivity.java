@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 
 public class RadioActivity extends Activity {
 
@@ -83,7 +80,7 @@ public class RadioActivity extends Activity {
                                     play(source);
                                     break;
                                 case 1:
-                                    showToast("Record clicked");
+                                    record(source);
                                     break;
                                 case 2:
                                     showToast("Both clicked");
@@ -94,8 +91,7 @@ public class RadioActivity extends Activity {
                             }
                         }
                     });
-            AlertDialog alert = builder.create();
-            alert.show();
+            builder.create().show();
         }
     }
 
@@ -104,67 +100,81 @@ public class RadioActivity extends Activity {
         toast.show();
     }
 
-    private void play(String uri) {
+    private void play(final String uri) {
         if (playerServiceBound) {
             if (playerService.alreadyPlaying()) {
-                Log.d(TAG, "Stopping play");
-                playerService.stopPlaying();
-                updateUIForPlaying(false, "Stopped");
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Stop playing current station?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d(TAG, "Stopping play");
+                                playerService.stopPlaying();
+                                setStatus("Buffering");
+                                playerService.startPlaying(RadioActivity.this, uri);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        });
+                builder.create().show();
+
             } else {
                 Log.d(TAG, "Starting play");
                 playerService.startPlaying(this, uri);
                 updateUIForPlaying(true, "Buffering");
             }
+        } else {
+            Log.e(TAG, "Playerservice unbound so cannot start playing");
         }
     }
 
-//    public void recordClick(View recordButton) {
-//        if (recorderServiceBound) {
-//            if (recorderService.alreadyRecording()) {
-//                Log.d(TAG, "Stopping recording");
-//                recorderService.stopRecording(this);
-//                updateUIForRecording(false);
-//            } else {
-//                Log.d(TAG, "Starting recording");
-//                recorderService.startRecording(this, rinseUri);
-//                updateUIForRecording(true);
-//            }
-//        }
-//    }
+    public void record(final String uri) {
+        if (recorderServiceBound) {
+            if (recorderService.alreadyRecording()) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Stop recording current station?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d(TAG, "Stopping recording");
+                                recorderService.stopRecording(RadioActivity.this);
+                                recorderService.startRecording(RadioActivity.this, uri);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        });
+                builder.create().show();
+
+            } else {
+                Log.d(TAG, "Starting recording");
+                recorderService.startRecording(this, uri);
+                updateUIForRecording(true);
+            }
+        }
+    }
 
     public void updateUIForPlaying(boolean playingNow, String status) {
         if (playingNow) {
             setStatus(status);
-            setPlayButtonText("Stop");
         } else {
             setStatus(status);
-            setPlayButtonText("Play");
         }
     }
 
     public void updateUIForRecording(boolean recordingNow) {
         if (recordingNow) {
             setStatus("Recording");
-            setRecordButtonText("Stop");
-        } else {
-            setRecordButtonText("Record");
         }
     }
 
     public void setStatus(String message) {
-//        TextView txtStatus = (TextView) findViewById(R.id.txt_status);
-//        txtStatus.setText(message);
-//        Log.d(TAG, "Status set to: " + message);
-    }
-
-    public void setPlayButtonText(String newText) {
-//        Button playButton = (Button) findViewById(R.id.play);
-//        playButton.setText(newText);
-    }
-
-    public void setRecordButtonText(String newText) {
-//        Button playButton = (Button) findViewById(R.id.record);
-//        playButton.setText(newText);
+        TextView txtStatus = (TextView) findViewById(R.id.txt_status);
+        txtStatus.setText(message);
+        Log.d(TAG, "Status set to: " + message);
     }
 
     private ServiceConnection playerConnection = new ServiceConnection() {
