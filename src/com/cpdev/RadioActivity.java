@@ -25,6 +25,7 @@ public class RadioActivity extends Activity {
 
     private static final int STOP_PLAYING = 0;
     private static final int STOP_RECORDING = 1;
+    private static final int ADD_FAVOURITE = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class RadioActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE, STOP_PLAYING, Menu.NONE, "Stop Playing");
         menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
+        menu.add(Menu.NONE, ADD_FAVOURITE, Menu.NONE, "Add Favourite");
         return (super.onCreateOptionsMenu(menu));
     }
 
@@ -95,6 +97,10 @@ public class RadioActivity extends Activity {
                     }
                     recorderService.stopRecording(this);
                 }
+                return true;
+
+            case ADD_FAVOURITE:
+                // Implement adding fav's here
                 return true;
 
             default:
