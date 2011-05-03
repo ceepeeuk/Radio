@@ -1,15 +1,14 @@
 package com.cpdev;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.app.AlertDialog;
+import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,7 +22,7 @@ public class RadioActivity extends Activity {
     private Intent recorderIntent = new Intent("com.cpdev.RecorderService");
 
     private String TAG = "com.cpdev.RadioActivity";
-    private static final String rinseUri = "http://podcast.dgen.net:8000/rinseradio";
+    private final CharSequence[] items = {"Play", "Record", "Both"};
 
 
     @Override
@@ -69,18 +68,35 @@ public class RadioActivity extends Activity {
     }
 
     public void goClick(View view) {
-        showToast("goClick called");
-//        if (playerServiceBound) {
-//            if (playerService.alreadyPlaying()) {
-//                Log.d(TAG, "Stopping play");
-//                playerService.stopPlaying();
-//                updateUIForPlaying(false, "Stopped");
-//            } else {
-//                Log.d(TAG, "Starting play");
-//                playerService.startPlaying(this, rinseUri);
-//                updateUIForPlaying(true, "Buffering");
-//            }
-//        }
+        final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
+        Log.d(TAG, "url is: " + source);
+
+        if (source.isEmpty()) {
+            showToast("Please supply a URL");
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("What shall we do?")
+                    .setItems(items, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int item) {
+                            switch (item) {
+                                case 0:
+                                    play(source);
+                                    break;
+                                case 1:
+                                    showToast("Record clicked");
+                                    break;
+                                case 2:
+                                    showToast("Both clicked");
+                                    break;
+                                default:
+                                    Log.e(TAG, "Unexpected option returned from dialog, option #" + item);
+                                    break;
+                            }
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     private void showToast(String message) {
@@ -88,20 +104,33 @@ public class RadioActivity extends Activity {
         toast.show();
     }
 
-
-    public void recordClick(View recordButton) {
-        if (recorderServiceBound) {
-            if (recorderService.alreadyRecording()) {
-                Log.d(TAG, "Stopping recording");
-                recorderService.stopRecording(this);
-                updateUIForRecording(false);
+    private void play(String uri) {
+        if (playerServiceBound) {
+            if (playerService.alreadyPlaying()) {
+                Log.d(TAG, "Stopping play");
+                playerService.stopPlaying();
+                updateUIForPlaying(false, "Stopped");
             } else {
-                Log.d(TAG, "Starting recording");
-                recorderService.startRecording(this, rinseUri);
-                updateUIForRecording(true);
+                Log.d(TAG, "Starting play");
+                playerService.startPlaying(this, uri);
+                updateUIForPlaying(true, "Buffering");
             }
         }
     }
+
+//    public void recordClick(View recordButton) {
+//        if (recorderServiceBound) {
+//            if (recorderService.alreadyRecording()) {
+//                Log.d(TAG, "Stopping recording");
+//                recorderService.stopRecording(this);
+//                updateUIForRecording(false);
+//            } else {
+//                Log.d(TAG, "Starting recording");
+//                recorderService.startRecording(this, rinseUri);
+//                updateUIForRecording(true);
+//            }
+//        }
+//    }
 
     public void updateUIForPlaying(boolean playingNow, String status) {
         if (playingNow) {

@@ -28,12 +28,10 @@
     </EditText>
     <ListView
             android:id="@+id/lst_favourites"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@+id/txt_url"
             android:layout_above="@+id/lbl_status"
-            android:padding="2dp"
-            android:textSize="15sp"
             >
     </ListView>
     <TextView
@@ -43,6 +41,7 @@
             android:text="Status: "
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
+            android:padding="6dip"
             >
     </TextView>
     <TextView
@@ -52,7 +51,7 @@
             android:layout_above="@id/txt_url"
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@id/lbl_status"
-            android:text="test"
+            android:padding="6dip"
             >
     </TextView>
 </RelativeLayout>
