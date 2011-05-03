@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
+import java.io.IOException;
+
 public class RadioActivity extends Activity {
 
     private PlayerService playerService;
@@ -39,11 +41,20 @@ public class RadioActivity extends Activity {
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
 
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        try {
+            dbHelper.createDataBase();
+            dbHelper.openDataBase();
+        } catch (IOException e) {
+            Log.e(TAG, "Error occurred trying to access DB ", e);
+        }
+
         ListView lstFavourites = (ListView) findViewById(R.id.lst_favourites);
         ArrayAdapter<String> favArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1);
         for (int i = 0; i < 10; i++) {
             favArray.add("Favourite #" + i);
         }
+
         lstFavourites.setAdapter(favArray);
     }
 
