@@ -58,7 +58,6 @@ public class PlayerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("TAG", "PlayerService.onBind() hash code:" + String.valueOf(this.hashCode()));
         return mBinder;
     }
 

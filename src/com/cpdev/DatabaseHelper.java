@@ -6,6 +6,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +24,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase myDataBase;
 
     private final Context myContext;
+
+
+    public static final String TABLE = "stations";
+    public static final String NAME = "name";
+    public static final String URL = "url";
+    public static final String ID = "_id";
+
+    private static final String TAG = "DatabaseHelper";
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
@@ -133,6 +142,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getFavourites() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        Cursor cursor = myDataBase.query(TABLE, new String[]{ID, NAME}, null, null, null, null, null);
+        Log.d(TAG, "Num of rows = " + cursor.getCount());
+        return cursor;
     }
 }

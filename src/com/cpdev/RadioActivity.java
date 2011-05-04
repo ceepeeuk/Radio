@@ -3,6 +3,7 @@ package com.cpdev;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -46,16 +47,23 @@ public class RadioActivity extends Activity {
             dbHelper.createDataBase();
             dbHelper.openDataBase();
         } catch (IOException e) {
-            Log.e(TAG, "Error occurred trying to access DB ", e);
+            Log.e(TAG, "IOException thrown when trying to access DB", e);
         }
+
+        Cursor favouritesCursor = dbHelper.getFavourites();
+        ListAdapter adapter = new SimpleCursorAdapter(this,
+                R.layout.favourite_list_item,
+                favouritesCursor,
+                new String[]{dbHelper.NAME},
+                new int[]{R.id.name_entry});
 
         ListView lstFavourites = (ListView) findViewById(R.id.lst_favourites);
-        ArrayAdapter<String> favArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1);
-        for (int i = 0; i < 10; i++) {
-            favArray.add("Favourite #" + i);
-        }
+        lstFavourites.setAdapter(adapter);
 
-        lstFavourites.setAdapter(favArray);
+//        ArrayAdapter<String> favArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.favourite_list_item);
+//        for (int i = 0; i < 10; i++) {
+//            favArray.add("Favourite #" + i);
+//        }
     }
 
     @Override
