@@ -142,7 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getFavourites() {
-        Cursor cursor = myDataBase.query(TABLE, new String[]{ID, NAME}, null, null, null, null, null);
+        Cursor cursor = myDataBase.query(TABLE, new String[]{ID, NAME, URL}, null, null, null, null, null);
         Log.d(TAG, "Num of rows = " + cursor.getCount());
         return cursor;
     }

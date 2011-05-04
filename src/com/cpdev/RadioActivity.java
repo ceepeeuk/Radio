@@ -61,9 +61,11 @@ public class RadioActivity extends Activity {
 
         lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                Log.d(TAG, "Selected: " + id);
                 favouritesCursor.moveToPosition((int) id - 1);
-                Log.d(TAG, "Name: " + favouritesCursor.getString(1));
+                String url = favouritesCursor.getString(2);
+                Log.d(TAG, "Calling decideStreamOption for : " + url);
+                decideStreamOption(url);
+
             }
         });
 
@@ -133,35 +135,39 @@ public class RadioActivity extends Activity {
 
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
-        final CharSequence[] goOptions = {"Play", "Record", "Both"};
 
         Log.d(TAG, "url is: " + source);
 
         if (source.isEmpty()) {
             showToast("Please supply a URL");
         } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("What shall we do?")
-                    .setItems(goOptions, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int item) {
-                            switch (item) {
-                                case 0:
-                                    play(source);
-                                    break;
-                                case 1:
-                                    record(source);
-                                    break;
-                                case 2:
-                                    showToast("Both clicked");
-                                    break;
-                                default:
-                                    Log.e(TAG, "Unexpected option returned from dialog, option #" + item);
-                                    break;
-                            }
-                        }
-                    });
-            builder.create().show();
+            decideStreamOption(source);
         }
+    }
+
+    private void decideStreamOption(final String source) {
+        CharSequence[] goOptions = {"Play", "Record", "Both"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What shall we do?")
+                .setItems(goOptions, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int item) {
+                        switch (item) {
+                            case 0:
+                                play(source);
+                                break;
+                            case 1:
+                                record(source);
+                                break;
+                            case 2:
+                                showToast("Both clicked");
+                                break;
+                            default:
+                                Log.e(TAG, "Unexpected option returned from dialog, option #" + item);
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
     }
 
     private void showToast(String message) {
@@ -199,7 +205,7 @@ public class RadioActivity extends Activity {
         }
     }
 
-    public void record(final String uri) {
+    private void record(final String uri) {
         if (recorderServiceBound) {
             if (recorderService.alreadyRecording()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
