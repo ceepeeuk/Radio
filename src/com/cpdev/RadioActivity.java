@@ -24,7 +24,6 @@ public class RadioActivity extends Activity {
     private Intent recorderIntent = new Intent("com.cpdev.RecorderService");
 
     private String TAG = "com.cpdev.RadioActivity";
-    private final CharSequence[] items = {"Play", "Record", "Both"};
 
     private static final int STOP_PLAYING = 0;
     private static final int STOP_RECORDING = 1;
@@ -50,7 +49,8 @@ public class RadioActivity extends Activity {
             Log.e(TAG, "IOException thrown when trying to access DB", e);
         }
 
-        Cursor favouritesCursor = dbHelper.getFavourites();
+        final Cursor favouritesCursor = dbHelper.getFavourites();
+
         ListAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.favourite_list_item,
                 favouritesCursor,
@@ -58,12 +58,16 @@ public class RadioActivity extends Activity {
                 new int[]{R.id.name_entry});
 
         ListView lstFavourites = (ListView) findViewById(R.id.lst_favourites);
-        lstFavourites.setAdapter(adapter);
 
-//        ArrayAdapter<String> favArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.favourite_list_item);
-//        for (int i = 0; i < 10; i++) {
-//            favArray.add("Favourite #" + i);
-//        }
+        lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                Log.d(TAG, "Selected: " + id);
+                favouritesCursor.moveToPosition((int) id - 1);
+                Log.d(TAG, "Name: " + favouritesCursor.getString(1));
+            }
+        });
+
+        lstFavourites.setAdapter(adapter);
     }
 
     @Override
@@ -127,9 +131,10 @@ public class RadioActivity extends Activity {
         }
     }
 
-
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
+        final CharSequence[] goOptions = {"Play", "Record", "Both"};
+
         Log.d(TAG, "url is: " + source);
 
         if (source.isEmpty()) {
@@ -137,7 +142,7 @@ public class RadioActivity extends Activity {
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("What shall we do?")
-                    .setItems(items, new DialogInterface.OnClickListener() {
+                    .setItems(goOptions, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int item) {
                             switch (item) {
                                 case 0:
@@ -197,8 +202,8 @@ public class RadioActivity extends Activity {
     public void record(final String uri) {
         if (recorderServiceBound) {
             if (recorderService.alreadyRecording()) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
                 builder.setMessage("Stop recording current station?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -244,9 +249,11 @@ public class RadioActivity extends Activity {
     private ServiceConnection playerConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+
             PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
             playerService = binder.getService();
             playerServiceBound = true;
+
             if (playerService.alreadyPlaying()) {
                 updateUIForPlaying(true, "Playing");
             } else {
