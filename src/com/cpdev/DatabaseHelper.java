@@ -142,7 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public void AddFavourite(RadioDetails radioDetails) {
+    public void addFavourite(RadioDetails radioDetails) {
         Log.d(TAG, "Attempting to add: " + radioDetails);
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, radioDetails.getStationName());

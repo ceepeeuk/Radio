@@ -7,9 +7,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.*;
 import com.cpdev.FileHandling.PlsHandler;
 
@@ -127,19 +125,57 @@ public class RadioActivity extends Activity {
                 if (playerServiceBound && playerService.alreadyPlaying()) {
                     RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
                     DatabaseHelper dbHelper = new DatabaseHelper(this);
-                    try {
-                        dbHelper.createDataBase();
-                        dbHelper.openDataBase();
-                    } catch (IOException e) {
-                        Log.e(TAG, "IOException thrown when trying to access DB", e);
+                    if (confirmDetails(radioDetails)) {
+                        try {
+                            dbHelper.createDataBase();
+                            dbHelper.openDataBase();
+                            dbHelper.addFavourite(radioDetails);
+                        } catch (IOException e) {
+                            Log.e(TAG, "IOException thrown when trying to access DB", e);
+                        } finally {
+                            dbHelper.close();
+                        }
                     }
-                    dbHelper.AddFavourite(radioDetails);
                 }
+
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean confirmDetails(final RadioDetails radioDetails) {
+        final boolean[] result = new boolean[1];
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View layout = layoutInflater.inflate(R.layout.edit_fav_pop_up, null, false);
+        final PopupWindow pw = new PopupWindow(layout, 200, 200, true);
+        final EditText txtName = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_name);
+        final AutoCompleteTextView txtUrl = (AutoCompleteTextView) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
+
+        txtName.setText(radioDetails.getStationName());
+        txtUrl.setText(radioDetails.getStreamUrl());
+
+        Button cancelButton = (Button) layout.findViewById(R.id.edit_fav_pop_up_btn_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View vv) {
+                pw.dismiss();
+                result[0] = false;
+            }
+        });
+
+        Button saveButton = (Button) layout.findViewById(R.id.edit_fav_pop_up_btn_save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View vv) {
+                result[0] = true;
+                radioDetails.setStationName(txtName.getText().toString());
+                radioDetails.setStreamUrl(txtUrl.getText().toString());
+                pw.dismiss();
+            }
+        });
+
+        pw.showAtLocation(this.findViewById(R.id.layout_main), Gravity.CENTER, 0, 0);
+        return result[0];
     }
 
     public void goClick(View view) {
