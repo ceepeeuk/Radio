@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.cpdev.FileHandling.PlsHandler;
 
 import java.io.IOException;
 
@@ -63,9 +64,7 @@ public class RadioActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 favouritesCursor.moveToPosition((int) id - 1);
                 String url = favouritesCursor.getString(2);
-                Log.d(TAG, "Calling decideStreamOption for : " + url);
                 decideStreamOption(url);
-
             }
         });
 
@@ -109,7 +108,7 @@ public class RadioActivity extends Activity {
             case STOP_PLAYING:
                 if (playerServiceBound && playerService.alreadyPlaying()) {
                     if (recorderServiceBound && !recorderService.alreadyRecording()) {
-                        setStatus("Stopped playing");
+                        setStatus("Stopped");
                     }
                     playerService.stopPlaying();
                 }
@@ -118,14 +117,24 @@ public class RadioActivity extends Activity {
             case STOP_RECORDING:
                 if (recorderServiceBound && recorderService.alreadyRecording()) {
                     if (playerServiceBound && !playerService.alreadyPlaying()) {
-                        setStatus("Stopped recording");
+                        setStatus("Stopped");
                     }
                     recorderService.stopRecording(this);
                 }
                 return true;
 
             case ADD_FAVOURITE:
-                // Implement adding fav's here
+                if (playerServiceBound && playerService.alreadyPlaying()) {
+                    RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
+                    DatabaseHelper dbHelper = new DatabaseHelper(this);
+                    try {
+                        dbHelper.createDataBase();
+                        dbHelper.openDataBase();
+                    } catch (IOException e) {
+                        Log.e(TAG, "IOException thrown when trying to access DB", e);
+                    }
+                    dbHelper.AddFavourite(radioDetails);
+                }
                 return true;
 
             default:
@@ -146,14 +155,32 @@ public class RadioActivity extends Activity {
     }
 
     private void decideStreamOption(final String source) {
+        Log.d(TAG, "Source: " + source);
+        RadioDetails radioDetails;
+        if (source.endsWith(".pls") || source.endsWith(".m3u")) {
+            if (source.endsWith(".pls")) {
+                radioDetails = PlsHandler.parse(source);
+            } else {
+                // Add m3u handler here
+                radioDetails = new RadioDetails(null, null, source);
+            }
+        } else {
+            radioDetails = new RadioDetails(null, source, null);
+        }
+
+        Log.d(TAG, "RadioDetails:" + radioDetails);
+
         CharSequence[] goOptions = {"Play", "Record", "Both"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        final RadioDetails finalRadioDetails = radioDetails;
+
         builder.setTitle("What shall we do?")
                 .setItems(goOptions, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int item) {
                         switch (item) {
                             case 0:
-                                play(source);
+                                play(finalRadioDetails);
                                 break;
                             case 1:
                                 record(source);
@@ -175,7 +202,7 @@ public class RadioActivity extends Activity {
         toast.show();
     }
 
-    private void play(final String uri) {
+    private void play(final RadioDetails radioDetails) {
         if (playerServiceBound) {
             if (playerService.alreadyPlaying()) {
 
@@ -186,7 +213,7 @@ public class RadioActivity extends Activity {
                                 Log.d(TAG, "Stopping play");
                                 playerService.stopPlaying();
                                 setStatus("Buffering");
-                                playerService.startPlaying(RadioActivity.this, uri);
+                                playerService.startPlaying(RadioActivity.this, radioDetails);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -197,7 +224,7 @@ public class RadioActivity extends Activity {
 
             } else {
                 Log.d(TAG, "Starting play");
-                playerService.startPlaying(this, uri);
+                playerService.startPlaying(this, radioDetails);
                 updateUIForPlaying(true, "Buffering");
             }
         } else {
@@ -249,7 +276,6 @@ public class RadioActivity extends Activity {
     public void setStatus(String message) {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(message);
-        Log.d(TAG, "Status set to: " + message);
     }
 
     private ServiceConnection playerConnection = new ServiceConnection() {
@@ -261,7 +287,12 @@ public class RadioActivity extends Activity {
             playerServiceBound = true;
 
             if (playerService.alreadyPlaying()) {
-                updateUIForPlaying(true, "Playing");
+                StringBuilder sb = new StringBuilder("Playing ");
+                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
+                if (radioDetails.getStationName() != null) {
+                    sb.append(radioDetails.getStationName());
+                }
+                updateUIForPlaying(true, sb.toString());
             } else {
                 updateUIForPlaying(false, "");
             }

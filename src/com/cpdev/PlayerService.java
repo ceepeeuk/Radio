@@ -61,7 +61,7 @@ public class PlayerService extends Service {
         return mBinder;
     }
 
-    public void startPlaying(RadioActivity view, String streamUri) {
+    public void startPlaying(RadioActivity view, final RadioDetails radioDetails) {
         caller = view;
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
@@ -77,7 +77,6 @@ public class PlayerService extends Service {
                     Log.d(TAG, "On completion called");
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
-                        caller.updateUIForPlaying(true, "Playing");
                     }
                 }
             });
@@ -90,14 +89,18 @@ public class PlayerService extends Service {
                 }
             });
 
-            mediaPlayer.setDataSource(streamUri);
+            mediaPlayer.setDataSource(radioDetails.getStreamUrl());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.prepareAsync();
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
-                    caller.setStatus("Playing");
+                    StringBuilder status = new StringBuilder("Playing ");
+                    if (radioDetails.getStationName() != null) {
+                        status.append(radioDetails.getStationName());
+                    }
+                    caller.setStatus(status.toString());
                 }
             });
 
@@ -108,6 +111,7 @@ public class PlayerService extends Service {
             mediaPlayer.reset();
         } finally {
             radioApplication.setMediaPlayer(mediaPlayer);
+            radioApplication.setPlayingStation(radioDetails);
         }
     }
 

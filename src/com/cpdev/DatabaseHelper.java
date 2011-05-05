@@ -1,5 +1,6 @@
 package com.cpdev;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -14,7 +15,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
 
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/com.cpdev/databases/";
@@ -116,21 +116,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void openDataBase() throws SQLException {
-
         //Open the database
         String myPath = DB_PATH + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 
     }
 
     @Override
     public synchronized void close() {
-
         if (myDataBase != null)
             myDataBase.close();
-
         super.close();
-
     }
 
     @Override
@@ -143,7 +139,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getFavourites() {
         Cursor cursor = myDataBase.query(TABLE, new String[]{ID, NAME, URL}, null, null, null, null, null);
-        Log.d(TAG, "Num of rows = " + cursor.getCount());
         return cursor;
+    }
+
+    public void AddFavourite(RadioDetails radioDetails) {
+        Log.d(TAG, "Attempting to add: " + radioDetails);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NAME, radioDetails.getStationName());
+        contentValues.put(URL, radioDetails.getStreamUrl());
+        myDataBase.insert(TABLE, NAME, contentValues);
     }
 }

@@ -4,25 +4,35 @@ import android.app.Application;
 import android.media.MediaPlayer;
 
 public class RadioApplication extends Application {
-    private RecordingTask recordingTask;
-    private MediaPlayer mediaPlayer;
+    private RadioDetails _playingStation;
+
+    private MediaPlayer _mediaPlayer;
+    private RecordingTask _recordingTask;
 
     public RecordingTask getRecordingTask() {
-        if (recordingTask == null) {
-            recordingTask = new RecordingTask();
+        if (_recordingTask == null) {
+            _recordingTask = new RecordingTask();
         }
-        return recordingTask;
+        return _recordingTask;
     }
 
     public void setRecordingTask(RecordingTask recordingTask) {
-        this.recordingTask = recordingTask;
+        this._recordingTask = recordingTask;
     }
 
     public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
+        return _mediaPlayer;
     }
 
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
+        this._mediaPlayer = mediaPlayer;
+    }
+
+    public RadioDetails getPlayingStation() {
+        return _playingStation;
+    }
+
+    public void setPlayingStation(RadioDetails playingStation) {
+        _playingStation = playingStation;
     }
 }
