@@ -17,6 +17,7 @@ public class RadioActivity extends Activity {
 
     private PlayerService playerService;
     private RecorderService recorderService;
+    DatabaseHelper dbHelper = new DatabaseHelper(this);
     private boolean playerServiceBound = false;
     private boolean recorderServiceBound = false;
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
@@ -124,18 +125,7 @@ public class RadioActivity extends Activity {
             case ADD_FAVOURITE:
                 if (playerServiceBound && playerService.alreadyPlaying()) {
                     RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
-                    DatabaseHelper dbHelper = new DatabaseHelper(this);
-                    if (confirmDetails(radioDetails)) {
-                        try {
-                            dbHelper.createDataBase();
-                            dbHelper.openDataBase();
-                            dbHelper.addFavourite(radioDetails);
-                        } catch (IOException e) {
-                            Log.e(TAG, "IOException thrown when trying to access DB", e);
-                        } finally {
-                            dbHelper.close();
-                        }
-                    }
+                    confirmDetails(radioDetails);
                 }
 
                 return true;
@@ -145,13 +135,13 @@ public class RadioActivity extends Activity {
         }
     }
 
-    private boolean confirmDetails(final RadioDetails radioDetails) {
-        final boolean[] result = new boolean[1];
+    private void confirmDetails(final RadioDetails radioDetails) {
+
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.edit_fav_pop_up, null, false);
         final PopupWindow pw = new PopupWindow(layout, 200, 200, true);
         final EditText txtName = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_name);
-        final AutoCompleteTextView txtUrl = (AutoCompleteTextView) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
+        final EditText txtUrl = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
 
         txtName.setText(radioDetails.getStationName());
         txtUrl.setText(radioDetails.getStreamUrl());
@@ -160,22 +150,29 @@ public class RadioActivity extends Activity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vv) {
                 pw.dismiss();
-                result[0] = false;
             }
         });
 
         Button saveButton = (Button) layout.findViewById(R.id.edit_fav_pop_up_btn_save);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vv) {
-                result[0] = true;
                 radioDetails.setStationName(txtName.getText().toString());
                 radioDetails.setStreamUrl(txtUrl.getText().toString());
                 pw.dismiss();
+
+                try {
+                    dbHelper.createDataBase();
+                    dbHelper.openDataBase();
+                    dbHelper.addFavourite(radioDetails);
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException thrown when trying to access DB", e);
+                } finally {
+                    dbHelper.close();
+                }
             }
         });
 
         pw.showAtLocation(this.findViewById(R.id.layout_main), Gravity.CENTER, 0, 0);
-        return result[0];
     }
 
     public void goClick(View view) {
