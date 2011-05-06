@@ -1,4 +1,4 @@
-package com.cpdev.FileHandling;
+package com.cpdev.filehandling;
 
 import android.util.Log;
 import com.cpdev.RadioDetails;
@@ -9,7 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class PlsHandler extends FileHandler {
-    private static final String PLSTAG = "PlsHandler";
+    private static final String PLSTAG = "com.cpdev.filehandling.PlsHandler";
 
     public static RadioDetails parse(String plsUrl) {
         RadioDetails radioDetails = new RadioDetails(null, null, plsUrl);
