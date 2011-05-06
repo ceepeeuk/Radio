@@ -153,4 +153,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         myDataBase.insert(TABLE, NAME, contentValues);
     }
+
+    public void deleteFavourite(long id) {
+        myDataBase.delete(TABLE, "_id=?", new String[]{new Long(id).toString()});
+    }
 }

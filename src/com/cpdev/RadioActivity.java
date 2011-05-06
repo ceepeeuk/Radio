@@ -38,11 +38,13 @@ public class RadioActivity extends Activity {
 
     @Override
     public void onStart() {
+
         super.onStart();
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        final DatabaseHelper dbHelper = new DatabaseHelper(this);
+
         try {
             dbHelper.createDataBase();
             dbHelper.openDataBase();
@@ -65,6 +67,27 @@ public class RadioActivity extends Activity {
                 favouritesCursor.moveToPosition((int) id - 1);
                 String url = favouritesCursor.getString(2);
                 decideStreamOption(url);
+            }
+        });
+
+        lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
+                favouritesCursor.moveToPosition((int) id - 1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+
+                builder.setMessage("Delete " + favouritesCursor.getString(1))
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
+                                dbHelper.deleteFavourite(id);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        });
+                builder.create().show();
+                return false;
             }
         });
 
@@ -140,7 +163,7 @@ public class RadioActivity extends Activity {
 
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.edit_fav_pop_up, null, false);
-        final PopupWindow pw = new PopupWindow(layout, 200, 200, true);
+        final PopupWindow pw = new PopupWindow(layout, 300, 300, true);
         final EditText txtName = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_name);
         final EditText txtUrl = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
 
