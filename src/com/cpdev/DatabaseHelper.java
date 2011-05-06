@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String URL = "url";
     public static final String ID = "_id";
 
-    private static final String TAG = "DatabaseHelper";
+    private static final String TAG = "com.cpdev.DatabaseHelper";
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);

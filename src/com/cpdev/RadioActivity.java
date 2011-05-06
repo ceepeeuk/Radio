@@ -9,7 +9,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
-import com.cpdev.FileHandling.PlsHandler;
+import com.cpdev.filehandling.M3uHandler;
+import com.cpdev.filehandling.PlsHandler;
 
 import java.io.IOException;
 
@@ -192,14 +193,13 @@ public class RadioActivity extends Activity {
     }
 
     private void decideStreamOption(final String source) {
-        Log.d(TAG, "Source: " + source);
+
         RadioDetails radioDetails;
         if (source.endsWith(".pls") || source.endsWith(".m3u")) {
             if (source.endsWith(".pls")) {
                 radioDetails = PlsHandler.parse(source);
             } else {
-                // Add m3u handler here
-                radioDetails = new RadioDetails(null, null, source);
+                radioDetails = M3uHandler.parse(source);
             }
         } else {
             radioDetails = new RadioDetails(null, source, null);
