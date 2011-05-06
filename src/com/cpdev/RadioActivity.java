@@ -144,7 +144,11 @@ public class RadioActivity extends Activity {
         final EditText txtUrl = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
 
         txtName.setText(radioDetails.getStationName());
-        txtUrl.setText(radioDetails.getStreamUrl());
+        if (radioDetails.getPlaylistUrl() == null || radioDetails.getPlaylistUrl() == "") {
+            txtUrl.setText(radioDetails.getStreamUrl());
+        } else {
+            txtUrl.setText(radioDetails.getPlaylistUrl());
+        }
 
         Button cancelButton = (Button) layout.findViewById(R.id.edit_fav_pop_up_btn_cancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -208,7 +212,7 @@ public class RadioActivity extends Activity {
 
         final RadioDetails finalRadioDetails = radioDetails;
 
-        builder.setTitle("What shall we do?")
+        builder.setTitle("Play or Record?")
                 .setItems(goOptions, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int item) {
                         switch (item) {

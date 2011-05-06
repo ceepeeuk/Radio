@@ -4,10 +4,12 @@ public class RadioDetails {
 
     private String _stationName;
     private String _streamUrl;
+    private String _playlistUrl;
 
-    public RadioDetails(String stationName, String stationUrl, String playlist) {
+    public RadioDetails(String stationName, String streamUrl, String playlistUrl) {
         setStationName(stationName);
-        setStreamUrl(stationUrl);
+        setStreamUrl(streamUrl);
+        setPlaylistUrl(playlistUrl);
     }
 
     public String getStationName() {
@@ -26,12 +28,23 @@ public class RadioDetails {
         this._streamUrl = streamUrl;
     }
 
+    public String getPlaylistUrl() {
+        return _playlistUrl;
+    }
+
+    public void setPlaylistUrl(String _playlistUrl) {
+        this._playlistUrl = _playlistUrl;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\nName = ");
+        sb.append("\n\nName = ");
         sb.append(getStationName());
-        sb.append("\nUrl = ");
+        sb.append("\nStreamUrl = ");
         sb.append(getStreamUrl());
+        sb.append("\nPlaylistUrl = ");
+        sb.append(getPlaylistUrl());
+        sb.append("\n");
         return sb.toString();
     }
 }

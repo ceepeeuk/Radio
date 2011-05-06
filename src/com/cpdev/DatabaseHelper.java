@@ -146,7 +146,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Attempting to add: " + radioDetails);
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, radioDetails.getStationName());
-        contentValues.put(URL, radioDetails.getStreamUrl());
+        if (radioDetails.getPlaylistUrl() == null || radioDetails.getPlaylistUrl() == "") {
+            contentValues.put(URL, radioDetails.getStreamUrl());
+        } else {
+            contentValues.put(URL, radioDetails.getPlaylistUrl());
+        }
         myDataBase.insert(TABLE, NAME, contentValues);
     }
 }
