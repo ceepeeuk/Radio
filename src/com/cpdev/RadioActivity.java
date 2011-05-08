@@ -2,6 +2,7 @@ package com.cpdev;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.*;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -73,9 +74,9 @@ public class RadioActivity extends Activity {
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
                 favouritesCursor.moveToPosition((int) id - 1);
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
 
-                builder.setMessage("Delete " + favouritesCursor.getString(1))
+                Dialog dialog = new AlertDialog.Builder(view.getContext())
+                        .setMessage("Delete " + favouritesCursor.getString(1))
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
@@ -85,8 +86,9 @@ public class RadioActivity extends Activity {
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                             }
-                        });
-                builder.create().show();
+                        })
+                        .show();
+
                 return false;
             }
         });
@@ -163,7 +165,7 @@ public class RadioActivity extends Activity {
 
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.edit_fav_pop_up, null, false);
-        final PopupWindow pw = new PopupWindow(layout, 300, 300, true);
+        final PopupWindow pw = new PopupWindow(layout, 250, 300, true);
         final EditText txtName = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_name);
         final EditText txtUrl = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
 
