@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -44,6 +45,9 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
     }
 
     public void onClick(View view) {
+
+        Intent intent = new Intent(ConfirmDetailsActivity.this, RadioActivity.class);
+
         String txtName = ((EditText) findViewById(R.id.edit_fav_pop_up_txt_name)).getText().toString();
         String txtUrl = ((EditText) findViewById(R.id.edit_fav_pop_up_txt_url)).getText().toString();
 
@@ -56,8 +60,21 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
         }
 
         switch (view.getId()) {
+
             case R.id.edit_fav_pop_up_btn_save:
+
+                if (txtName.equals("")) {
+                    Toast.makeText(this, "Please enter a name before saving", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (txtUrl.equals("")) {
+                    Toast.makeText(this, "Please enter a URL before saving", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
+
                 try {
                     dbHelper.createDataBase();
                     dbHelper.openDataBase();
@@ -67,10 +84,14 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
                 } finally {
                     dbHelper.close();
                 }
+
+                startActivity(intent);
                 break;
+
+            case R.id.edit_fav_pop_up_btn_cancel:
+                startActivity(intent);
         }
 
-        Intent intent = new Intent(ConfirmDetailsActivity.this, RadioActivity.class);
-        startActivity(intent);
+
     }
 }
