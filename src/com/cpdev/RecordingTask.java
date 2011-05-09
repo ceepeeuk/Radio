@@ -31,11 +31,11 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
             Log.d(TAG, "RecordingTask attempting to stream from: " + url);
             inputStream = url.openStream();
 
-            String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Radio";
+            String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + R.string.app_name;
 
             if (!new File(recFolder).exists()) {
                 new File(recFolder).mkdir();
-                Log.d(TAG, "Radio directory was not found, so created it");
+                Log.d(TAG, "Recordio directory was not found, so created it");
             }
 
             String outputSource = recFolder + File.separator + getTimestamp() + ".mp3";

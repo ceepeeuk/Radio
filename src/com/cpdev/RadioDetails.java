@@ -1,6 +1,9 @@
 package com.cpdev;
 
-public class RadioDetails {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class RadioDetails implements Parcelable {
 
     private String _stationName;
     private String _streamUrl;
@@ -11,6 +14,22 @@ public class RadioDetails {
         setStreamUrl(streamUrl);
         setPlaylistUrl(playlistUrl);
     }
+
+    public RadioDetails(Parcel parcel) {
+        setStationName(parcel.readString());
+        setStreamUrl(parcel.readString());
+        setPlaylistUrl(parcel.readString());
+    }
+
+    public static final Creator CREATOR = new Creator() {
+        public RadioDetails createFromParcel(Parcel parcel) {
+            return new RadioDetails(parcel);  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        public Object[] newArray(int i) {
+            return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    };
 
     public String getStationName() {
         return _stationName;
@@ -46,5 +65,15 @@ public class RadioDetails {
         sb.append(getPlaylistUrl());
         sb.append("\n");
         return sb.toString();
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(getStationName());
+        parcel.writeString(getStreamUrl());
+        parcel.writeString(getPlaylistUrl());
     }
 }

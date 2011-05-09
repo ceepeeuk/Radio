@@ -1,4 +1,4 @@
-package com.cpdev.FileHandling;
+package com.cpdev.filehandling;
 
 import android.util.Log;
 import org.apache.http.util.ByteArrayBuffer;
@@ -7,14 +7,13 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class FileHandler {
+public abstract class FileHandler {
     private static final String PATH = "/data/data/com.cpdev/";  //put the downloaded file here
-    private static final String TAG = "FileHandler";
+    private static final String TAG = "com.cpdev.filehandling.FileHandler";
 
     public static String getFile(String plsUrl) {
 
         String fileName = PATH + parseFileName(plsUrl);
-        Log.d(TAG, "File is: " + fileName);
         File file = new File(fileName);
 
         try {
@@ -44,7 +43,10 @@ public class FileHandler {
     }
 
     private static String parseFileName(String plsUrl) {
+        StringBuilder filename = new StringBuilder();
         int position = plsUrl.lastIndexOf("/");
-        return plsUrl.substring(position + 1);
+        filename.append("temp_");
+        filename.append(plsUrl.substring(position + 1));
+        return filename.toString();
     }
 }
