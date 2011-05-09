@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Recordio</string>
-    <string name="btn_play">Play</string>
-    <string name="btn_stop">Stop</string>
-    <string name="btn_record">Record</string>
+    <string name="edit_fav_pop_up_btn_save">Save</string>
+    <string name="edit_fav_pop_up_btn_cancel">Cancel</string>
+    <string name="edit_fav_pop_up_lbl_name">Name</string>
+    <string name="edit_fav_pop_up_lbl_url">URL</string>
 </resources>

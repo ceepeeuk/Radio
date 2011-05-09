@@ -1,87 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
-        android:id="@+id/tblLayout"
+<LinearLayout
+        android:id="@+id/editLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical">
-    <TableRow
-            android:id="@+id/edit_fav_pop_up_table_row_1"
+        android:orientation="vertical"
+        >
+    <TextView
+            android:id="@+id/edit_fav_pop_up_lbl_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_fav_pop_up_lbl_name"
+            >
+    </TextView>
+    <AutoCompleteTextView
+            android:id="@+id/edit_fav_pop_up_txt_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="AutoComplete"
+            android:textSize="18sp"
+            >
+    </AutoCompleteTextView>
+    <TextView
+            android:id="@+id/edit_fav_pop_up_lbl_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_fav_pop_up_lbl_url"
+            >
+    </TextView>
+    <EditText
+            android:id="@+id/edit_fav_pop_up_txt_url"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="EditText"
+            android:textSize="18sp"
+            >
+    </EditText>
+    <LinearLayout
+            android:id="@+id/edit_fav_pop_up_button_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal">
-        <TextView
-                android:id="@+id/edit_fav_pop_up_lbl_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name">
-        </TextView>
-    </TableRow>
-    <TableRow
-            android:id="@+id/edit_fav_pop_up_table_row_2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal">
-        <AutoCompleteTextView
-                android:id="@+id/edit_fav_pop_up_txt_name"
+            >
+        <Button
+                android:id="@+id/edit_fav_pop_up_btn_save"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="15sp">
-        </AutoCompleteTextView>
-    </TableRow>
-    <TableRow
-            android:id="@+id/edit_fav_pop_up_table_row_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal">
-        <TextView
-                android:id="@+id/edit_fav_pop_up_lbl_url"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Url">
-        </TextView>
-    </TableRow>
-    <TableRow
-            android:id="@+id/edit_fav_pop_up_table_row_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal">
-        <EditText
-                android:id="@+id/edit_fav_pop_up_txt_url"
+                android:text="@string/edit_fav_pop_up_btn_save"
+                android:layout_weight="0.5"
+                >
+        </Button>
+        <Button
+                android:id="@+id/edit_fav_pop_up_btn_cancel"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp">
-        </EditText>
-    </TableRow>
-    <TableRow
-            android:id="@+id/edit_fav_pop_up_table_row_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal">
-        <LinearLayout
-                android:id="@+id/edit_fav_pop_up_linear_layout_buttons"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_gravity="center_horizontal">
-            <Button
-                    android:id="@+id/edit_fav_pop_up_btn_save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Save">
-            </Button>
-            <Button
-                    android:id="@+id/edit_fav_pop_up_btn_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cancel">
-            </Button>
-        </LinearLayout>
-    </TableRow>
-</TableLayout>
+                android:text="@string/edit_fav_pop_up_btn_cancel"
+                android:layout_weight="0.5"
+                >
+        </Button>
+    </LinearLayout>
+</LinearLayout>
