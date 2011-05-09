@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import java.io.IOException;
 
+
 public class ConfirmDetailsActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "com.cpdev.ConfirmDetailsActivity";
@@ -41,51 +42,6 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
         cancelButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
     }
-
-//    private void confirmDetails(final RadioDetails radioDetails) {
-//
-//        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        final View layout = layoutInflater.inflate(R.layout.edit_fav_pop_up, null, false);
-//        final PopupWindow pw = new PopupWindow(layout, 250, 300, true);
-//
-//        final EditText txtName = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_name);
-//        final EditText txtUrl = (EditText) layout.findViewById(R.id.edit_fav_pop_up_txt_url);
-//
-//        txtName.setText(radioDetails.getStationName());
-//        if (radioDetails.getPlaylistUrl() == null || radioDetails.getPlaylistUrl() == "") {
-//            txtUrl.setText(radioDetails.getStreamUrl());
-//        } else {
-//            txtUrl.setText(radioDetails.getPlaylistUrl());
-//        }
-//
-//        Button cancelButton = (Button) layout.findViewById(R.id.edit_fav_pop_up_btn_cancel);
-//        cancelButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View vv) {
-//                pw.dismiss();
-//            }
-//        });
-//
-//        Button saveButton = (Button) layout.findViewById(R.id.edit_fav_pop_up_btn_save);
-//        saveButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View vv) {
-//                radioDetails.setStationName(txtName.getText().toString());
-//                radioDetails.setStreamUrl(txtUrl.getText().toString());
-//                pw.dismiss();
-//
-//                try {
-//                    dbHelper.createDataBase();
-//                    dbHelper.openDataBase();
-//                    dbHelper.addFavourite(radioDetails);
-//                } catch (IOException e) {
-//                    Log.e(TAG, "IOException thrown when trying to access DB", e);
-//                } finally {
-//                    dbHelper.close();
-//                }
-//            }
-//        });
-//
-//        pw.showAtLocation(this.findViewById(R.id.layout_main), Gravity.CENTER, 0, 0);
-//    }
 
     public void onClick(View view) {
         String txtName = ((EditText) findViewById(R.id.edit_fav_pop_up_txt_name)).getText().toString();

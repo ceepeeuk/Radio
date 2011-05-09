@@ -152,13 +152,16 @@ public class RadioActivity extends Activity {
                 return true;
 
             case ADD_FAVOURITE:
+
+                RadioDetails radioDetails = new RadioDetails();
+
                 if (playerServiceBound && playerService.alreadyPlaying()) {
-                    RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
-                    Intent confirmDetailsIntent = new Intent(RadioActivity.this, ConfirmDetailsActivity.class);
-                    confirmDetailsIntent.putExtra("RadioDetails", radioDetails);
-                    startActivity(confirmDetailsIntent);
-                    //confirmDetails(radioDetails);
+                    radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
                 }
+
+                Intent confirmDetailsIntent = new Intent(RadioActivity.this, ConfirmDetailsActivity.class);
+                confirmDetailsIntent.putExtra("RadioDetails", radioDetails);
+                startActivity(confirmDetailsIntent);
 
                 return true;
 

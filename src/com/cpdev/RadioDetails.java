@@ -21,6 +21,12 @@ public class RadioDetails implements Parcelable {
         setPlaylistUrl(parcel.readString());
     }
 
+    public RadioDetails() {
+        setStationName("");
+        setStreamUrl("");
+        setPlaylistUrl("");
+    }
+
     public static final Creator CREATOR = new Creator() {
         public RadioDetails createFromParcel(Parcel parcel) {
             return new RadioDetails(parcel);  //To change body of implemented methods use File | Settings | File Templates.
