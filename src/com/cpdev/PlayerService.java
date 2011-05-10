@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
 
@@ -97,7 +98,7 @@ public class PlayerService extends Service {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
                     StringBuilder status = new StringBuilder("Playing ");
-                    if (radioDetails.getStationName() != null) {
+                    if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
                         status.append(radioDetails.getStationName());
                     }
                     caller.setStatus(status.toString());

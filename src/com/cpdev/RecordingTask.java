@@ -4,6 +4,7 @@ package com.cpdev;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import com.cpdev.utils.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +44,7 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
             StringBuilder outputSource = new StringBuilder()
                     .append(recFolder)
                     .append(File.separator);
-            if (radioDetails[0].getStationName() != null) {
+            if (!StringUtils.IsNullOrEmpty(radioDetails[0].getStationName())) {
                 outputSource.append(radioDetails[0].getStationName())
                         .append("-");
             }

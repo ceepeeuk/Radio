@@ -2,6 +2,7 @@ package com.cpdev.filehandling;
 
 import android.util.Log;
 import com.cpdev.RadioDetails;
+import com.cpdev.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -11,9 +12,9 @@ import java.io.IOException;
 public class PlsHandler extends FileHandler {
     private static final String PLSTAG = "com.cpdev.filehandling.PlsHandler";
 
-    public static RadioDetails parse(String plsUrl) {
-        RadioDetails radioDetails = new RadioDetails(null, null, plsUrl);
-        String plsFile = getFile(plsUrl);
+    public static RadioDetails parse(RadioDetails radioDetails) {
+
+        String plsFile = getFile(radioDetails.getPlaylistUrl());
 
         try {
 
@@ -25,14 +26,12 @@ public class PlsHandler extends FileHandler {
                 if (line.toLowerCase().contains("file1")) {
                     radioDetails.setStreamUrl(line.substring(line.indexOf("=") + 1));
                 }
-                if (line.toLowerCase().contains("title1")) {
+                if (line.toLowerCase().contains("title1") && StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
                     radioDetails.setStationName(line.substring(line.indexOf("=") + 1));
                 }
             }
             bufferedReader.close();
             fileReader.close();
-
-            Log.d(PLSTAG, ".pls contained these details: " + radioDetails.toString());
 
         } catch (FileNotFoundException e) {
             Log.e(PLSTAG, plsFile + " cannot be found", e);

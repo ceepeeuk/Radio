@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
 
@@ -30,7 +31,7 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
         EditText txtUrl = (EditText) findViewById(R.id.edit_fav_pop_up_txt_url);
 
         txtName.setText(radioDetails.getStationName());
-        if (radioDetails.getPlaylistUrl() == null || radioDetails.getPlaylistUrl() == "") {
+        if (StringUtils.IsNullOrEmpty(radioDetails.getPlaylistUrl())) {
             txtUrl.setText(radioDetails.getStreamUrl());
         } else {
             txtUrl.setText(radioDetails.getPlaylistUrl());

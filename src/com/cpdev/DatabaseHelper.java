@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import com.cpdev.utils.StringUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -146,7 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Attempting to add: " + radioDetails);
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, radioDetails.getStationName());
-        if (radioDetails.getPlaylistUrl() == null || radioDetails.getPlaylistUrl() == "") {
+        if (StringUtils.IsNullOrEmpty(radioDetails.getPlaylistUrl())) {
             contentValues.put(URL, radioDetails.getStreamUrl());
         } else {
             contentValues.put(URL, radioDetails.getPlaylistUrl());

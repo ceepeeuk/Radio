@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.*;
 import com.cpdev.filehandling.M3uHandler;
 import com.cpdev.filehandling.PlsHandler;
+import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
 
@@ -315,7 +316,7 @@ public class RadioActivity extends Activity {
             if (playerService.alreadyPlaying()) {
                 StringBuilder sb = new StringBuilder("Playing ");
                 RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
-                if (radioDetails.getStationName() != null) {
+                if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
                     sb.append(radioDetails.getStationName());
                 }
                 updateUIForPlaying(true, sb.toString());
