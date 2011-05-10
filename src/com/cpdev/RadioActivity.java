@@ -57,7 +57,7 @@ public class RadioActivity extends Activity {
 
         final Cursor favouritesCursor = dbHelper.getFavourites();
 
-        ListAdapter adapter = new SimpleCursorAdapter(this,
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.favourite_list_item,
                 favouritesCursor,
                 new String[]{dbHelper.NAME},
@@ -67,15 +67,16 @@ public class RadioActivity extends Activity {
 
         lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                favouritesCursor.moveToPosition((int) id - 1);
+                favouritesCursor.moveToPosition(pos);
                 String url = favouritesCursor.getString(2);
                 decideStreamOption(url);
             }
         });
 
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
-                favouritesCursor.moveToPosition((int) id - 1);
+                favouritesCursor.moveToPosition(pos);
 
                 Dialog dialog = new AlertDialog.Builder(view.getContext())
                         .setMessage("Delete " + favouritesCursor.getString(1))

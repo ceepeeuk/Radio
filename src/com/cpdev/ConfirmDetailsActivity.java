@@ -1,10 +1,12 @@
 package com.cpdev;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -84,6 +86,9 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
                 } finally {
                     dbHelper.close();
                 }
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(((EditText) findViewById(R.id.edit_fav_pop_up_txt_name)).getWindowToken(), 0);
 
                 startActivity(intent);
                 break;
