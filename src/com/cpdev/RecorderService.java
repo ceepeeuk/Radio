@@ -23,11 +23,12 @@ public class RecorderService extends Service {
         return START_STICKY;
     }
 
-    public void startRecording(RadioActivity view, String streamUri) {
+    public void startRecording(RadioActivity view, RadioDetails radioDetails) {
         caller = view;
-        caller.setStatus("Recording");
         RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
-        radioApplication.getRecordingTask().execute(streamUri);
+        radioApplication.getRecordingTask().execute(radioDetails);
+        radioApplication.getRecordingTask().attach(view);
+        caller.setStatus("Recording");
     }
 
     public void stopRecording(RadioActivity view) {

@@ -68,8 +68,7 @@ public class RadioActivity extends Activity {
         lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 favouritesCursor.moveToPosition(pos);
-                String url = favouritesCursor.getString(2);
-                decideStreamOption(url);
+                decideStreamOption(new RadioDetails(favouritesCursor.getString(1), null, favouritesCursor.getString(2)));
             }
         });
 
@@ -179,21 +178,20 @@ public class RadioActivity extends Activity {
         if (source.isEmpty()) {
             showToast("Please supply a URL");
         } else {
-            decideStreamOption(source);
+            decideStreamOption(new RadioDetails(null, null, source));
         }
     }
 
-    private void decideStreamOption(final String source) {
+    private void decideStreamOption(RadioDetails radioDetails) {
 
-        RadioDetails radioDetails;
-        if (source.endsWith(".pls") || source.endsWith(".m3u")) {
-            if (source.endsWith(".pls")) {
-                radioDetails = PlsHandler.parse(source);
+        if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
+            if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
+                radioDetails = PlsHandler.parse(radioDetails);
             } else {
-                radioDetails = M3uHandler.parse(source);
+                radioDetails = M3uHandler.parse(radioDetails);
             }
         } else {
-            radioDetails = new RadioDetails(null, source, null);
+            radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
         }
 
         Log.d(TAG, "RadioDetails:" + radioDetails);
@@ -211,7 +209,7 @@ public class RadioActivity extends Activity {
                                 play(finalRadioDetails);
                                 break;
                             case 1:
-                                record(source);
+                                record(finalRadioDetails);
                                 break;
                             case 2:
                                 showToast("Both clicked");
@@ -260,7 +258,7 @@ public class RadioActivity extends Activity {
         }
     }
 
-    private void record(final String uri) {
+    private void record(final RadioDetails radioDetails) {
         if (recorderServiceBound) {
             if (recorderService.alreadyRecording()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -270,7 +268,7 @@ public class RadioActivity extends Activity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Stopping recording");
                                 recorderService.stopRecording(RadioActivity.this);
-                                recorderService.startRecording(RadioActivity.this, uri);
+                                recorderService.startRecording(RadioActivity.this, radioDetails);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -281,7 +279,7 @@ public class RadioActivity extends Activity {
 
             } else {
                 Log.d(TAG, "Starting recording");
-                recorderService.startRecording(this, uri);
+                recorderService.startRecording(this, radioDetails);
                 updateUIForRecording(true);
             }
         }

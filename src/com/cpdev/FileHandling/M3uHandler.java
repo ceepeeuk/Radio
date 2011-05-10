@@ -9,9 +9,9 @@ public class M3uHandler extends FileHandler {
 
     private static final String M3UTAG = "com.cpdev.filehandling.M3uHandler";
 
-    public static RadioDetails parse(String plsUrl) {
-        RadioDetails radioDetails = new RadioDetails(null, null, plsUrl);
-        String plsFile = getFile(plsUrl);
+    public static RadioDetails parse(RadioDetails radioDetails) {
+
+        String plsFile = getFile(radioDetails.getPlaylistUrl());
 
         try {
 

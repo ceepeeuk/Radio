@@ -88,7 +88,7 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
                 }
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(((EditText) findViewById(R.id.edit_fav_pop_up_txt_name)).getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(findViewById(R.id.edit_fav_pop_up_txt_name).getWindowToken(), 0);
 
                 startActivity(intent);
                 break;

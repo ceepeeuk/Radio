@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-public class RecordingTask extends AsyncTask<String, Void, Void> {
+public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
 
     private static final String TAG = "com.cpdev.RecordingTask";
     private boolean recordingState = false;
@@ -23,24 +23,36 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
 
     private FileOutputStream fileOutputStream;
     private InputStream inputStream;
+    private RadioActivity activity;
+    private Exception exception;
 
     @Override
-    protected Void doInBackground(String... urls) {
+    protected Boolean doInBackground(RadioDetails... radioDetails) {
         try {
-            URL url = new URL(urls[0]);
+            URL url = new URL(radioDetails[0].getStreamUrl());
             Log.d(TAG, "RecordingTask attempting to stream from: " + url);
             inputStream = url.openStream();
 
-            String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + R.string.app_name;
+            String recFolder = GetRecordingsFolder();
 
             if (!new File(recFolder).exists()) {
                 new File(recFolder).mkdir();
                 Log.d(TAG, "Recordio directory was not found, so created it");
             }
 
-            String outputSource = recFolder + File.separator + getTimestamp() + ".mp3";
+            StringBuilder outputSource = new StringBuilder()
+                    .append(recFolder)
+                    .append(File.separator);
+            if (radioDetails[0].getStationName() != null) {
+                outputSource.append(radioDetails[0].getStationName())
+                        .append("-");
+            }
+            outputSource.append(getTimestamp())
+                    .append(".mp3");
+
+
             Log.d(TAG, "Writing stream to : " + outputSource);
-            fileOutputStream = new FileOutputStream(outputSource);
+            fileOutputStream = new FileOutputStream(outputSource.toString());
             recordingState = true;
 
             int c;
@@ -51,33 +63,48 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
                 bytesRead++;
             }
 
-            Log.d(TAG, "Finished writing stream, " + bytesRead / 1024 / 1024 + " megabytes written");
+            Log.d(TAG, "Finished writing stream, " + bytesRead + " bytes written");
+            Log.d(TAG, "cancelRecording = " + cancelRecording);
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
+            this.exception = e;
         } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage(), e);
+            Log.d(TAG, "IOException: " + e.getMessage(), e);
             // Expected when stream closes
         } finally {
             try {
-                inputStream.close();
-                fileOutputStream.flush();
-                fileOutputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                    inputStream = null;
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                    fileOutputStream = null;
+                }
                 recordingState = false;
                 cancelRecording = false;
             } catch (IOException e) {
                 Log.e(TAG, "Error flushing and close output stream", e);
             }
         }
-        return null;
+        return true;
     }
 
     @Override
     public void onCancelled() {
         if (inputStream != null) {
-            //inputStream.close();
             cancelRecording = true;
             Log.d(TAG, "cancelRecording=true");
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Boolean result) {
+        super.onPostExecute(result);
+        if (exception != null) {
+            activity.setStatus("Error occurred trying to record stream.");
         }
     }
 
@@ -95,6 +122,14 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
         return timestamp.toString();
     }
 
+    private String GetRecordingsFolder() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Environment.getExternalStorageDirectory().getAbsolutePath());
+        sb.append(File.separator);
+        sb.append(activity.getString(R.string.app_name));
+        return sb.toString();
+    }
+
     private String pad(int originalNum) {
         String original = String.valueOf(originalNum);
         if (original.length() == 1) {
@@ -106,5 +141,9 @@ public class RecordingTask extends AsyncTask<String, Void, Void> {
 
     public boolean alreadyRecording() {
         return recordingState;
+    }
+
+    public void attach(RadioActivity radioActivity) {
+        this.activity = radioActivity;
     }
 }
