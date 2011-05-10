@@ -1,6 +1,10 @@
 package com.cpdev;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -17,6 +21,7 @@ public class PlayerService extends Service {
     RadioActivity caller;
 
     private final IBinder mBinder = new RadioServiceBinder();
+    private static final int PLAYING_ID = 1;
 
 
     public boolean alreadyPlaying() {
@@ -55,6 +60,9 @@ public class PlayerService extends Service {
             }
             mediaPlayer.reset();
         }
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(PLAYING_ID);
     }
 
     @Override
@@ -63,6 +71,7 @@ public class PlayerService extends Service {
     }
 
     public void startPlaying(RadioActivity view, final RadioDetails radioDetails) {
+
         caller = view;
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
@@ -74,8 +83,8 @@ public class PlayerService extends Service {
             }
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    Log.d(TAG, "On completion called");
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
                     }
@@ -102,6 +111,7 @@ public class PlayerService extends Service {
                         status.append(radioDetails.getStationName());
                     }
                     caller.setStatus(status.toString());
+                    showNotification(radioDetails);
                 }
             });
 
@@ -114,6 +124,25 @@ public class PlayerService extends Service {
             radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
         }
+    }
+
+    private void showNotification(RadioDetails radioDetails) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        int icon = R.drawable.ic_notification_playing;
+        CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? "Playing" : "Playing " + radioDetails.getStationName();
+        long when = System.currentTimeMillis();
+
+        Notification notification = new Notification(icon, tickerText, when);
+
+        Context context = getApplicationContext();
+        CharSequence contentTitle = getString(R.string.app_name);
+        CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? "Playing" : "Playing " + radioDetails.getStationName();
+        Intent notificationIntent = new Intent(this, RadioActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+        notificationManager.notify(PLAYING_ID, notification);
     }
 
     public class RadioServiceBinder extends Binder {

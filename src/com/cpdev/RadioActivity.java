@@ -22,7 +22,6 @@ public class RadioActivity extends Activity {
 
     private PlayerService playerService;
     private RecorderService recorderService;
-    DatabaseHelper dbHelper = new DatabaseHelper(this);
     private boolean playerServiceBound = false;
     private boolean recorderServiceBound = false;
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
