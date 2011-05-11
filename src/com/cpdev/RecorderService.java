@@ -44,7 +44,7 @@ public class RecorderService extends NotificationService {
         recordingTask.cancel(true);
 
         view.setStatus("Stopped recording");
-        cancelNotification(NotificationService.PLAYING_ID);
+        cancelNotification(NotificationService.RECORDING_ID);
 
         recordingTask = null;
         radioApplication.setRecordingTask(recordingTask);
