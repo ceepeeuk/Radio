@@ -43,7 +43,7 @@ public class PlayerService extends NotificationService {
         return START_STICKY;
     }
 
-    public void stopPlaying() {
+    public void stopPlaying(RadioActivity view) {
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
@@ -54,7 +54,8 @@ public class PlayerService extends NotificationService {
             mediaPlayer.reset();
         }
 
-        CancelNotification(NotificationService.PLAYING_ID);
+        view.setStatus("Stopped playing");
+        cancelNotification(NotificationService.PLAYING_ID);
     }
 
     @Override

@@ -138,7 +138,7 @@ public class RadioActivity extends Activity {
                     if (recorderServiceBound && !recorderService.alreadyRecording()) {
                         setStatus("Stopped");
                     }
-                    playerService.stopPlaying();
+                    playerService.stopPlaying(this);
                 }
                 return true;
 
@@ -237,7 +237,7 @@ public class RadioActivity extends Activity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Stopping play");
-                                playerService.stopPlaying();
+                                playerService.stopPlaying(null);
                                 setStatus("Buffering");
                                 playerService.startPlaying(RadioActivity.this, radioDetails);
                             }

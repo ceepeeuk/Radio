@@ -35,10 +35,11 @@ public abstract class NotificationService extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+        notification.flags = Notification.FLAG_FOREGROUND_SERVICE;
         notificationManager.notify(notificationId, notification);
     }
 
-    protected void CancelNotification(int notificationId) {
+    protected void cancelNotification(int notificationId) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
     }
