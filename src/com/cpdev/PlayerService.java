@@ -1,10 +1,5 @@
 package com.cpdev;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -15,14 +10,12 @@ import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
 
-public class PlayerService extends Service {
+public class PlayerService extends NotificationService {
 
     private static final String TAG = "com.cpdev.PlayerService";
     RadioActivity caller;
 
     private final IBinder mBinder = new RadioServiceBinder();
-    private static final int PLAYING_ID = 1;
-
 
     public boolean alreadyPlaying() {
         MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
@@ -61,8 +54,7 @@ public class PlayerService extends Service {
             mediaPlayer.reset();
         }
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(PLAYING_ID);
+        CancelNotification(NotificationService.PLAYING_ID);
     }
 
     @Override
@@ -111,7 +103,11 @@ public class PlayerService extends Service {
                         status.append(radioDetails.getStationName());
                     }
                     caller.setStatus(status.toString());
-                    showNotification(radioDetails);
+
+                    String operation = "Playing ";
+                    CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
+                    CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
+                    showNotification(NotificationService.PLAYING_ID, radioDetails, tickerText, contentText);
                 }
             });
 
@@ -124,25 +120,6 @@ public class PlayerService extends Service {
             radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
         }
-    }
-
-    private void showNotification(RadioDetails radioDetails) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        int icon = R.drawable.ic_notification_playing;
-        CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? "Playing" : "Playing " + radioDetails.getStationName();
-        long when = System.currentTimeMillis();
-
-        Notification notification = new Notification(icon, tickerText, when);
-
-        Context context = getApplicationContext();
-        CharSequence contentTitle = getString(R.string.app_name);
-        CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? "Playing" : "Playing " + radioDetails.getStationName();
-        Intent notificationIntent = new Intent(this, RadioActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-        notificationManager.notify(PLAYING_ID, notification);
     }
 
     public class RadioServiceBinder extends Binder {
