@@ -33,6 +33,8 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
     @Override
     protected Boolean doInBackground(RadioDetails... radioDetails) {
 
+        long startTime = System.currentTimeMillis();
+
         try {
             URL url = new URL(radioDetails[0].getStreamUrl());
             Log.d(TAG, "RecordingTask attempting to stream from: " + url);
@@ -63,13 +65,23 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
             int c;
             int bytesRead = 0;
 
-            while (!cancelRecording && (c = inputStream.read()) != -1) {
-                fileOutputStream.write(c);
-                bytesRead++;
+            if (radioDetails[0].getDuration() > 0) {
+                // Timed recording
+                long endTime = startTime + radioDetails[0].getDuration();
+                while (System.currentTimeMillis() < endTime && (c = inputStream.read()) != -1) {
+                    fileOutputStream.write(c);
+                    bytesRead++;
+                }
+            } else {
+                // Manual recording
+                while (!cancelRecording && (c = inputStream.read()) != -1) {
+                    fileOutputStream.write(c);
+                    bytesRead++;
+                }
             }
 
+
             Log.d(TAG, "Finished writing stream, " + bytesRead + " bytes written");
-            Log.d(TAG, "cancelRecording = " + cancelRecording);
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);

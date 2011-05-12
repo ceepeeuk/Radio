@@ -2,17 +2,34 @@ package com.cpdev;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.cpdev.utils.StringUtils;
 
 public class RadioDetails implements Parcelable {
 
     private String _stationName;
     private String _streamUrl;
     private String _playlistUrl;
+    private long _duration = 0;
 
     public RadioDetails(String stationName, String streamUrl, String playlistUrl) {
         setStationName(stationName);
         setStreamUrl(streamUrl);
         setPlaylistUrl(playlistUrl);
+    }
+
+    public RadioDetails(String name, String streamUrl, String playlistUrl, long duration) {
+        if (!StringUtils.IsNullOrEmpty(name)) {
+            setStationName(name);
+        }
+        if (!StringUtils.IsNullOrEmpty(playlistUrl)) {
+            setPlaylistUrl(playlistUrl);
+        }
+        if (!StringUtils.IsNullOrEmpty(name)) {
+            setStationName(name);
+        }
+        if (duration > 0) {
+            setDuration(duration);
+        }
     }
 
     public RadioDetails(Parcel parcel) {
@@ -37,12 +54,13 @@ public class RadioDetails implements Parcelable {
         }
     };
 
+
     public String getStationName() {
         return _stationName;
     }
 
     public void setStationName(String stationName) {
-        this._stationName = stationName;
+        _stationName = stationName;
     }
 
     public String getStreamUrl() {
@@ -50,15 +68,23 @@ public class RadioDetails implements Parcelable {
     }
 
     public void setStreamUrl(String streamUrl) {
-        this._streamUrl = streamUrl;
+        _streamUrl = streamUrl;
     }
 
     public String getPlaylistUrl() {
         return _playlistUrl;
     }
 
-    public void setPlaylistUrl(String _playlistUrl) {
-        this._playlistUrl = _playlistUrl;
+    public void setPlaylistUrl(String playlistUrl) {
+        _playlistUrl = playlistUrl;
+    }
+
+    public long getDuration() {
+        return _duration;
+    }
+
+    public void setDuration(long duration) {
+        _duration = duration;
     }
 
     public String toString() {
