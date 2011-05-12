@@ -180,9 +180,9 @@ public class RadioActivity extends Activity {
                 Intent intent = new Intent(this, RecordingBroadcastReceiver.class);
                 intent.putExtra(getString(R.string.timed_recorder_service_name_key), "rinse.fm");
                 intent.putExtra(getString(R.string.timed_recorder_service_url_key), "http://sub.fm/listenwinamp128k.pls");
-                intent.putExtra(getString(R.string.timed_recorder_service_url_key), TimeUnit.MINUTES.toMillis(1));
+                intent.putExtra(getString(R.string.timed_recorder_service_recording_duration), TimeUnit.MINUTES.toMillis(1));
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-                long timeToRun = (System.currentTimeMillis() + (AlarmManager.INTERVAL_FIFTEEN_MINUTES / 30));
+                long timeToRun = (System.currentTimeMillis() + (AlarmManager.INTERVAL_FIFTEEN_MINUTES / 60));
 
                 Log.d(TAG, "timeToRun = " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(timeToRun));
 

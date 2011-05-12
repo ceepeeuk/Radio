@@ -12,10 +12,9 @@ public class RecordingBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //TimedRecorderService.sendWakefulWork(context, intent);
-        Log.e(TAG, "In onReceive");
         Bundle bundle = intent.getExtras();
         Log.e(TAG, "StationName = " + bundle.getString("StationName"));
         Log.e(TAG, "StationURL = " + bundle.getString("StationURL"));
-        Log.e(TAG, "duration = " + bundle.getString("duration"));
+        Log.e(TAG, "duration = " + bundle.getLong("duration"));
     }
 }
