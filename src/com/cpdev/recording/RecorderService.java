@@ -1,14 +1,18 @@
-package com.cpdev;
+package com.cpdev.recording;
 
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import com.cpdev.NotificationService;
+import com.cpdev.RadioActivity;
+import com.cpdev.RadioApplication;
+import com.cpdev.RadioDetails;
 import com.cpdev.utils.StringUtils;
 
 public class RecorderService extends NotificationService {
 
-    private static final String TAG = "com.cpdev.RecorderService";
+    private static final String TAG = "com.cpdev.recording.RecorderService";
     private RadioActivity caller;
 
     private final IBinder mBinder = new RecorderServiceBinder();
@@ -57,7 +61,7 @@ public class RecorderService extends NotificationService {
     }
 
     public class RecorderServiceBinder extends Binder {
-        RecorderService getService() {
+        public RecorderService getService() {
             return RecorderService.this;
         }
     }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.*;
 import com.cpdev.filehandling.M3uHandler;
 import com.cpdev.filehandling.PlsHandler;
+import com.cpdev.recording.RecorderService;
 import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class RadioActivity extends Activity {
     private boolean playerServiceBound = false;
     private boolean recorderServiceBound = false;
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
-    private Intent recorderIntent = new Intent("com.cpdev.RecorderService");
+    private Intent recorderIntent = new Intent("com.cpdev.recording.RecorderService");
 
     private String TAG = "com.cpdev.RadioActivity";
 

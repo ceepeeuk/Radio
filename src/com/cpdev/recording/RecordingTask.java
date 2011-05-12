@@ -1,9 +1,12 @@
-package com.cpdev;
+package com.cpdev.recording;
 
 
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import com.cpdev.R;
+import com.cpdev.RadioActivity;
+import com.cpdev.RadioDetails;
 import com.cpdev.utils.StringUtils;
 
 import java.io.File;
@@ -18,7 +21,7 @@ import java.util.TimeZone;
 
 public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
 
-    private static final String TAG = "com.cpdev.RecordingTask";
+    private static final String TAG = "com.cpdev.recording.RecordingTask";
     private boolean recordingState = false;
     private boolean cancelRecording = false;
 
@@ -29,6 +32,7 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(RadioDetails... radioDetails) {
+
         try {
             URL url = new URL(radioDetails[0].getStreamUrl());
             Log.d(TAG, "RecordingTask attempting to stream from: " + url);
@@ -110,14 +114,20 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
     }
 
     private String getTimestamp() {
+
         Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
 
         StringBuilder timestamp = new StringBuilder();
         timestamp.append(calendar.get(Calendar.YEAR));
+        timestamp.append(("."));
         timestamp.append(pad(calendar.get(Calendar.MONTH)));
+        timestamp.append(("."));
         timestamp.append(pad(calendar.get(Calendar.DAY_OF_MONTH)));
+        timestamp.append(("-"));
         timestamp.append(pad(calendar.get(Calendar.HOUR_OF_DAY)));
+        timestamp.append(("."));
         timestamp.append(pad(calendar.get(Calendar.MINUTE)));
+        timestamp.append(("."));
         timestamp.append(pad(calendar.get(Calendar.SECOND)));
 
         return timestamp.toString();

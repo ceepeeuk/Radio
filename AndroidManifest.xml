@@ -20,9 +20,9 @@
                 <action android:name="com.cpdev.PlayerService"/>
             </intent-filter>
         </service>
-        <service android:name=".RecorderService">
+        <service android:name=".recording.RecorderService">
             <intent-filter>
-                <action android:name="com.cpdev.RecorderService"/>
+                <action android:name="com.cpdev.recording.RecorderService"/>
             </intent-filter>
         </service>
     </application>
