@@ -27,7 +27,7 @@ public class RadioActivity extends Activity {
     private boolean playerServiceBound = false;
     private boolean recorderServiceBound = false;
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
-    private Intent recorderIntent = new Intent("com.cpdev.recording.RecorderService");
+    private Intent recorderIntent = new Intent("com.cpdev.recording.RecordingService");
 
     private String TAG = "com.cpdev.RadioActivity";
 

@@ -5,6 +5,7 @@
     <string name="edit_fav_pop_up_btn_cancel">Cancel</string>
     <string name="edit_fav_pop_up_lbl_name">Name</string>
     <string name="edit_fav_pop_up_lbl_url">URL</string>
+    <string name="timed_recorder_service_operation_key">Operation</string>
     <string name="timed_recorder_service_name_key">StationName</string>
     <string name="timed_recorder_service_url_key">StationURL</string>
     <string name="timed_recorder_service_recording_duration">duration</string>
