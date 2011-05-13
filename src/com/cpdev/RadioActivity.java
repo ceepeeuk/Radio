@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.*;
 import com.cpdev.filehandling.M3uHandler;
 import com.cpdev.filehandling.PlsHandler;
-import com.cpdev.recording.RecorderService;
 import com.cpdev.recording.RecordingBroadcastReceiver;
+import com.cpdev.recording.RecordingTask;
 import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class RadioActivity extends Activity {
 
     private PlayerService playerService;
-    private RecorderService recorderService;
+    //private RecorderService recorderService;
     private boolean playerServiceBound = false;
     private boolean recorderServiceBound = false;
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
@@ -47,7 +47,7 @@ public class RadioActivity extends Activity {
 
         super.onStart();
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
-        bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
+        //bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
 
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
@@ -111,17 +111,17 @@ public class RadioActivity extends Activity {
             playerServiceBound = false;
         }
 
-        if (recorderServiceBound) {
-            unbindService(recorderConnection);
-            recorderServiceBound = false;
-        }
+//        if (recorderServiceBound) {
+//            unbindService(recorderConnection);
+//            recorderServiceBound = false;
+//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
-        bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
+        //bindService(recorderIntent, recorderConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -139,19 +139,21 @@ public class RadioActivity extends Activity {
 
             case STOP_PLAYING:
                 if (playerServiceBound && playerService.alreadyPlaying()) {
-                    if (recorderServiceBound && !recorderService.alreadyRecording()) {
-                        setStatus("Stopped");
-                    }
+                    //if (recorderServiceBound && !recorderService.alreadyRecording()) {
+                    setStatus("Stopped");
+                    //}
                     playerService.stopPlaying(this);
                 }
                 return true;
 
             case STOP_RECORDING:
-                if (recorderServiceBound && recorderService.alreadyRecording()) {
+                RecordingTask recordingTask = ((RadioApplication) getApplicationContext()).getRecordingTask();
+
+                if (recordingTask.alreadyRecording()) {
                     if (playerServiceBound && !playerService.alreadyPlaying()) {
                         setStatus("Stopped");
                     }
-                    recorderService.stopRecording(this);
+                    // TODO: fire stop intent here
                 }
                 return true;
 
@@ -284,34 +286,40 @@ public class RadioActivity extends Activity {
     }
 
     private void record(final RadioDetails radioDetails) {
-        if (recorderServiceBound) {
-            if (recorderService.alreadyRecording()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //if (recorderServiceBound) {
+        RecordingTask recordingTask = ((RadioApplication) getApplicationContext()).getRecordingTask();
 
-                builder.setMessage("Stop recording current station?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d(TAG, "Stopping recording");
-                                recorderService.stopRecording(RadioActivity.this);
-                                recorderService.startRecording(RadioActivity.this, radioDetails);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-                builder.create().show();
+        if (recordingTask != null && recordingTask.alreadyRecording()) {
 
-            } else {
-                Log.d(TAG, "Starting recording");
-                CharSequence ticketText = new StringBuilder()
-                        .append("Recording ")
-                        .append(radioDetails.getStationName())
-                        .toString();
-                recorderService.startRecording(this, radioDetails);
-                updateUIForRecording(true);
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setMessage("Stop recording current station?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Log.d(TAG, "Stopping recording");
+                            //recorderService.stopRecording(RadioActivity.this);
+                            // TODO Fire stop intent
+                            //recorderService.startRecording(RadioActivity.this, radioDetails);
+                            // TODO Fire start intent
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    });
+            builder.create().show();
+
+        } else {
+            Log.d(TAG, "Starting recording");
+            CharSequence ticketText = new StringBuilder()
+                    .append("Recording ")
+                    .append(radioDetails.getStationName())
+                    .toString();
+            //recorderService.startRecording(this, radioDetails);
+            // TODO Fire start intent
+            updateUIForRecording(true);
         }
+        //}
     }
 
     public void updateUIForPlaying(boolean playingNow, String status) {
@@ -358,17 +366,17 @@ public class RadioActivity extends Activity {
         }
     };
 
-    private ServiceConnection recorderConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            RecorderService.RecorderServiceBinder binder = (RecorderService.RecorderServiceBinder) iBinder;
-            recorderService = binder.getService();
-            recorderServiceBound = true;
-            updateUIForRecording(recorderService.alreadyRecording());
-        }
-
-        public void onServiceDisconnected(ComponentName componentName) {
-            recorderServiceBound = false;
-        }
-    };
+//    private ServiceConnection recorderConnection = new ServiceConnection() {
+//
+//        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//            RecorderService.RecorderServiceBinder binder = (RecorderService.RecorderServiceBinder) iBinder;
+//            recorderService = binder.getService();
+//            recorderServiceBound = true;
+//            updateUIForRecording(recorderService.alreadyRecording());
+//        }
+//
+//        public void onServiceDisconnected(ComponentName componentName) {
+//            recorderServiceBound = false;
+//        }
+//    };
 }

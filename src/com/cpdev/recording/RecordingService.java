@@ -53,8 +53,7 @@ public class RecordingService extends WakefulIntentService {
                 RecordingTask recordingTask = radioApplication.getRecordingTask();
                 recordingTask.cancel(true);
 
-                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.cancel(notificationId);
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(notificationId);
 
                 recordingTask = null;
                 radioApplication.setRecordingTask(recordingTask);
