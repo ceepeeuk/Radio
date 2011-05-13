@@ -8,4 +8,6 @@
     <string name="timed_recorder_service_name_key">StationName</string>
     <string name="timed_recorder_service_url_key">StationURL</string>
     <string name="timed_recorder_service_recording_duration">duration</string>
+    <string name="recording_schedule_start_label_text">Start Date</string>
+    <string name="recording_schedule_end_label_text">End Date</string>
 </resources>

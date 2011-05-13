@@ -304,6 +304,10 @@ public class RadioActivity extends Activity {
 
             } else {
                 Log.d(TAG, "Starting recording");
+                CharSequence ticketText = new StringBuilder()
+                        .append("Recording ")
+                        .append(radioDetails.getStationName())
+                        .toString();
                 recorderService.startRecording(this, radioDetails);
                 updateUIForRecording(true);
             }

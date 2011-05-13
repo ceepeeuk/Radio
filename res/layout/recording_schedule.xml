@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        android:id="@+id/recordingScheduleLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        >
+    <LinearLayout
+            android:id="@+id/newRecordingLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            >
+        <TextView
+                android:id="@+id/widget53"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start time"
+                >
+        </TextView>
+        <DatePicker
+                android:id="@+id/widget54"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+        </DatePicker>
+        <TimePicker
+                android:id="@+id/widget55"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+        </TimePicker>
+    </LinearLayout>
+</RelativeLayout>

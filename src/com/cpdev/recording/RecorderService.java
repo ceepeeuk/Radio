@@ -1,13 +1,11 @@
 package com.cpdev.recording;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import com.cpdev.NotificationService;
-import com.cpdev.RadioActivity;
-import com.cpdev.RadioApplication;
-import com.cpdev.RadioDetails;
+import com.cpdev.*;
 import com.cpdev.utils.StringUtils;
 
 public class RecorderService extends NotificationService {
@@ -28,6 +26,12 @@ public class RecorderService extends NotificationService {
     }
 
     public void startRecording(RadioActivity view, RadioDetails radioDetails) {
+        CharSequence ticketText = new StringBuilder()
+                .append("Recording ")
+                .append(radioDetails.getStationName())
+                .toString();
+        startForeground(0, new Notification(R.drawable.ic_notification_recording, ticketText, System.currentTimeMillis()));
+
         caller = view;
         RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
         radioApplication.getRecordingTask().execute(radioDetails);
@@ -37,7 +41,7 @@ public class RecorderService extends NotificationService {
         caller.setStatus(operation);
 //        CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
 //        CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-        showNotification(NotificationService.RECORDING_ID, radioDetails, operation, operation);
+//        showNotification(NotificationService.RECORDING_ID, radioDetails, operation, operation);
     }
 
     public void stopRecording(RadioActivity view) {

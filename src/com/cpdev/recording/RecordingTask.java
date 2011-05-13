@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -36,9 +37,8 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
         long startTime = System.currentTimeMillis();
 
         try {
-            URL url = new URL(radioDetails[0].getStreamUrl());
-            Log.d(TAG, "RecordingTask attempting to stream from: " + url);
-            inputStream = url.openStream();
+            URLConnection url = new URL(radioDetails[0].getStreamUrl()).openConnection();
+            inputStream = url.getInputStream();
 
             String recFolder = GetRecordingsFolder();
 
@@ -50,10 +50,12 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
             StringBuilder outputSource = new StringBuilder()
                     .append(recFolder)
                     .append(File.separator);
+
             if (!StringUtils.IsNullOrEmpty(radioDetails[0].getStationName())) {
                 outputSource.append(radioDetails[0].getStationName())
                         .append("-");
             }
+
             outputSource.append(getTimestamp())
                     .append(".mp3");
 
@@ -62,26 +64,25 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
             fileOutputStream = new FileOutputStream(outputSource.toString());
             recordingState = true;
 
-            int c;
-            int bytesRead = 0;
+            byte[] buffer = new byte[4096];
+            int len = 0;
 
             if (radioDetails[0].getDuration() > 0) {
                 // Timed recording
                 long endTime = startTime + radioDetails[0].getDuration();
-                while (System.currentTimeMillis() < endTime && (c = inputStream.read()) != -1) {
-                    fileOutputStream.write(c);
-                    bytesRead++;
+                while (System.currentTimeMillis() < endTime && (len = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
                 }
             } else {
                 // Manual recording
-                while (!cancelRecording && (c = inputStream.read()) != -1) {
-                    fileOutputStream.write(c);
-                    bytesRead++;
+                Log.d(TAG, "Starting manual recording...");
+                while (!cancelRecording && (len = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
                 }
             }
 
 
-            Log.d(TAG, "Finished writing stream, " + bytesRead + " bytes written");
+            Log.d(TAG, "Finished writing stream");
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
@@ -113,7 +114,6 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
     public void onCancelled() {
         if (inputStream != null) {
             cancelRecording = true;
-            Log.d(TAG, "cancelRecording=true");
         }
     }
 
