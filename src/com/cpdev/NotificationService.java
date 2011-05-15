@@ -3,14 +3,18 @@ package com.cpdev;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import com.commonsware.cwac.wakeful.WakefulIntentService;
 
-public abstract class NotificationService extends Service {
+public abstract class NotificationService extends WakefulIntentService {
 
-    protected static final int PLAYING_ID = 1;
-    protected static final int RECORDING_ID = 2;
+    protected static final int NOTIFICATION_PLAYING_ID = 1;
+    protected static final int NOTIFICATION_RECORDING_ID = 2;
+
+    public NotificationService(String name) {
+        super("NotificationService");
+    }
 
 
     protected void showNotification(int notificationId, RadioDetails radioDetails, CharSequence tickerText, CharSequence contentText) {
@@ -21,10 +25,10 @@ public abstract class NotificationService extends Service {
         Notification notification = null;
 
         switch (notificationId) {
-            case PLAYING_ID:
+            case NOTIFICATION_PLAYING_ID:
                 notification = new Notification(R.drawable.ic_notification_playing, tickerText, when);
                 break;
-            case RECORDING_ID:
+            case NOTIFICATION_RECORDING_ID:
                 notification = new Notification(R.drawable.ic_notification_recording, tickerText, when);
                 break;
         }

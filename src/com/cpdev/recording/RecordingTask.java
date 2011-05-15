@@ -4,8 +4,6 @@ package com.cpdev.recording;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import com.cpdev.R;
-import com.cpdev.RadioActivity;
 import com.cpdev.RadioDetails;
 import com.cpdev.utils.StringUtils;
 
@@ -28,7 +26,6 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
 
     private FileOutputStream fileOutputStream;
     private InputStream inputStream;
-    private RadioActivity activity;
     private Exception exception;
 
     @Override
@@ -121,7 +118,7 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         if (exception != null) {
-            activity.setStatus("Error occurred trying to record stream.");
+            // TODO Show notification that its failed
         }
     }
 
@@ -149,7 +146,7 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
         StringBuilder sb = new StringBuilder();
         sb.append(Environment.getExternalStorageDirectory().getAbsolutePath());
         sb.append(File.separator);
-        sb.append(activity.getString(R.string.app_name));
+        sb.append("Recordio");
         return sb.toString();
     }
 
@@ -164,9 +161,5 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
 
     public boolean alreadyRecording() {
         return recordingState;
-    }
-
-    public void attach(RadioActivity radioActivity) {
-        this.activity = radioActivity;
     }
 }
