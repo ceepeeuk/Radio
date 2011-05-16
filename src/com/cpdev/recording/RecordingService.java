@@ -3,12 +3,13 @@ package com.cpdev.recording;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import com.cpdev.NotificationService;
+import com.commonsware.cwac.wakeful.WakefulIntentService;
+import com.cpdev.NotificationHelper;
 import com.cpdev.R;
 import com.cpdev.RadioApplication;
 import com.cpdev.RadioDetails;
 
-public class RecordingService extends NotificationService {
+public class RecordingService extends WakefulIntentService {
 
     public static final int StartRecording = 1;
     public static final int StopRecording = 2;
@@ -40,7 +41,7 @@ public class RecordingService extends NotificationService {
 
                 radioApplication.getRecordingTask().execute(radioDetails);
                 Log.d(TAG, ticketText.toString());
-                showNotification(NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
+                NotificationHelper.showNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
                 break;
 
             case StopRecording:
@@ -49,10 +50,23 @@ public class RecordingService extends NotificationService {
                 RecordingTask recordingTask = radioApplication.getRecordingTask();
                 recordingTask.cancel(true);
 
-                cancelNotification(NOTIFICATION_RECORDING_ID);
+                NotificationHelper.cancelNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID);
                 recordingTask = null;
                 radioApplication.setRecordingTask(recordingTask);
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called, so presumably we are about to have the task cancelled?");
+        //NotificationHelper.cancelNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onDestroy();
+        Log.d(TAG, "onLowMemory called");
     }
 }

@@ -33,7 +33,7 @@ public class RecorderService {
 //        caller.setStatus(operation);
 ////        CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
 ////        CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-////        showNotification(NotificationService.RECORDING_ID, radioDetails, operation, operation);
+////        showNotification(NotificationHelper.RECORDING_ID, radioDetails, operation, operation);
 //    }
 //
 //    public void stopRecording(RadioActivity view) {
@@ -44,7 +44,7 @@ public class RecorderService {
 //        recordingTask.cancel(true);
 //
 //        view.setStatus("Stopped recording");
-//        cancelNotification(NotificationService.RECORDING_ID);
+//        cancelNotification(NotificationHelper.RECORDING_ID);
 //
 //        recordingTask = null;
 //        radioApplication.setRecordingTask(recordingTask);

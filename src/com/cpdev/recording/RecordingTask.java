@@ -78,7 +78,6 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
                 }
             }
 
-
             Log.d(TAG, "Finished writing stream");
 
         } catch (MalformedURLException e) {
@@ -118,7 +117,7 @@ public class RecordingTask extends AsyncTask<RadioDetails, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         if (exception != null) {
-            // TODO Show notification that its failed
+            Log.e(TAG, "Error occurred during recording", exception);
         }
     }
 

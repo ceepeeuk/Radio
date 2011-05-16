@@ -1,56 +1,50 @@
 package com.cpdev;
 
+import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Bundle;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
 import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
 
-public class PlayerService extends NotificationService {
+public class PlayerService extends Service {
 
     private static final String TAG = "com.cpdev.PlayerService";
+    RadioActivity caller;
 
-    public static final int StartPlaying = 1;
-    public static final int StopPlaying = 2;
+    private final IBinder mBinder = new RadioServiceBinder();
 
-
-    public PlayerService() {
-        super("PlayerService");
-    }
-
-
-    @Override
-    public void onDestroy() {
-        Log.d(TAG, "onDestroy called");
-        super.onDestroy();
-    }
-
-    @Override
-    protected void doWakefulWork(Intent intent) {
-
-        Bundle bundle = intent.getExtras();
-
-        switch (intent.getIntExtra(getString(R.string.player_service_operation_key), 1)) {
-
-            case StartPlaying:
-                RadioDetails radioDetails = new RadioDetails(
-                        bundle.getString(getString(R.string.player_service_name_key)),
-                        bundle.getString(getString(R.string.player_service_url_key)),
-                        null);
-                startPlaying(radioDetails);
-                break;
-
-            case StopPlaying:
-                stopPlaying();
-                break;
+    public boolean alreadyPlaying() {
+        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
+        if (mediaPlayer != null) {
+            boolean playing = mediaPlayer.isPlaying();
+            return playing;
+        } else {
+            return false;
         }
-
     }
 
-    private void stopPlaying() {
+    @Override
+    public void onCreate() {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+        super.onCreate();
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+        }
+        radioApplication.setMediaPlayer(mediaPlayer);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    public void stopPlaying(RadioActivity view) {
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
@@ -61,11 +55,18 @@ public class PlayerService extends NotificationService {
             mediaPlayer.reset();
         }
 
-        cancelNotification(NotificationService.NOTIFICATION_PLAYING_ID);
+        view.setStatus("Stopped playing");
+        NotificationHelper.cancelNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID);
     }
 
-    private void startPlaying(final RadioDetails radioDetails) {
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
 
+    public void startPlaying(RadioActivity view, final RadioDetails radioDetails) {
+
+        caller = view;
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
@@ -76,6 +77,7 @@ public class PlayerService extends NotificationService {
             }
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
@@ -86,43 +88,47 @@ public class PlayerService extends NotificationService {
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                     Log.e(TAG, "Damn error occurred");
+                    caller.setStatus("Error");
                     return true;
-                }
-            });
-
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    Log.d(TAG, "OnPrepared called, so about to call MediaPlayer.start");
-                    mediaPlayer.start();
-                    Log.d(TAG, "Called MediaPlayer.start");
-
-                    StringBuilder status = new StringBuilder("Playing ");
-                    if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
-                        status.append(radioDetails.getStationName());
-                    }
-
-                    String operation = "Playing ";
-                    CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-                    CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-                    showNotification(NotificationService.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText);
                 }
             });
 
             mediaPlayer.setDataSource(radioDetails.getStreamUrl());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.prepare();
+            mediaPlayer.prepareAsync();
+
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.start();
+                    StringBuilder status = new StringBuilder("Playing ");
+                    if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+                        status.append(radioDetails.getStationName());
+                    }
+                    caller.setStatus(status.toString());
+
+                    String operation = "Playing ";
+                    CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
+                    CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText);
+                }
+            });
+
 
         } catch (IOException ioe) {
             Log.e(TAG, "Error caught in play", ioe);
+            ioe.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             mediaPlayer.reset();
         } finally {
             radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
-            Log.d(TAG, "Finished finally");
         }
     }
 
-
+    public class RadioServiceBinder extends Binder {
+        PlayerService getService() {
+            return PlayerService.this;
+        }
+    }
 }
 
 

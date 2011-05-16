@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +18,7 @@ import com.cpdev.filehandling.PlsHandler;
 import com.cpdev.recording.RecordingBroadcastReceiver;
 import com.cpdev.recording.RecordingService;
 import com.cpdev.recording.RecordingTask;
+import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -28,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 public class RadioActivity extends Activity {
 
     private PlayerService playerService;
+    private boolean playerServiceBound = false;
+
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
     private Intent recorderIntent = new Intent("com.cpdev.recording.RecordingService");
 
@@ -48,6 +49,7 @@ public class RadioActivity extends Activity {
     public void onStart() {
 
         super.onStart();
+        bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         try {
@@ -99,16 +101,22 @@ public class RadioActivity extends Activity {
         });
 
         lstFavourites.setAdapter(adapter);
+        dbHelper.close();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (playerServiceBound) {
+            unbindService(playerConnection);
+            playerServiceBound = false;
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -125,9 +133,11 @@ public class RadioActivity extends Activity {
         switch (item.getItemId()) {
 
             case STOP_PLAYING:
-                if (alreadyPlaying()) {
+                if (playerServiceBound && playerService.alreadyPlaying()) {
+                    //if (recorderServiceBound && !recorderService.alreadyRecording()) {
                     setStatus("Stopped");
-                    PlayerService.sendWakefulWork(this, createPlayingIntent(PlayerService.StopPlaying, null));
+                    //}
+                    playerService.stopPlaying(this);
                 }
                 return true;
 
@@ -135,7 +145,7 @@ public class RadioActivity extends Activity {
                 RecordingTask recordingTask = ((RadioApplication) getApplicationContext()).getRecordingTask();
 
                 if (recordingTask.alreadyRecording()) {
-                    if (alreadyPlaying()) {
+                    if (playerServiceBound && !playerService.alreadyPlaying()) {
                         setStatus("Stopped");
                     }
                     RecordingService.sendWakefulWork(this, createRecordingIntent(RecordingService.StopRecording, null));
@@ -146,7 +156,7 @@ public class RadioActivity extends Activity {
 
                 RadioDetails radioDetails = new RadioDetails();
 
-                if (alreadyPlaying()) {
+                if (playerServiceBound && playerService.alreadyPlaying()) {
                     radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
                 }
 
@@ -182,15 +192,15 @@ public class RadioActivity extends Activity {
         }
     }
 
-    public boolean alreadyPlaying() {
-        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
-        if (mediaPlayer != null) {
-            boolean playing = mediaPlayer.isPlaying();
-            return playing;
-        } else {
-            return false;
-        }
-    }
+//    public boolean alreadyPlaying() {
+//        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
+//        if (mediaPlayer != null) {
+//            boolean playing = mediaPlayer.isPlaying();
+//            return playing;
+//        } else {
+//            return false;
+//        }
+//    }
 
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
@@ -251,29 +261,32 @@ public class RadioActivity extends Activity {
     }
 
     private void play(final RadioDetails radioDetails) {
+        if (playerServiceBound) {
+            if (playerService.alreadyPlaying()) {
 
-        if (alreadyPlaying()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Stop playing current station?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d(TAG, "Stopping play");
+                                playerService.stopPlaying(null);
+                                setStatus("Buffering");
+                                playerService.startPlaying(RadioActivity.this, radioDetails);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        });
+                builder.create().show();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Stop playing current station?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Log.d(TAG, "Stopping play");
-                            PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(PlayerService.StopPlaying, null));
-                            setStatus("Buffering");
-                            PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(PlayerService.StartPlaying, radioDetails));
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    });
-            builder.create().show();
-
+            } else {
+                Log.d(TAG, "Starting play");
+                playerService.startPlaying(this, radioDetails);
+                updateUIForPlaying(true, "Buffering");
+            }
         } else {
-            Log.d(TAG, "Starting play");
-            PlayerService.sendWakefulWork(this, createPlayingIntent(PlayerService.StartPlaying, radioDetails));
-            updateUIForPlaying(true, "Buffering");
+            Log.e(TAG, "Playerservice unbound so cannot start playing");
         }
     }
 
@@ -309,15 +322,15 @@ public class RadioActivity extends Activity {
         }
     }
 
-    private Intent createPlayingIntent(int operation, RadioDetails radioDetails) {
-        Intent intent = new Intent("com.cpdev.PlayerService");
-        intent.putExtra(getString(R.string.player_service_operation_key), operation);
-        if (radioDetails != null) {
-            intent.putExtra(getString(R.string.player_service_name_key), radioDetails.getStationName());
-            intent.putExtra((getString(R.string.player_service_url_key)), radioDetails.getStreamUrl());
-        }
-        return intent;
-    }
+//    private Intent createPlayingIntent(int operation, RadioDetails radioDetails) {
+//        Intent intent = new Intent("com.cpdev.PlayerService");
+//        intent.putExtra(getString(R.string.player_service_operation_key), operation);
+//        if (radioDetails != null) {
+//            intent.putExtra(getString(R.string.player_service_name_key), radioDetails.getStationName());
+//            intent.putExtra((getString(R.string.player_service_url_key)), radioDetails.getStreamUrl());
+//        }
+//        return intent;
+//    }
 
     private Intent createRecordingIntent(int operation, RadioDetails radioDetails) {
         Intent intent = new Intent("com.cpdev.recording.RecordingService");
@@ -347,4 +360,29 @@ public class RadioActivity extends Activity {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(message);
     }
+
+    private ServiceConnection playerConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+
+            PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
+            playerService = binder.getService();
+            playerServiceBound = true;
+
+            if (playerService.alreadyPlaying()) {
+                StringBuilder sb = new StringBuilder("Playing ");
+                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
+                if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+                    sb.append(radioDetails.getStationName());
+                }
+                updateUIForPlaying(true, sb.toString());
+            } else {
+                updateUIForPlaying(false, "");
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName componentName) {
+            playerServiceBound = false;
+        }
+    };
 }
