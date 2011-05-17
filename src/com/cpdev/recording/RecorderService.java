@@ -1,7 +1,9 @@
 package com.cpdev.recording;
 
 import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -28,6 +30,10 @@ public class RecorderService extends WakefulIntentService {
 
     private FileOutputStream fileOutputStream;
     private InputStream inputStream;
+
+
+    WifiManager.WifiLock wifiLock = null;
+
 
     private static boolean recordingState = false;
     private static boolean cancelRecordingFlag = false;
@@ -86,6 +92,13 @@ public class RecorderService extends WakefulIntentService {
             fileOutputStream = new FileOutputStream(outputSource.toString());
             recordingState = true;
 
+
+            WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "MyWifiLock");
+            if (!wifiLock.isHeld()) {
+                wifiLock.acquire();
+            }
+
             byte[] buffer = new byte[4096];
             int len = 0;
 
@@ -121,6 +134,9 @@ public class RecorderService extends WakefulIntentService {
                     fileOutputStream.close();
                     fileOutputStream = null;
                 }
+
+
+                wifiLock.release();
                 recordingState = false;
                 cancelRecordingFlag = false;
             } catch (IOException e) {
