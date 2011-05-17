@@ -15,9 +15,8 @@ import android.view.View;
 import android.widget.*;
 import com.cpdev.filehandling.M3uHandler;
 import com.cpdev.filehandling.PlsHandler;
+import com.cpdev.recording.RecorderService;
 import com.cpdev.recording.RecordingBroadcastReceiver;
-import com.cpdev.recording.RecordingService;
-import com.cpdev.recording.RecordingTask;
 import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
@@ -30,7 +29,6 @@ public class RadioActivity extends Activity {
     private boolean playerServiceBound = false;
 
     private Intent playerIntent = new Intent("com.cpdev.PlayerService");
-    private Intent recorderIntent = new Intent("com.cpdev.recording.RecordingService");
 
     private String TAG = "com.cpdev.RadioActivity";
 
@@ -134,21 +132,19 @@ public class RadioActivity extends Activity {
 
             case STOP_PLAYING:
                 if (playerServiceBound && playerService.alreadyPlaying()) {
-                    //if (recorderServiceBound && !recorderService.alreadyRecording()) {
-                    setStatus("Stopped");
-                    //}
+                    if (!RecorderService.alreadyRecording()) {
+                        setStatus("Stopped");
+                    }
                     playerService.stopPlaying(this);
                 }
                 return true;
 
             case STOP_RECORDING:
-                RecordingTask recordingTask = ((RadioApplication) getApplicationContext()).getRecordingTask();
-
-                if (recordingTask.alreadyRecording()) {
+                if (RecorderService.alreadyRecording()) {
                     if (playerServiceBound && !playerService.alreadyPlaying()) {
                         setStatus("Stopped");
                     }
-                    RecordingService.sendWakefulWork(this, createRecordingIntent(RecordingService.StopRecording, null));
+                    RecorderService.cancelRecording();
                 }
                 return true;
 
@@ -191,16 +187,6 @@ public class RadioActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-//    public boolean alreadyPlaying() {
-//        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
-//        if (mediaPlayer != null) {
-//            boolean playing = mediaPlayer.isPlaying();
-//            return playing;
-//        } else {
-//            return false;
-//        }
-//    }
 
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
@@ -292,9 +278,7 @@ public class RadioActivity extends Activity {
 
     private void record(final RadioDetails radioDetails) {
 
-        RecordingTask recordingTask = ((RadioApplication) getApplicationContext()).getRecordingTask();
-
-        if (recordingTask != null && recordingTask.alreadyRecording()) {
+        if (RecorderService.alreadyRecording()) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -302,10 +286,11 @@ public class RadioActivity extends Activity {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Log.d(TAG, "Stopping recording");
-                            // Fire stop intent
-                            RecordingService.sendWakefulWork(getApplicationContext(), createRecordingIntent(RecordingService.StopRecording, null));
+                            // Set stop var
+                            RecorderService.cancelRecording();
                             // Fire start intent
-                            RecordingService.sendWakefulWork(getApplicationContext(), createRecordingIntent(RecordingService.StartRecording, radioDetails));
+                            RecorderService.sendWakefulWork(getApplicationContext(), createRecordingIntent(radioDetails));
+                            updateUIForRecording(true);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -316,25 +301,14 @@ public class RadioActivity extends Activity {
 
         } else {
             Log.d(TAG, "Starting recording");
-            Intent intent = createRecordingIntent(RecordingService.StartRecording, radioDetails);
-            RecordingService.sendWakefulWork(this, intent);
+            Intent intent = createRecordingIntent(radioDetails);
+            RecorderService.sendWakefulWork(this, intent);
             updateUIForRecording(true);
         }
     }
 
-//    private Intent createPlayingIntent(int operation, RadioDetails radioDetails) {
-//        Intent intent = new Intent("com.cpdev.PlayerService");
-//        intent.putExtra(getString(R.string.player_service_operation_key), operation);
-//        if (radioDetails != null) {
-//            intent.putExtra(getString(R.string.player_service_name_key), radioDetails.getStationName());
-//            intent.putExtra((getString(R.string.player_service_url_key)), radioDetails.getStreamUrl());
-//        }
-//        return intent;
-//    }
-
-    private Intent createRecordingIntent(int operation, RadioDetails radioDetails) {
-        Intent intent = new Intent("com.cpdev.recording.RecordingService");
-        intent.putExtra(getString(R.string.timed_recorder_service_operation_key), operation);
+    private Intent createRecordingIntent(RadioDetails radioDetails) {
+        Intent intent = new Intent("com.cpdev.recording.RecorderService");
         if (radioDetails != null) {
             intent.putExtra(getString(R.string.timed_recorder_service_name_key), radioDetails.getStationName());
             intent.putExtra((getString(R.string.timed_recorder_service_url_key)), radioDetails.getStreamUrl());

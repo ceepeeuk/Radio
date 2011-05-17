@@ -22,6 +22,6 @@ public class TimedRecorderService extends WakefulIntentService {
 
         RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
         RadioDetails radioDetails = new RadioDetails(name, null, url, duration);
-        radioApplication.getRecordingTask().execute(radioDetails);
+        //radioApplication.getRecordingTask().execute(radioDetails);
     }
 }

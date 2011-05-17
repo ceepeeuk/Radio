@@ -42,4 +42,26 @@ public abstract class NotificationHelper {
         notificationManager.cancel(notificationId);
     }
 
+    public static Notification getNotification(Context context, int notificationRecordingId, RadioDetails radioDetails, CharSequence tickerText, CharSequence contentText) {
+        long when = System.currentTimeMillis();
+        Notification notification = null;
+
+        switch (notificationRecordingId) {
+            case NOTIFICATION_PLAYING_ID:
+                notification = new Notification(R.drawable.ic_notification_playing, tickerText, when);
+                break;
+            case NOTIFICATION_RECORDING_ID:
+                notification = new Notification(R.drawable.ic_notification_recording, tickerText, when);
+                break;
+        }
+
+        CharSequence contentTitle = context.getString(R.string.app_name);
+        Intent notificationIntent = new Intent(context, RadioActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+
+        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+
+        return notification;
+    }
 }

@@ -30,11 +30,6 @@
                 <action android:name="com.cpdev.recording.RecorderService"/>
             </intent-filter>
         </service>
-        <service android:name=".recording.RecordingService">
-            <intent-filter>
-                <action android:name="com.cpdev.recording.RecordingService"/>
-            </intent-filter>
-        </service>
         <service android:name=".recording.TimedRecorderService">
             <intent-filter>
                 <action android:name="com.cpdev.recording.TimedRecorderService"/>

@@ -1,64 +1,189 @@
 package com.cpdev.recording;
 
-public class RecorderService {
+import android.app.Notification;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import com.commonsware.cwac.wakeful.WakefulIntentService;
+import com.cpdev.NotificationHelper;
+import com.cpdev.R;
+import com.cpdev.RadioDetails;
+import com.cpdev.utils.StringUtils;
 
-//    private static final String TAG = "com.cpdev.recording.RecorderService";
-//    private RadioActivity caller;
-//
-//    private final IBinder mBinder = new RecorderServiceBinder();
-//
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        return mBinder;
-//    }
-//
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        return START_STICKY;
-//    }
-//
-//    public void startRecording(RadioActivity view, RadioDetails radioDetails) {
-//        CharSequence ticketText = new StringBuilder()
-//                .append("Recording ")
-//                .append(radioDetails.getStationName())
-//                .toString();
-//        startForeground(0, new Notification(R.drawable.ic_notification_recording, ticketText, System.currentTimeMillis()));
-//
-//        caller = view;
-//        RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
-//        radioApplication.getRecordingTask().execute(radioDetails);
-//        //radioApplication.getRecordingTask().attach(view);
-//
-//        String operation = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? "Recording " : "Recording " + radioDetails.getStationName();
-//        caller.setStatus(operation);
-////        CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-////        CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-////        showNotification(NotificationHelper.RECORDING_ID, radioDetails, operation, operation);
-//    }
-//
-//    public void stopRecording(RadioActivity view) {
-//        Log.d(TAG, "Stopping recording");
-//        caller = view;
-//        RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
-//        RecordingTask recordingTask = radioApplication.getRecordingTask();
-//        recordingTask.cancel(true);
-//
-//        view.setStatus("Stopped recording");
-//        cancelNotification(NotificationHelper.RECORDING_ID);
-//
-//        recordingTask = null;
-//        radioApplication.setRecordingTask(recordingTask);
-//    }
-//
-//    public boolean alreadyRecording() {
-//        RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
-//        RecordingTask recordingTask = radioApplication.getRecordingTask();
-//        return recordingTask.alreadyRecording();
-//    }
-//
-//    public class RecorderServiceBinder extends Binder {
-//        public RecorderService getService() {
-//            return RecorderService.this;
-//        }
-//    }
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+public class RecorderService extends WakefulIntentService {
+
+    private static final String TAG = "com.cpdev.recording.RecorderService";
+
+    private FileOutputStream fileOutputStream;
+    private InputStream inputStream;
+
+    private static boolean recordingState = false;
+    private static boolean cancelRecordingFlag = false;
+
+
+    public RecorderService() {
+        super("RecorderService");
+    }
+
+    @Override
+    protected void doWakefulWork(Intent intent) {
+
+        Bundle bundle = intent.getExtras();
+        RadioDetails radioDetails = new RadioDetails(
+                bundle.getString(getString(R.string.timed_recorder_service_name_key)),
+                bundle.getString(getString(R.string.timed_recorder_service_url_key)),
+                null);
+
+        CharSequence ticketText = new StringBuilder()
+                .append("Recording ")
+                .append(radioDetails.getStationName())
+                .toString();
+
+        Log.d(TAG, ticketText.toString());
+
+        Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
+        startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
+
+        long startTime = System.currentTimeMillis();
+
+        try {
+            URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
+            inputStream = url.getInputStream();
+
+            String recFolder = GetRecordingsFolder();
+
+            if (!new File(recFolder).exists()) {
+                new File(recFolder).mkdir();
+                Log.d(TAG, "Recordio directory was not found, so created it");
+            }
+
+            StringBuilder outputSource = new StringBuilder()
+                    .append(recFolder)
+                    .append(File.separator);
+
+            if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+                outputSource.append(radioDetails.getStationName())
+                        .append("-");
+            }
+
+            outputSource.append(getTimestamp())
+                    .append(".mp3");
+
+
+            Log.d(TAG, "Writing stream to : " + outputSource);
+            fileOutputStream = new FileOutputStream(outputSource.toString());
+            recordingState = true;
+
+            byte[] buffer = new byte[4096];
+            int len = 0;
+
+            if (radioDetails.getDuration() > 0) {
+                // Timed recording
+                long endTime = startTime + radioDetails.getDuration();
+                while (System.currentTimeMillis() < endTime && (len = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
+                }
+            } else {
+                // Manual recording
+                Log.d(TAG, "Starting manual recording...");
+                while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
+                }
+            }
+
+            Log.d(TAG, "Finished writing stream");
+
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
+        } catch (IOException e) {
+            Log.d(TAG, "IOException: " + e.getMessage(), e);
+            // Expected when stream closes
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                    inputStream = null;
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                    fileOutputStream = null;
+                }
+                recordingState = false;
+                cancelRecordingFlag = false;
+            } catch (IOException e) {
+                Log.e(TAG, "Error flushing and close output stream", e);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onDestroy();
+        Log.d(TAG, "onLowMemory called");
+    }
+
+    private String getTimestamp() {
+
+        Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
+
+        StringBuilder timestamp = new StringBuilder();
+        timestamp.append(calendar.get(Calendar.YEAR));
+        timestamp.append(("."));
+        timestamp.append(pad(calendar.get(Calendar.MONTH)));
+        timestamp.append(("."));
+        timestamp.append(pad(calendar.get(Calendar.DAY_OF_MONTH)));
+        timestamp.append(("-"));
+        timestamp.append(pad(calendar.get(Calendar.HOUR_OF_DAY)));
+        timestamp.append(("."));
+        timestamp.append(pad(calendar.get(Calendar.MINUTE)));
+        timestamp.append(("."));
+        timestamp.append(pad(calendar.get(Calendar.SECOND)));
+
+        return timestamp.toString();
+    }
+
+    private String GetRecordingsFolder() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Environment.getExternalStorageDirectory().getAbsolutePath());
+        sb.append(File.separator);
+        sb.append("Recordio");
+        return sb.toString();
+    }
+
+    private String pad(int originalNum) {
+        String original = String.valueOf(originalNum);
+        if (original.length() == 1) {
+            return "0" + original;
+        } else {
+            return original;
+        }
+    }
+
+    public static boolean alreadyRecording() {
+        return recordingState;
+    }
+
+    public static void cancelRecording() {
+        Log.d(TAG, "Cancel recording requested");
+        cancelRecordingFlag = true;
+    }
 }
