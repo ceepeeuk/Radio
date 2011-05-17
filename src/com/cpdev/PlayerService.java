@@ -56,7 +56,7 @@ public class PlayerService extends Service {
         }
 
         view.setStatus("Stopped playing");
-        NotificationHelper.cancelNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID);
+        stopForeground(true);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class PlayerService extends Service {
                     String operation = "Playing ";
                     CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
                     CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText);
+                    startForeground(NotificationHelper.NOTIFICATION_PLAYING_ID, NotificationHelper.getNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText));
                 }
             });
 
