@@ -5,32 +5,77 @@
         android:layout_height="fill_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         >
-    <LinearLayout
-            android:id="@+id/newRecordingLayout"
+    <Spinner
+            android:id="@+id/favouriteStationSpinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
             >
-        <TextView
-                android:id="@+id/widget53"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start time"
-                >
-        </TextView>
-        <DatePicker
-                android:id="@+id/widget54"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
-        </DatePicker>
-        <TimePicker
-                android:id="@+id/widget55"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
-        </TimePicker>
-    </LinearLayout>
+    </Spinner>
+    <TextView
+            android:id="@+id/newRecordingStartTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start time:  "
+            android:layout_below="@id/favouriteStationSpinner"
+            >
+    </TextView>
+    <TextView
+            android:id="@+id/newRecordingStartTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:00 23/04/11"
+            android:layout_below="@id/favouriteStationSpinner"
+            android:layout_centerHorizontal="true"
+            >
+    </TextView>
+    <Button
+            android:id="@+id/setStartTimeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  Change  "
+            android:layout_below="@id/favouriteStationSpinner"
+            android:layout_alignParentRight="true"
+            >
+    </Button>
+    <TextView
+            android:id="@+id/newRecordingEndTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End time:   "
+            android:layout_below="@id/setStartTimeButton"
+            >
+    </TextView>
+    <TextView
+            android:id="@+id/newRecordingEndTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="13:00 23/04/11"
+            android:layout_below="@id/setStartTimeButton"
+            android:layout_centerHorizontal="true"
+            >
+    </TextView>
+    <Button
+            android:id="@+id/setEndTimeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  Change  "
+            android:layout_below="@id/setStartTimeButton"
+            android:layout_alignParentRight="true"
+            >
+    </Button>
+    <Spinner
+            android:id="@+id/recordingTypeSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setEndTimeButton"
+            >
+    </Spinner>
+    <Button
+            android:id="@+id/widget315"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Add new scheduled recording"
+            android:layout_below="@id/recordingTypeSpinner"
+            >
+    </Button>
 </RelativeLayout>
