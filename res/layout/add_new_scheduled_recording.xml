@@ -78,7 +78,7 @@
             android:layout_below="@id/recordingTypeSpinner"
             >
         <Button
-                android:id="@+id/widget315"
+                android:id="@+id/new_recording_ok_button_text"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/new_recording_ok_button_text"
@@ -86,7 +86,7 @@
                 >
         </Button>
         <Button
-                android:id="@+id/edit_fav_pop_up_btn_cancel"
+                android:id="@+id/new_recording_cancel_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/new_recording_cancel_button_text"

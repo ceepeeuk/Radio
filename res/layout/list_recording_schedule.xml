@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/relativeLayout1"
+<RelativeLayout android:id="@+id/list_recording_schedule_layout"
                 android:layout_width="fill_parent" android:layout_height="fill_parent"
                 xmlns:android="http://schemas.android.com/apk/res/android">
     <ListView android:layout_width="fill_parent" android:layout_height="fill_parent"/>
-    <Button android:layout_width="fill_parent" android:id="@+id/button1"
+    <Button android:layout_width="fill_parent" android:id="@+id/list_recording_schedule_new_button"
             android:layout_height="wrap_content" android:text="Add new"
             android:layout_alignParentBottom="true"/>
 </RelativeLayout>

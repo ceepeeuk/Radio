@@ -15,6 +15,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ConfirmDetailsActivity" android:label="@string/app_name"/>
+        <activity android:name=".ListScheduledRecordings" android:label="Scheduled Recordings"/>
+        <activity android:name=".AddNewScheduledRecording" android:label="Add New Scheduled Recording"/>
         <receiver android:name=".recording.RecordingBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.cpdev.recording.RecordingBroadcastReceiver"/>

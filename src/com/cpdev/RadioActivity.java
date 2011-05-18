@@ -1,9 +1,7 @@
 package com.cpdev;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.*;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,12 +14,9 @@ import android.widget.*;
 import com.cpdev.filehandling.M3uHandler;
 import com.cpdev.filehandling.PlsHandler;
 import com.cpdev.recording.RecorderService;
-import com.cpdev.recording.RecordingBroadcastReceiver;
 import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.concurrent.TimeUnit;
 
 public class RadioActivity extends Activity {
 
@@ -35,7 +30,7 @@ public class RadioActivity extends Activity {
     private static final int STOP_PLAYING = 0;
     private static final int STOP_RECORDING = 1;
     private static final int ADD_FAVOURITE = 2;
-    private static final int SET_TIMER = 3;
+    private static final int SCHEDULED_RECORDINGS = 3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,7 +117,7 @@ public class RadioActivity extends Activity {
         menu.add(Menu.NONE, STOP_PLAYING, Menu.NONE, "Stop Playing");
         menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
         menu.add(Menu.NONE, ADD_FAVOURITE, Menu.NONE, "Add Favourite");
-        menu.add(Menu.NONE, SET_TIMER, Menu.NONE, "Set Timer");
+        menu.add(Menu.NONE, SCHEDULED_RECORDINGS, Menu.NONE, "Scheduled Recordings");
         return (super.onCreateOptionsMenu(menu));
     }
 
@@ -162,26 +157,29 @@ public class RadioActivity extends Activity {
 
                 return true;
 
-            case SET_TIMER:
+            case SCHEDULED_RECORDINGS:
+
+                Intent scheduledRecordingsIntent = new Intent(RadioActivity.this, ListScheduledRecordings.class);
+                startActivity(scheduledRecordingsIntent);
 //                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 //                Intent i = new Intent(context, OnAlarmReceiver.class);
 //                PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 //
 //                mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60000, PERIOD, pi);
 
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(this, RecordingBroadcastReceiver.class);
-                intent.putExtra(getString(R.string.timed_recorder_service_name_key), "rinse.fm");
-                intent.putExtra(getString(R.string.timed_recorder_service_url_key), "http://sub.fm/listenwinamp128k.pls");
-                intent.putExtra(getString(R.string.timed_recorder_service_recording_duration), TimeUnit.MINUTES.toMillis(1));
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-                long timeToRun = (System.currentTimeMillis() + (AlarmManager.INTERVAL_FIFTEEN_MINUTES / 60));
-
-                Log.d(TAG, "timeToRun = " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(timeToRun));
-
-                alarmManager.set(AlarmManager.RTC_WAKEUP, timeToRun, pendingIntent);
-
-                showToast("OK, think alarm is set");
+//                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//                Intent intent = new Intent(this, RecordingBroadcastReceiver.class);
+//                intent.putExtra(getString(R.string.timed_recorder_service_name_key), "rinse.fm");
+//                intent.putExtra(getString(R.string.timed_recorder_service_url_key), "http://sub.fm/listenwinamp128k.pls");
+//                intent.putExtra(getString(R.string.timed_recorder_service_recording_duration), TimeUnit.MINUTES.toMillis(1));
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+//                long timeToRun = (System.currentTimeMillis() + (AlarmManager.INTERVAL_FIFTEEN_MINUTES / 60));
+//
+//                Log.d(TAG, "timeToRun = " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(timeToRun));
+//
+//                alarmManager.set(AlarmManager.RTC_WAKEUP, timeToRun, pendingIntent);
+//
+//                showToast("OK, think alarm is set");
 
             default:
                 return super.onOptionsItemSelected(item);
