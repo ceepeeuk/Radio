@@ -13,7 +13,6 @@ import com.cpdev.utils.StringUtils;
 import java.util.Calendar;
 
 public class AddNewScheduledRecording extends Activity implements View.OnClickListener {
-    private static final int DATE_DIALOG_ID = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +27,10 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.setStartTimeButton:
-                this.showDateTimeDialog(view.getId());
+                showDateTimeDialog(view.getId());
+            case R.id.setEndTimeButton:
+                showDateTimeDialog(view.getId());
+                break;
 
         }
     }
@@ -78,6 +80,10 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
                     case R.id.setStartTimeButton:
                         ((TextView) findViewById(R.id.newRecordingStartTimeText)).setText(date);
                         break;
+                    case R.id.setEndTimeButton:
+                        ((TextView) findViewById(R.id.newRecordingEndTimeText)).setText(date);
+                        break;
+
                 }
 
                 mDateTimeDialog.dismiss();
