@@ -14,4 +14,6 @@
     <string name="timed_recorder_service_recording_duration">duration</string>
     <string name="recording_schedule_start_label_text">Start Date</string>
     <string name="recording_schedule_end_label_text">End Date</string>
+    <string name="new_recording_ok_button_text">OK</string>
+    <string name="new_recording_cancel_button_text">Cancel</string>
 </resources>

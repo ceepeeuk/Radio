@@ -1,4 +1,5 @@
 # ignore binary files
 out/
 .idea/
+.settings/
 /gen

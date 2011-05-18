@@ -31,13 +31,10 @@ public class RecorderService extends WakefulIntentService {
     private FileOutputStream fileOutputStream;
     private InputStream inputStream;
 
-
-    WifiManager.WifiLock wifiLock = null;
-
+    private WifiManager.WifiLock wifiLock = null;
 
     private static boolean recordingState = false;
     private static boolean cancelRecordingFlag = false;
-
 
     public RecorderService() {
         super("RecorderService");
