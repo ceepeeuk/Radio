@@ -161,15 +161,15 @@ public class RecorderService extends WakefulIntentService {
         StringBuilder timestamp = new StringBuilder();
         timestamp.append(calendar.get(Calendar.YEAR));
         timestamp.append(("."));
-        timestamp.append(pad(calendar.get(Calendar.MONTH)));
+        timestamp.append(StringUtils.pad(calendar.get(Calendar.MONTH)));
         timestamp.append(("."));
-        timestamp.append(pad(calendar.get(Calendar.DAY_OF_MONTH)));
+        timestamp.append(StringUtils.pad(calendar.get(Calendar.DAY_OF_MONTH)));
         timestamp.append(("-"));
-        timestamp.append(pad(calendar.get(Calendar.HOUR_OF_DAY)));
+        timestamp.append(StringUtils.pad(calendar.get(Calendar.HOUR_OF_DAY)));
         timestamp.append(("."));
-        timestamp.append(pad(calendar.get(Calendar.MINUTE)));
+        timestamp.append(StringUtils.pad(calendar.get(Calendar.MINUTE)));
         timestamp.append(("."));
-        timestamp.append(pad(calendar.get(Calendar.SECOND)));
+        timestamp.append(StringUtils.pad(calendar.get(Calendar.SECOND)));
 
         return timestamp.toString();
     }
@@ -180,15 +180,6 @@ public class RecorderService extends WakefulIntentService {
         sb.append(File.separator);
         sb.append("Recordio");
         return sb.toString();
-    }
-
-    private String pad(int originalNum) {
-        String original = String.valueOf(originalNum);
-        if (original.length() == 1) {
-            return "0" + original;
-        } else {
-            return original;
-        }
     }
 
     public static boolean alreadyRecording() {
