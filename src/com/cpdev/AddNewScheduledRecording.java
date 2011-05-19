@@ -3,6 +3,7 @@ package com.cpdev;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -14,24 +15,32 @@ import java.util.Calendar;
 
 public class AddNewScheduledRecording extends Activity implements View.OnClickListener {
 
+    private long startDateTime = 0;
+    private int endDateTime = 0;
+    private static final String TAG = "AddNewScheduledRecording";
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_scheduled_recording);
 
-        Button setStartTimeButton = (Button) findViewById(R.id.setStartTimeButton);
-        Button setEndTimeButton = (Button) findViewById(R.id.setEndTimeButton);
+        Button setStartTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_set_start_time_button);
+        Button setEndTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_end_time_button);
         setStartTimeButton.setOnClickListener(this);
         setEndTimeButton.setOnClickListener(this);
     }
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.setStartTimeButton:
-                showDateTimeDialog(view.getId());
-            case R.id.setEndTimeButton:
+            case R.id.add_new_scheduled_recording_set_start_time_button:
                 showDateTimeDialog(view.getId());
                 break;
-
+            case R.id.add_new_scheduled_recording_end_time_button:
+                showDateTimeDialog(view.getId());
+                break;
+            case R.id.add_new_scheduled_recording_ok_button:
+                break;
+            case R.id.add_new_scheduled_recording_cancel_button:
+                break;
         }
     }
 
@@ -77,11 +86,14 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
                         .append(mDateTimePicker.get(Calendar.YEAR));
 
                 switch (originalViewId) {
-                    case R.id.setStartTimeButton:
-                        ((TextView) findViewById(R.id.newRecordingStartTimeText)).setText(date);
+                    case R.id.add_new_scheduled_recording_set_start_time_button:
+                        startDateTime = mDateTimePicker.getDateTimeMillis();
+                        ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(date);
                         break;
-                    case R.id.setEndTimeButton:
-                        ((TextView) findViewById(R.id.newRecordingEndTimeText)).setText(date);
+                    case R.id.add_new_scheduled_recording_end_time_button:
+                        startDateTime = mDateTimePicker.getDateTimeMillis();
+                        Log.d(TAG, "endDateTime = " + endDateTime);
+                        ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(date);
                         break;
 
                 }

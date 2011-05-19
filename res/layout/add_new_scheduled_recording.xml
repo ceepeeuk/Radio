@@ -1,95 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-        android:id="@+id/recordingScheduleLayout"
+        android:id="@+id/add_new_scheduled_recording_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         >
     <Spinner
-            android:id="@+id/favouriteStationSpinner"
+            android:id="@+id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             >
     </Spinner>
     <TextView
-            android:id="@+id/newRecordingStartTimeLabel"
+            android:id="@+id/add_new_scheduled_recording_start_time_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start time:  "
-            android:layout_below="@id/favouriteStationSpinner"
+            android:text="@string/add_new_scheduled_recording_start_label_text"
+            android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
             >
     </TextView>
     <TextView
-            android:id="@+id/newRecordingStartTimeText"
+            android:id="@+id/add_new_scheduled_recording_start_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="12:00 23/04/11"
-            android:layout_below="@id/favouriteStationSpinner"
+            android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_centerHorizontal="true"
             >
     </TextView>
     <Button
-            android:id="@+id/setStartTimeButton"
+            android:id="@+id/add_new_scheduled_recording_set_start_time_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  Change  "
-            android:layout_below="@id/favouriteStationSpinner"
+            android:text="@string/add_new_scheduled_recording_change_button_text"
+            android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_alignParentRight="true"
             >
     </Button>
     <TextView
-            android:id="@+id/newRecordingEndTimeLabel"
+            android:id="@+id/add_new_scheduled_recording_end_time_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End time:   "
-            android:layout_below="@id/setStartTimeButton"
+            android:text="@string/add_new_scheduled_recording_end_label_text"
+            android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
             >
     </TextView>
     <TextView
-            android:id="@+id/newRecordingEndTimeText"
+            android:id="@+id/add_new_scheduled_recording_end_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="13:00 23/04/11"
-            android:layout_below="@id/setStartTimeButton"
+            android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
             android:layout_centerHorizontal="true"
             >
     </TextView>
     <Button
-            android:id="@+id/setEndTimeButton"
+            android:id="@+id/add_new_scheduled_recording_end_time_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  Change  "
-            android:layout_below="@id/setStartTimeButton"
+            android:text="@string/add_new_scheduled_recording_change_button_text"
+            android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
             android:layout_alignParentRight="true"
             >
     </Button>
     <Spinner
-            android:id="@+id/recordingTypeSpinner"
+            android:id="@+id/add_new_scheduled_recording_recording_type_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/setEndTimeButton"
+            android:layout_below="@id/add_new_scheduled_recording_end_time_button"
             >
     </Spinner>
     <LinearLayout
-            android:id="@+id/new_recording_button_layout"
+            android:id="@+id/add_new_scheduled_recording_new_recording_button_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_below="@id/recordingTypeSpinner"
+            android:layout_below="@id/add_new_scheduled_recording_recording_type_spinner"
             >
         <Button
-                android:id="@+id/new_recording_ok_button_text"
+                android:id="@+id/add_new_scheduled_recording_ok_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/new_recording_ok_button_text"
+                android:text="@string/add_new_scheduled_recording_ok_button_text"
                 android:layout_weight="0.5"
                 >
         </Button>
         <Button
-                android:id="@+id/new_recording_cancel_button"
+                android:id="@+id/add_new_scheduled_recording_cancel_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/new_recording_cancel_button_text"
+                android:text="@string/add_new_scheduled_recording_cancel_button_text"
                 android:layout_weight="0.5"
                 >
         </Button>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Recordio</string>
+    <string name="app_name_confirm_details_activity">Recordio - Confirm New Favourite</string>
+    <string name="app_name_list_scheduled_recordings">Recordio - Scheduled Recordings</string>
+    <string name="app_name_add_new_scheduled_recordings">Recordio - Add New Scheduled Recording</string>
     <string name="edit_fav_pop_up_btn_save">Save</string>
     <string name="edit_fav_pop_up_btn_cancel">Cancel</string>
     <string name="edit_fav_pop_up_lbl_name">Name</string>
@@ -11,9 +14,10 @@
     <string name="timed_recorder_service_operation_key">Operation</string>
     <string name="timed_recorder_service_name_key">StationName</string>
     <string name="timed_recorder_service_url_key">StationURL</string>
-    <string name="timed_recorder_service_recording_duration">duration</string>
-    <string name="recording_schedule_start_label_text">Start Date</string>
-    <string name="recording_schedule_end_label_text">End Date</string>
-    <string name="new_recording_ok_button_text">OK</string>
-    <string name="new_recording_cancel_button_text">Cancel</string>
+    <string name="timed_recorder_service_recording_duration">Duration</string>
+    <string name="add_new_scheduled_recording_start_label_text">Start time:</string>
+    <string name="add_new_scheduled_recording_end_label_text">End time:</string>
+    <string name="add_new_scheduled_recording_change_button_text">" Change "</string>
+    <string name="add_new_scheduled_recording_ok_button_text">OK</string>
+    <string name="add_new_scheduled_recording_cancel_button_text">Cancel</string>
 </resources>
