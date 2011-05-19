@@ -57,7 +57,7 @@ public class RadioActivity extends Activity {
         final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.favourite_list_item,
                 favouritesCursor,
-                new String[]{dbHelper.NAME},
+                new String[]{dbHelper.FAVOURITES_NAME},
                 new int[]{R.id.name_entry});
 
         ListView lstFavourites = (ListView) findViewById(R.id.lst_favourites);

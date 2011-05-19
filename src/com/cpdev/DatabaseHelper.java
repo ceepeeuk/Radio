@@ -27,10 +27,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final Context myContext;
 
 
-    public static final String TABLE = "stations";
-    public static final String NAME = "name";
-    public static final String URL = "url";
-    public static final String ID = "_id";
+    public static final String FAVOURITES_TABLE = "stations";
+    public static final String FAVOURITES_ID = "_id";
+    public static final String FAVOURITES_NAME = "name";
+    public static final String FAVOURITES_URL = "url";
+
+    public static final String RECORDING_TYPES_TABLE = "recording_type";
+    public static final String RECORDING_TYPES_ID = "_id";
+    public static final String RECORDING_TYPES_TYPE = "type";
 
     private static final String TAG = "com.cpdev.DatabaseHelper";
 
@@ -139,23 +143,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getFavourites() {
-        Cursor cursor = myDataBase.query(TABLE, new String[]{ID, NAME, URL}, null, null, null, null, null);
+        Cursor cursor = myDataBase.query(FAVOURITES_TABLE, new String[]{FAVOURITES_ID, FAVOURITES_NAME, FAVOURITES_URL}, null, null, null, null, null);
         return cursor;
     }
 
     public void addFavourite(RadioDetails radioDetails) {
         Log.d(TAG, "Attempting to add: " + radioDetails);
         ContentValues contentValues = new ContentValues();
-        contentValues.put(NAME, radioDetails.getStationName());
+        contentValues.put(FAVOURITES_NAME, radioDetails.getStationName());
         if (StringUtils.IsNullOrEmpty(radioDetails.getPlaylistUrl())) {
-            contentValues.put(URL, radioDetails.getStreamUrl());
+            contentValues.put(FAVOURITES_URL, radioDetails.getStreamUrl());
         } else {
-            contentValues.put(URL, radioDetails.getPlaylistUrl());
+            contentValues.put(FAVOURITES_URL, radioDetails.getPlaylistUrl());
         }
-        myDataBase.insert(TABLE, NAME, contentValues);
+        myDataBase.insert(FAVOURITES_TABLE, FAVOURITES_NAME, contentValues);
     }
 
     public void deleteFavourite(long id) {
-        myDataBase.delete(TABLE, "_id=?", new String[]{new Long(id).toString()});
+        myDataBase.delete(FAVOURITES_TABLE, "_id=?", new String[]{new Long(id).toString()});
+    }
+
+    public Cursor getRecordingTypes() {
+        Cursor cursor = myDataBase.query(RECORDING_TYPES_TABLE, new String[]{RECORDING_TYPES_ID, RECORDING_TYPES_TYPE}, null, null, null, null, null);
+        return cursor;
     }
 }

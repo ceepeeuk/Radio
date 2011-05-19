@@ -2,15 +2,15 @@ package com.cpdev;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 import com.cpdev.utils.StringUtils;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 public class AddNewScheduledRecording extends Activity implements View.OnClickListener {
@@ -27,6 +27,39 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
         Button setEndTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_end_time_button);
         setStartTimeButton.setOnClickListener(this);
         setEndTimeButton.setOnClickListener(this);
+
+        final DatabaseHelper dbHelper = new DatabaseHelper(this);
+
+        try {
+            dbHelper.createDataBase();
+            dbHelper.openDataBase();
+        } catch (IOException e) {
+            Log.e(TAG, "IOException thrown when trying to access DB", e);
+        }
+
+        Spinner favouriteStationSpinner = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
+        Cursor favouriteStationCursor = dbHelper.getFavourites();
+        SimpleCursorAdapter favouriteStationAdapter = new SimpleCursorAdapter(this,
+                R.layout.add_new_scheduled_recording_favourite_stations,
+                favouriteStationCursor,
+                new String[]{dbHelper.FAVOURITES_NAME},
+                new int[]{R.id.name_entry});
+
+        favouriteStationAdapter.setDropDownViewResource(R.layout.add_new_scheduled_recording_favourite_stations);
+        favouriteStationSpinner.setAdapter(favouriteStationAdapter);
+
+        Spinner recordingTypeSpinner = (Spinner) findViewById(R.id.add_new_scheduled_recording_recording_type_spinner);
+        Cursor recordingTypeCursor = dbHelper.getRecordingTypes();
+        SimpleCursorAdapter recordingTypesAdapter = new SimpleCursorAdapter(this,
+                R.layout.add_new_scheduled_recording_types,
+                recordingTypeCursor,
+                new String[]{dbHelper.RECORDING_TYPES_TYPE},
+                new int[]{R.id.add_new_scheduled_recording_type_entry});
+
+        recordingTypesAdapter.setDropDownViewResource(R.layout.add_new_scheduled_recording_types);
+        recordingTypeSpinner.setAdapter(recordingTypesAdapter);
+
+        dbHelper.close();
     }
 
     public void onClick(View view) {
