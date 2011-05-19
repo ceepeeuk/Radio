@@ -17,7 +17,6 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/com.cpdev/databases/";
 
     private static final String DB_NAME = "db";
@@ -35,6 +34,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String RECORDING_TYPES_TABLE = "recording_type";
     public static final String RECORDING_TYPES_ID = "_id";
     public static final String RECORDING_TYPES_TYPE = "type";
+
+    private static final String SCHEDULED_RECORDINGS_TABLE = "recording_schedule";
+    private static final String SCHEDULED_RECORDINGS_ID = "_id";
+    public static final String SCHEDULED_RECORDINGS_START_TIME = "start_time";
+    public static final String SCHEDULED_RECORDINGS_END_TIME = "end_time";
+    public static final String SCHEDULED_RECORDINGS_STATION = "station";
+    public static final String SCHEDULED_RECORDINGS_TYPE = "type";
 
     private static final String TAG = "com.cpdev.DatabaseHelper";
 
@@ -165,6 +171,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getRecordingTypes() {
         Cursor cursor = myDataBase.query(RECORDING_TYPES_TABLE, new String[]{RECORDING_TYPES_ID, RECORDING_TYPES_TYPE}, null, null, null, null, null);
+        return cursor;
+    }
+
+    public void insertScheduledRecording(long startTime, long endTime, int station, int type) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SCHEDULED_RECORDINGS_START_TIME, startTime);
+        contentValues.put(SCHEDULED_RECORDINGS_END_TIME, endTime);
+        contentValues.put(SCHEDULED_RECORDINGS_STATION, station);
+        contentValues.put(SCHEDULED_RECORDINGS_TYPE, type);
+        myDataBase.insert(SCHEDULED_RECORDINGS_TABLE, SCHEDULED_RECORDINGS_START_TIME, contentValues);
+    }
+
+    public Cursor getScheduledRecordings() {
+        String[] columns = {
+                SCHEDULED_RECORDINGS_ID,
+                SCHEDULED_RECORDINGS_START_TIME,
+                SCHEDULED_RECORDINGS_END_TIME,
+                SCHEDULED_RECORDINGS_STATION,
+                SCHEDULED_RECORDINGS_TYPE};
+        Cursor cursor = myDataBase.query(SCHEDULED_RECORDINGS_TABLE, columns, null, null, null, null, null);
         return cursor;
     }
 }

@@ -2,6 +2,7 @@ package com.cpdev;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,29 +14,28 @@ import com.cpdev.utils.StringUtils;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class AddNewScheduledRecording extends Activity implements View.OnClickListener {
+public class AddNewScheduledRecordingActivity extends Activity implements View.OnClickListener {
 
     private long startDateTime = 0;
-    private int endDateTime = 0;
-    private static final String TAG = "AddNewScheduledRecording";
+    private long endDateTime = 0;
+    private static final String TAG = "AddNewScheduledRecordingActivity";
 
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_scheduled_recording);
 
         Button setStartTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_set_start_time_button);
         Button setEndTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_end_time_button);
+        Button okButton = (Button) findViewById(R.id.add_new_scheduled_recording_ok_button);
+        Button cancelButton = (Button) findViewById(R.id.add_new_scheduled_recording_cancel_button);
+
         setStartTimeButton.setOnClickListener(this);
         setEndTimeButton.setOnClickListener(this);
+        okButton.setOnClickListener(this);
+        cancelButton.setOnClickListener(this);
 
-        final DatabaseHelper dbHelper = new DatabaseHelper(this);
-
-        try {
-            dbHelper.createDataBase();
-            dbHelper.openDataBase();
-        } catch (IOException e) {
-            Log.e(TAG, "IOException thrown when trying to access DB", e);
-        }
+        final DatabaseHelper dbHelper = prepareDatabaseHelper();
 
         Spinner favouriteStationSpinner = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
         Cursor favouriteStationCursor = dbHelper.getFavourites();
@@ -63,6 +63,8 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
     }
 
     public void onClick(View view) {
+        Intent listScheduledRecordingsIntent = new Intent(AddNewScheduledRecordingActivity.this, ListScheduledRecordingsActivity.class);
+
         switch (view.getId()) {
             case R.id.add_new_scheduled_recording_set_start_time_button:
                 showDateTimeDialog(view.getId());
@@ -71,10 +73,46 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
                 showDateTimeDialog(view.getId());
                 break;
             case R.id.add_new_scheduled_recording_ok_button:
+                if (this.startDateTime < 1 && this.endDateTime < 1) {
+                    Toast.makeText(this, R.string.add_new_scheduled_recording_start_and_end_time_not_set, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                if (this.startDateTime < 1) {
+                    Toast.makeText(this, R.string.add_new_scheduled_recording_start_time_not_set, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                if (this.endDateTime < 1) {
+                    Toast.makeText(this, R.string.add_new_scheduled_recording_end_time_not_set, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                addNewScheduledRecording();
+                startActivity(listScheduledRecordingsIntent);
                 break;
             case R.id.add_new_scheduled_recording_cancel_button:
+                startActivity(listScheduledRecordingsIntent);
                 break;
         }
+    }
+
+    private void addNewScheduledRecording() {
+        DatabaseHelper dbHelper = prepareDatabaseHelper();
+        Spinner station = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
+        Spinner type = (Spinner) findViewById(R.id.add_new_scheduled_recording_recording_type_spinner);
+        dbHelper.insertScheduledRecording(startDateTime, endDateTime, station.getSelectedItemPosition(), type.getSelectedItemPosition());
+        dbHelper.close();
+    }
+
+    private DatabaseHelper prepareDatabaseHelper() {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+
+        try {
+            dbHelper.createDataBase();
+            dbHelper.openDataBase();
+        } catch (IOException e) {
+            Log.e(TAG, "IOException thrown when trying to access DB", e);
+        }
+
+        return dbHelper;
     }
 
     private void showDateTimeDialog(int viewId) {
@@ -124,11 +162,10 @@ public class AddNewScheduledRecording extends Activity implements View.OnClickLi
                         ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(date);
                         break;
                     case R.id.add_new_scheduled_recording_end_time_button:
-                        startDateTime = mDateTimePicker.getDateTimeMillis();
+                        endDateTime = mDateTimePicker.getDateTimeMillis();
                         Log.d(TAG, "endDateTime = " + endDateTime);
                         ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(date);
                         break;
-
                 }
 
                 mDateTimeDialog.dismiss();

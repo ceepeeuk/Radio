@@ -159,7 +159,7 @@ public class RadioActivity extends Activity {
 
             case SCHEDULED_RECORDINGS:
 
-                Intent scheduledRecordingsIntent = new Intent(RadioActivity.this, ListScheduledRecordings.class);
+                Intent scheduledRecordingsIntent = new Intent(RadioActivity.this, ListScheduledRecordingsActivity.class);
                 startActivity(scheduledRecordingsIntent);
 //                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 //                Intent i = new Intent(context, OnAlarmReceiver.class);

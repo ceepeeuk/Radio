@@ -20,4 +20,8 @@
     <string name="add_new_scheduled_recording_change_button_text">" Change "</string>
     <string name="add_new_scheduled_recording_ok_button_text">OK</string>
     <string name="add_new_scheduled_recording_cancel_button_text">Cancel</string>
+    <string name="add_new_scheduled_recording_start_time_not_set">Please enter an start time</string>
+    <string name="add_new_scheduled_recording_end_time_not_set">Please enter an end time</string>
+    <string name="add_new_scheduled_recording_start_and_end_time_not_set">Please enter both a start and end time
+    </string>
 </resources>
