@@ -1,5 +1,8 @@
 package com.cpdev.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class StringUtils {
 
     public static boolean IsNullOrEmpty(String s) {
@@ -13,5 +16,12 @@ public class StringUtils {
         } else {
             return original;
         }
+    }
+
+    public static String convertDateTimeToString(long milliseconds) {
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE dd/MM/yy hh:mm");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliseconds);
+        return formatter.format(calendar.getTime());
     }
 }

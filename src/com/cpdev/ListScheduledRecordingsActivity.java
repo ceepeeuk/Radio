@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import java.io.IOException;
 
@@ -21,19 +20,19 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
         setContentView(R.layout.list_recording_schedule);
 
         DatabaseHelper dbHelper = prepareDatabaseHelper();
-        final Cursor scheduledRecordingsCursor = dbHelper.getScheduledRecordings();
+        final Cursor scheduledRecordingsCursor = dbHelper.getScheduledRecordingsList();
 
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+        final ScheduledRecordingsCursorAdaptor adapter = new ScheduledRecordingsCursorAdaptor(this,
                 R.layout.list_recording_schedule_list,
                 scheduledRecordingsCursor,
-                new String[]{DatabaseHelper.SCHEDULED_RECORDINGS_STATION,
+                new String[]{DatabaseHelper.STATIONS_NAME,
+                        DatabaseHelper.RECORDING_TYPES_TYPE,
                         DatabaseHelper.SCHEDULED_RECORDINGS_START_TIME,
-                        DatabaseHelper.SCHEDULED_RECORDINGS_END_TIME,
-                        DatabaseHelper.SCHEDULED_RECORDINGS_TYPE},
+                        DatabaseHelper.SCHEDULED_RECORDINGS_END_TIME},
                 new int[]{R.id.station_entry,
+                        R.id.type_entry,
                         R.id.start_time_entry,
-                        R.id.end_time_entry,
-                        R.id.type_entry
+                        R.id.end_time_entry
                 });
 
         ListView scheduledRecordings = (ListView) findViewById(R.id.list_recording_schedule_list_view);

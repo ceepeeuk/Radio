@@ -35,6 +35,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String RECORDING_TYPES_ID = "_id";
     public static final String RECORDING_TYPES_TYPE = "type";
 
+    public static final String STATIONS_TABLE = "stations";
+    public static final String STATIONS_ID = "_id";
+    public static final String STATIONS_NAME = "name";
+    public static final String STATIONS_URL = "url";
+
     private static final String SCHEDULED_RECORDINGS_TABLE = "recording_schedule";
     private static final String SCHEDULED_RECORDINGS_ID = "_id";
     public static final String SCHEDULED_RECORDINGS_START_TIME = "start_time";
@@ -49,9 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.myContext = context;
     }
 
-    /**
-     * Creates a empty database on the system and rewrites it with your own database.
-     */
+    // Creates a empty database on the system and rewrites it with your own database.
     public void createDataBase() throws IOException {
 
         boolean dbExist = checkDataBase();
@@ -72,11 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Check if the database already exist to avoid re-copying the file each time you open the application.
-     *
-     * @return true if it exists, false if it doesn't
-     */
+    // Check if the database already exist to avoid re-copying the file each time you open the application.
     private boolean checkDataBase() {
 
         SQLiteDatabase checkDB = null;
@@ -87,20 +86,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
 
         } catch (SQLiteException e) {
+            Log.e(TAG, "SQLException occurred in checkDataBase()", e);
         }
 
         if (checkDB != null) {
             checkDB.close();
         }
 
-        return checkDB != null ? true : false;
+        return checkDB != null;
     }
 
-    /**
-     * Copies your database from your local assets-folder to the just created empty database in the
-     * system folder, from where it can be accessed and handled.
-     * This is done by transfering bytestream.
-     */
+    // Copies your database from your local assets-folder to the just created empty database in the
+    // system folder, from where it can be accessed and handled.This is done by transfering bytestream.
     private void copyDataBase() throws IOException {
 
         //Open your local db as the input stream
@@ -149,8 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getFavourites() {
-        Cursor cursor = myDataBase.query(FAVOURITES_TABLE, new String[]{FAVOURITES_ID, FAVOURITES_NAME, FAVOURITES_URL}, null, null, null, null, null);
-        return cursor;
+        return myDataBase.query(FAVOURITES_TABLE, new String[]{FAVOURITES_ID, FAVOURITES_NAME, FAVOURITES_URL}, null, null, null, null, null);
     }
 
     public void addFavourite(RadioDetails radioDetails) {
@@ -166,31 +162,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void deleteFavourite(long id) {
-        myDataBase.delete(FAVOURITES_TABLE, "_id=?", new String[]{new Long(id).toString()});
+        myDataBase.delete(FAVOURITES_TABLE, "_id=?", new String[]{Long.toString(id)});
     }
 
     public Cursor getRecordingTypes() {
-        Cursor cursor = myDataBase.query(RECORDING_TYPES_TABLE, new String[]{RECORDING_TYPES_ID, RECORDING_TYPES_TYPE}, null, null, null, null, null);
-        return cursor;
+        return myDataBase.query(RECORDING_TYPES_TABLE, new String[]{RECORDING_TYPES_ID, RECORDING_TYPES_TYPE}, null, null, null, null, null);
     }
 
     public void insertScheduledRecording(long startTime, long endTime, int station, int type) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SCHEDULED_RECORDINGS_START_TIME, startTime);
         contentValues.put(SCHEDULED_RECORDINGS_END_TIME, endTime);
-        contentValues.put(SCHEDULED_RECORDINGS_STATION, station);
-        contentValues.put(SCHEDULED_RECORDINGS_TYPE, type);
+        contentValues.put(SCHEDULED_RECORDINGS_STATION, station + 1);
+        contentValues.put(SCHEDULED_RECORDINGS_TYPE, type + 1);
         myDataBase.insert(SCHEDULED_RECORDINGS_TABLE, SCHEDULED_RECORDINGS_START_TIME, contentValues);
     }
 
-    public Cursor getScheduledRecordings() {
+    public Cursor getScheduledRecordingsList() {
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT RECORDING_SCHEDULE._ID, STATIONS.NAME, RECORDING_TYPE.TYPE, RECORDING_SCHEDULE.START_TIME, RECORDING_SCHEDULE.END_TIME ");
+        query.append("FROM RECORDING_SCHEDULE, RECORDING_TYPE, STATIONS ");
+        query.append("WHERE RECORDING_SCHEDULE.STATION = STATIONS._ID AND RECORDING_SCHEDULE.TYPE = RECORDING_TYPE._ID");
+        return myDataBase.rawQuery(query.toString(), new String[]{});
+    }
+
+    public Cursor getAllScheduledRecordings() {
         String[] columns = {
                 SCHEDULED_RECORDINGS_ID,
                 SCHEDULED_RECORDINGS_START_TIME,
                 SCHEDULED_RECORDINGS_END_TIME,
                 SCHEDULED_RECORDINGS_STATION,
                 SCHEDULED_RECORDINGS_TYPE};
-        Cursor cursor = myDataBase.query(SCHEDULED_RECORDINGS_TABLE, columns, null, null, null, null, null);
-        return cursor;
+        return myDataBase.query(SCHEDULED_RECORDINGS_TABLE, columns, null, null, null, null, null);
     }
 }

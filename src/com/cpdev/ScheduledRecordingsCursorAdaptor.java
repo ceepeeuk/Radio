@@ -7,15 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import com.cpdev.utils.StringUtils;
 
 public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
 
-    private Context context;
     private int layout;
 
     public ScheduledRecordingsCursorAdaptor(Context context, int layout, Cursor c, String[] from, int[] to) {
         super(context, layout, c, from, to);
-        this.context = context;
         this.layout = layout;
     }
 
@@ -27,8 +26,8 @@ public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
         final LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(layout, parent, false);
 
-        int stationColumn = c.getColumnIndex(DatabaseHelper.SCHEDULED_RECORDINGS_STATION);
-        int typeColumn = c.getColumnIndex(DatabaseHelper.SCHEDULED_RECORDINGS_TYPE);
+        int stationColumn = c.getColumnIndex(DatabaseHelper.STATIONS_NAME);
+        int typeColumn = c.getColumnIndex(DatabaseHelper.RECORDING_TYPES_TYPE);
         int startTimeColumn = c.getColumnIndex(DatabaseHelper.SCHEDULED_RECORDINGS_START_TIME);
         int endTimeColumn = c.getColumnIndex(DatabaseHelper.SCHEDULED_RECORDINGS_END_TIME);
 
@@ -36,8 +35,6 @@ public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
         String type = c.getString(typeColumn);
         long start = c.getLong(startTimeColumn);
         long end = c.getLong(endTimeColumn);
-
-        // This is where long milliseconds can be converted to correct format
 
         TextView station_text = (TextView) v.findViewById(R.id.station_entry);
         if (station_text != null) {
@@ -49,14 +46,14 @@ public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
             type_text.setText(type);
         }
 
-        TextView start_time_text = (TextView) v.findViewById(R.id.station_entry);
+        TextView start_time_text = (TextView) v.findViewById(R.id.start_time_entry);
         if (start_time_text != null) {
-            start_time_text.setText(start);
+            start_time_text.setText(StringUtils.convertDateTimeToString(start));
         }
 
-        TextView end_time_text = (TextView) v.findViewById(R.id.station_entry);
+        TextView end_time_text = (TextView) v.findViewById(R.id.end_time_entry);
         if (end_time_text != null) {
-            end_time_text.setText(end);
+            end_time_text.setText(StringUtils.convertDateTimeToString(end));
         }
 
         return v;
@@ -65,6 +62,35 @@ public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        super.bindView(view, context, cursor);
+
+        int stationColumn = cursor.getColumnIndex(DatabaseHelper.STATIONS_NAME);
+        int typeColumn = cursor.getColumnIndex(DatabaseHelper.RECORDING_TYPES_TYPE);
+        int startTimeColumn = cursor.getColumnIndex(DatabaseHelper.SCHEDULED_RECORDINGS_START_TIME);
+        int endTimeColumn = cursor.getColumnIndex(DatabaseHelper.SCHEDULED_RECORDINGS_END_TIME);
+
+        String station = cursor.getString(stationColumn);
+        String type = cursor.getString(typeColumn);
+        long start = cursor.getLong(startTimeColumn);
+        long end = cursor.getLong(endTimeColumn);
+
+        TextView station_text = (TextView) view.findViewById(R.id.station_entry);
+        if (station_text != null) {
+            station_text.setText(station);
+        }
+
+        TextView type_text = (TextView) view.findViewById(R.id.type_entry);
+        if (type_text != null) {
+            type_text.setText(type);
+        }
+
+        TextView start_time_text = (TextView) view.findViewById(R.id.start_time_entry);
+        if (start_time_text != null) {
+            start_time_text.setText(StringUtils.convertDateTimeToString(start));
+        }
+
+        TextView end_time_text = (TextView) view.findViewById(R.id.end_time_entry);
+        if (end_time_text != null) {
+            end_time_text.setText(StringUtils.convertDateTimeToString(end));
+        }
     }
 }

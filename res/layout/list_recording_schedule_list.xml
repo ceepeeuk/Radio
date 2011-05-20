@@ -8,7 +8,7 @@
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/station_entry"
+                  android:id="@+id/start_time_entry"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="18sp"/>
@@ -16,21 +16,23 @@
                   android:id="@+id/type_entry"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:textSize="18sp"/>
+                  android:textSize="18sp"
+                  android:paddingLeft="10dip"/>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/start_time_entry"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:textSize="18sp"/>
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
                   android:id="@+id/end_time_entry"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="18sp"/>
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/station_entry"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="18sp"
+                  android:paddingLeft="10dip"/>
     </LinearLayout>
 </LinearLayout>
