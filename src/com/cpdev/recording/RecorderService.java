@@ -47,7 +47,8 @@ public class RecorderService extends WakefulIntentService {
         RadioDetails radioDetails = new RadioDetails(
                 bundle.getString(getString(R.string.timed_recorder_service_name_key)),
                 bundle.getString(getString(R.string.timed_recorder_service_url_key)),
-                null);
+                null,
+                bundle.getLong(getString(R.string.timed_recorder_service_recording_duration)));
 
         CharSequence ticketText = new StringBuilder()
                 .append("Recording ")
@@ -55,6 +56,7 @@ public class RecorderService extends WakefulIntentService {
                 .toString();
 
         Log.d(TAG, ticketText.toString());
+        Log.d(TAG, "radioDetails.getStreamUrl() = " + radioDetails.getStreamUrl());
 
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
@@ -97,7 +99,7 @@ public class RecorderService extends WakefulIntentService {
             }
 
             byte[] buffer = new byte[4096];
-            int len = 0;
+            int len;
 
             if (radioDetails.getDuration() > 0) {
                 // Timed recording

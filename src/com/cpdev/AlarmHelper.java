@@ -13,16 +13,12 @@ import java.text.SimpleDateFormat;
 public class AlarmHelper {
     private static final String TAG = "AlarmHelper";
 
+
     public void setAlarm(Context context, long stationId, long typeId, long startDateTime, long endDateTime) {
-//        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//                Intent i = new Intent(context, OnAlarmReceiver.class);
-//                PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-//
-//                mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60000, PERIOD, pi);
 
         DatabaseHelper databaseHelper = prepareDatabaseHelper(context);
-
         RadioDetails radioDetails = databaseHelper.getRadioDetail(stationId);
+        databaseHelper.close();
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, RecordingBroadcastReceiver.class);
@@ -34,12 +30,27 @@ public class AlarmHelper {
 
         Log.d(TAG, "startTime = " + new SimpleDateFormat("EEE dd/MM/yyyy HH:mm:ss").format(startDateTime));
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, startDateTime, pendingIntent);
+        switch ((int) typeId) {
 
-        databaseHelper.close();
+            case RadioApplication.ONE_OFF_SCHEDULED_RECORDING:
+                alarmManager.set(AlarmManager.RTC_WAKEUP, startDateTime, pendingIntent);
+                break;
+
+            case RadioApplication.DAILY_SCHEDULED_RECORDING:
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startDateTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+                break;
+
+            case RadioApplication.WEEKLY_SCHEDULED_RECORDING:
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startDateTime, AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                break;
+
+        }
+
+
     }
 
     private DatabaseHelper prepareDatabaseHelper(Context context) {
+
         DatabaseHelper dbHelper = new DatabaseHelper(context);
 
         try {

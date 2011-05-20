@@ -24,8 +24,8 @@ public class RadioDetails implements Parcelable {
         if (!StringUtils.IsNullOrEmpty(playlistUrl)) {
             setPlaylistUrl(playlistUrl);
         }
-        if (!StringUtils.IsNullOrEmpty(name)) {
-            setStationName(name);
+        if (!StringUtils.IsNullOrEmpty(streamUrl)) {
+            setStreamUrl(streamUrl);
         }
         if (duration > 0) {
             setDuration(duration);

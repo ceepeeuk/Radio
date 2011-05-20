@@ -4,8 +4,13 @@ import android.app.Application;
 import android.media.MediaPlayer;
 
 public class RadioApplication extends Application {
-    private RadioDetails _playingStation;
 
+    // Table not zero indexed, so starts at 1
+    public static final int ONE_OFF_SCHEDULED_RECORDING = 1;
+    public static final int DAILY_SCHEDULED_RECORDING = 2;
+    public static final int WEEKLY_SCHEDULED_RECORDING = 3;
+
+    private RadioDetails _playingStation;
     private MediaPlayer _mediaPlayer;
 
     public MediaPlayer getMediaPlayer() {

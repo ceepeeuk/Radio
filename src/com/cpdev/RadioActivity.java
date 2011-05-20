@@ -32,6 +32,7 @@ public class RadioActivity extends Activity {
     private static final int ADD_FAVOURITE = 2;
     private static final int SCHEDULED_RECORDINGS = 3;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +58,7 @@ public class RadioActivity extends Activity {
         final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.favourite_list_item,
                 favouritesCursor,
-                new String[]{dbHelper.FAVOURITES_NAME},
+                new String[]{DatabaseHelper.FAVOURITES_NAME},
                 new int[]{R.id.name_entry});
 
         ListView lstFavourites = (ListView) findViewById(R.id.lst_favourites);
