@@ -62,7 +62,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (dbExist) {
             //do nothing - database already exist
         } else {
-
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
             this.getReadableDatabase();
@@ -120,14 +119,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         myOutput.flush();
         myOutput.close();
         myInput.close();
-
     }
 
     public void openDataBase() throws SQLException {
         //Open the database
         String myPath = DB_PATH + DB_NAME;
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
-
     }
 
     @Override
@@ -178,11 +175,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         myDataBase.insert(SCHEDULED_RECORDINGS_TABLE, SCHEDULED_RECORDINGS_START_TIME, contentValues);
     }
 
+    public void deleteScheduledRecording(long id) {
+        myDataBase.delete(SCHEDULED_RECORDINGS_TABLE, "_id=?", new String[]{Long.toString(id)});
+    }
+
     public Cursor getScheduledRecordingsList() {
         StringBuilder query = new StringBuilder();
         query.append("SELECT RECORDING_SCHEDULE._ID, STATIONS.NAME, RECORDING_TYPE.TYPE, RECORDING_SCHEDULE.START_TIME, RECORDING_SCHEDULE.END_TIME ");
         query.append("FROM RECORDING_SCHEDULE, RECORDING_TYPE, STATIONS ");
-        query.append("WHERE RECORDING_SCHEDULE.STATION = STATIONS._ID AND RECORDING_SCHEDULE.TYPE = RECORDING_TYPE._ID");
+        query.append("WHERE RECORDING_SCHEDULE.STATION = STATIONS._ID AND RECORDING_SCHEDULE.TYPE = RECORDING_TYPE._ID ");
+        query.append("ORDER BY RECORDING_SCHEDULE.START_TIME");
         return myDataBase.rawQuery(query.toString(), new String[]{});
     }
 
@@ -194,5 +196,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 SCHEDULED_RECORDINGS_STATION,
                 SCHEDULED_RECORDINGS_TYPE};
         return myDataBase.query(SCHEDULED_RECORDINGS_TABLE, columns, null, null, null, null, null);
+    }
+
+    public RadioDetails getRadioDetail(long stationId) {
+        Cursor cursor = myDataBase.query(STATIONS_TABLE, new String[]{STATIONS_NAME, STATIONS_URL}, " _ID = ?", new String[]{String.valueOf(stationId)}, null, null, null);
+        RadioDetails radioDetails = new RadioDetails();
+        if (cursor.moveToFirst()) {
+            radioDetails.setStationName(cursor.getString(0));
+            radioDetails.setPlaylistUrl(cursor.getString(1));
+        }
+        return radioDetails;
     }
 }

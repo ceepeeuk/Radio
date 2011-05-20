@@ -19,7 +19,7 @@ public class StringUtils {
     }
 
     public static String convertDateTimeToString(long milliseconds) {
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE dd/MM/yy hh:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE dd/MM/yy HH:mm");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliseconds);
         return formatter.format(calendar.getTime());

@@ -42,7 +42,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         SimpleCursorAdapter favouriteStationAdapter = new SimpleCursorAdapter(this,
                 R.layout.add_new_scheduled_recording_favourite_stations,
                 favouriteStationCursor,
-                new String[]{dbHelper.FAVOURITES_NAME},
+                new String[]{DatabaseHelper.FAVOURITES_NAME},
                 new int[]{R.id.name_entry});
 
         favouriteStationAdapter.setDropDownViewResource(R.layout.add_new_scheduled_recording_favourite_stations);
@@ -53,7 +53,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         SimpleCursorAdapter recordingTypesAdapter = new SimpleCursorAdapter(this,
                 R.layout.add_new_scheduled_recording_types,
                 recordingTypeCursor,
-                new String[]{dbHelper.RECORDING_TYPES_TYPE},
+                new String[]{DatabaseHelper.RECORDING_TYPES_TYPE},
                 new int[]{R.id.add_new_scheduled_recording_type_entry});
 
         recordingTypesAdapter.setDropDownViewResource(R.layout.add_new_scheduled_recording_types);
@@ -95,11 +95,15 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
     }
 
     private void addNewScheduledRecording() {
+        // Add to database
         DatabaseHelper dbHelper = prepareDatabaseHelper();
         Spinner station = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
         Spinner type = (Spinner) findViewById(R.id.add_new_scheduled_recording_recording_type_spinner);
         dbHelper.insertScheduledRecording(startDateTime, endDateTime, station.getSelectedItemPosition(), type.getSelectedItemPosition());
         dbHelper.close();
+
+        //Set alarm
+        new AlarmHelper().setAlarm(this, station.getSelectedItemId(), type.getSelectedItemId(), startDateTime, endDateTime);
     }
 
     private DatabaseHelper prepareDatabaseHelper() {
@@ -173,7 +177,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         });
 
         // Cancel the dialog when the "Cancel" button is clicked
-        ((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new View.OnClickListener() {
+        mDateTimeDialogView.findViewById(R.id.CancelDialog).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 // TODO Auto-generated method stub
@@ -182,7 +186,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         });
 
         // Reset Date and Time pickers when the "Reset" button is clicked
-        ((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new View.OnClickListener() {
+        mDateTimeDialogView.findViewById(R.id.ResetDateTime).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 // TODO Auto-generated method stub
