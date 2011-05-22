@@ -9,7 +9,7 @@ public class RadioDetails implements Parcelable {
     private String _streamUrl;
     private String _playlistUrl;
     private long _duration = 0;
-    public long _recordingType = 0;
+    private long _recordingType = 0;
 
     // Table not zero indexed, so starts at 1
     public static final int ONE_OFF_SCHEDULED_RECORDING = 1;
@@ -29,7 +29,7 @@ public class RadioDetails implements Parcelable {
         setRecordingType(recordingType);
     }
 
-    public RadioDetails(Parcel parcel) {
+    private RadioDetails(Parcel parcel) {
         setStationName(parcel.readString());
         setStreamUrl(parcel.readString());
         setPlaylistUrl(parcel.readString());
@@ -43,13 +43,13 @@ public class RadioDetails implements Parcelable {
         setPlaylistUrl("");
     }
 
-    public static final Creator CREATOR = new Creator() {
+    public static final Parcelable.Creator<RadioDetails> CREATOR = new Parcelable.Creator<RadioDetails>() {
         public RadioDetails createFromParcel(Parcel parcel) {
-            return new RadioDetails(parcel);  //To change body of implemented methods use File | Settings | File Templates.
+            return new RadioDetails(parcel);
         }
 
-        public Object[] newArray(int i) {
-            return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.
+        public RadioDetails[] newArray(int size) {
+            return new RadioDetails[size];
         }
     };
 
@@ -116,7 +116,7 @@ public class RadioDetails implements Parcelable {
         return 0;
     }
 
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getStationName());
         parcel.writeString(getStreamUrl());
         parcel.writeString(getPlaylistUrl());

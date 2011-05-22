@@ -5,6 +5,9 @@
     <string name="app_name_list_scheduled_recordings">Recordio - Scheduled Recordings</string>
     <string name="app_name_add_new_scheduled_recordings">Recordio - Add New Scheduled Recording</string>
     <string name="radio_details_key">radioDetails</string>
+    <string name="radio_details_name_key">radioDetails name</string>
+    <string name="radio_details_stream_url_key">radioDetails stream</string>
+    <string name="radio_details_playlist_url_key">radioDetails playlist</string>
     <string name="edit_fav_pop_up_btn_save">Save</string>
     <string name="edit_fav_pop_up_btn_cancel">Cancel</string>
     <string name="edit_fav_pop_up_lbl_name">Name</string>
@@ -12,6 +15,7 @@
     <string name="player_service_operation_key">Operation</string>
     <string name="player_service_name_key">StationName</string>
     <string name="player_service_url_key">StationURL</string>
+    <string name="timed_recorder_service_database_id_key">databseId</string>
     <string name="timed_recorder_service_operation_key">Operation</string>
     <string name="timed_recorder_service_name_key">StationName</string>
     <string name="timed_recorder_service_url_key">StationURL</string>

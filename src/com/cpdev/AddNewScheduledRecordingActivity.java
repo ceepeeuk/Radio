@@ -99,11 +99,12 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         DatabaseHelper dbHelper = prepareDatabaseHelper();
         Spinner station = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
         Spinner type = (Spinner) findViewById(R.id.add_new_scheduled_recording_recording_type_spinner);
-        dbHelper.insertScheduledRecording(startDateTime, endDateTime, station.getSelectedItemPosition(), type.getSelectedItemPosition());
+        long dbId = dbHelper.insertScheduledRecording(startDateTime, endDateTime, station.getSelectedItemPosition(), type.getSelectedItemPosition());
+
         dbHelper.close();
 
         //Set alarm
-        new AlarmHelper().setAlarm(this, station.getSelectedItemId(), type.getSelectedItemId(), startDateTime, endDateTime);
+        new AlarmHelper().setAlarm(this, dbId, station.getSelectedItemId(), type.getSelectedItemId(), startDateTime, endDateTime);
     }
 
     private DatabaseHelper prepareDatabaseHelper() {

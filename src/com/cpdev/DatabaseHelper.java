@@ -166,13 +166,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return myDataBase.query(RECORDING_TYPES_TABLE, new String[]{RECORDING_TYPES_ID, RECORDING_TYPES_TYPE}, null, null, null, null, null);
     }
 
-    public void insertScheduledRecording(long startTime, long endTime, int station, int type) {
+    public long insertScheduledRecording(long startTime, long endTime, int station, int type) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SCHEDULED_RECORDINGS_START_TIME, startTime);
         contentValues.put(SCHEDULED_RECORDINGS_END_TIME, endTime);
         contentValues.put(SCHEDULED_RECORDINGS_STATION, station + 1);
         contentValues.put(SCHEDULED_RECORDINGS_TYPE, type + 1);
-        myDataBase.insert(SCHEDULED_RECORDINGS_TABLE, SCHEDULED_RECORDINGS_START_TIME, contentValues);
+        return myDataBase.insert(SCHEDULED_RECORDINGS_TABLE, SCHEDULED_RECORDINGS_START_TIME, contentValues);
     }
 
     public void deleteScheduledRecording(long id) {

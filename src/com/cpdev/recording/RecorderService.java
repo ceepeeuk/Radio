@@ -42,13 +42,13 @@ public class RecorderService extends WakefulIntentService {
         super("RecorderService");
     }
 
+
     @Override
     protected void doWakefulWork(Intent intent) {
 
         Bundle bundle = intent.getExtras();
         RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
 
-        Log.d(TAG, "RadioDetails: \n" + radioDetails);
 
         if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
             if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
@@ -60,13 +60,11 @@ public class RecorderService extends WakefulIntentService {
             radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
         }
 
-
         CharSequence ticketText = new StringBuilder()
                 .append("Recording ")
                 .append(radioDetails.getStationName())
                 .toString();
 
-        Log.d(TAG, ticketText.toString());
 
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
@@ -110,13 +108,18 @@ public class RecorderService extends WakefulIntentService {
             byte[] buffer = new byte[4096];
             int len = 0;
 
-            Log.d(TAG, "RadioDetails = " + radioDetails);
-
             if (radioDetails.getDuration() > 0) {
 
                 // Timed recording
-                Log.d(TAG, "Starting timed recording of " + radioDetails.getStationName() +
-                        "for " + radioDetails.getDuration() / 1000 + " seconds");
+                StringBuilder logText = new StringBuilder()
+                        .append("Starting timed recording of ")
+                        .append(radioDetails.getStationName())
+                        .append(" for ")
+                        .append(radioDetails.getDuration() / 1000 / 60)
+                        .append(" minutes, into ")
+                        .append(outputSource);
+
+                Log.d(TAG, logText.toString());
 
                 long endTime = System.currentTimeMillis() + radioDetails.getDuration();
 
