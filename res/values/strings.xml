@@ -4,6 +4,7 @@
     <string name="app_name_confirm_details_activity">Recordio - Confirm New Favourite</string>
     <string name="app_name_list_scheduled_recordings">Recordio - Scheduled Recordings</string>
     <string name="app_name_add_new_scheduled_recordings">Recordio - Add New Scheduled Recording</string>
+    <string name="radio_details_key">radioDetails</string>
     <string name="edit_fav_pop_up_btn_save">Save</string>
     <string name="edit_fav_pop_up_btn_cancel">Cancel</string>
     <string name="edit_fav_pop_up_lbl_name">Name</string>

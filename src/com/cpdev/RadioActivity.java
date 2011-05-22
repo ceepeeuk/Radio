@@ -11,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import com.cpdev.filehandling.M3uHandler;
-import com.cpdev.filehandling.PlsHandler;
 import com.cpdev.recording.RecorderService;
 import com.cpdev.utils.StringUtils;
 
@@ -153,7 +151,7 @@ public class RadioActivity extends Activity {
                 }
 
                 Intent confirmDetailsIntent = new Intent(RadioActivity.this, ConfirmDetailsActivity.class);
-                confirmDetailsIntent.putExtra("RadioDetails", radioDetails);
+                confirmDetailsIntent.putExtra(getString(R.string.radio_details_key), radioDetails);
                 startActivity(confirmDetailsIntent);
 
                 return true;
@@ -162,25 +160,6 @@ public class RadioActivity extends Activity {
 
                 Intent scheduledRecordingsIntent = new Intent(RadioActivity.this, ListScheduledRecordingsActivity.class);
                 startActivity(scheduledRecordingsIntent);
-//                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//                Intent i = new Intent(context, OnAlarmReceiver.class);
-//                PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-//
-//                mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60000, PERIOD, pi);
-
-//                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//                Intent intent = new Intent(this, RecordingBroadcastReceiver.class);
-//                intent.putExtra(getString(R.string.timed_recorder_service_name_key), "rinse.fm");
-//                intent.putExtra(getString(R.string.timed_recorder_service_url_key), "http://sub.fm/listenwinamp128k.pls");
-//                intent.putExtra(getString(R.string.timed_recorder_service_recording_duration), TimeUnit.MINUTES.toMillis(1));
-//                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-//                long timeToRun = (System.currentTimeMillis() + (AlarmManager.INTERVAL_FIFTEEN_MINUTES / 60));
-//
-//                Log.d(TAG, "timeToRun = " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(timeToRun));
-//
-//                alarmManager.set(AlarmManager.RTC_WAKEUP, timeToRun, pendingIntent);
-//
-//                showToast("OK, think alarm is set");
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -200,16 +179,6 @@ public class RadioActivity extends Activity {
     }
 
     private void decideStreamOption(RadioDetails radioDetails) {
-
-        if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
-            if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
-                radioDetails = PlsHandler.parse(radioDetails);
-            } else {
-                radioDetails = M3uHandler.parse(radioDetails);
-            }
-        } else {
-            radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
-        }
 
         Log.d(TAG, "RadioDetails:" + radioDetails);
 
@@ -277,6 +246,8 @@ public class RadioActivity extends Activity {
 
     private void record(final RadioDetails radioDetails) {
 
+        Log.d(TAG, "RadioDetails for calling service: \n" + radioDetails);
+
         if (RecorderService.alreadyRecording()) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -309,8 +280,7 @@ public class RadioActivity extends Activity {
     private Intent createRecordingIntent(RadioDetails radioDetails) {
         Intent intent = new Intent("com.cpdev.recording.RecorderService");
         if (radioDetails != null) {
-            intent.putExtra(getString(R.string.timed_recorder_service_name_key), radioDetails.getStationName());
-            intent.putExtra((getString(R.string.timed_recorder_service_url_key)), radioDetails.getStreamUrl());
+            intent.putExtra(getString(R.string.radio_details_key), radioDetails);
         }
         return intent;
     }

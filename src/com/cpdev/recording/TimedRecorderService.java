@@ -5,7 +5,6 @@ import android.os.Bundle;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.cpdev.R;
 import com.cpdev.RadioApplication;
-import com.cpdev.RadioDetails;
 
 public class TimedRecorderService extends WakefulIntentService {
 
@@ -21,7 +20,7 @@ public class TimedRecorderService extends WakefulIntentService {
         long duration = bundle.getLong(getString(R.string.timed_recorder_service_recording_duration));
 
         RadioApplication radioApplication = (RadioApplication) this.getApplicationContext();
-        RadioDetails radioDetails = new RadioDetails(name, null, url, duration);
+        //RadioDetails radioDetails = new RadioDetails(name, null, url, duration);
         //radioApplication.getRecordingTask().execute(radioDetails);
     }
 }

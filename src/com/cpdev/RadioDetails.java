@@ -2,7 +2,6 @@ package com.cpdev;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.cpdev.utils.StringUtils;
 
 public class RadioDetails implements Parcelable {
 
@@ -10,6 +9,13 @@ public class RadioDetails implements Parcelable {
     private String _streamUrl;
     private String _playlistUrl;
     private long _duration = 0;
+    public long _recordingType = 0;
+
+    // Table not zero indexed, so starts at 1
+    public static final int ONE_OFF_SCHEDULED_RECORDING = 1;
+    public static final int DAILY_SCHEDULED_RECORDING = 2;
+    public static final int WEEKLY_SCHEDULED_RECORDING = 3;
+
 
     public RadioDetails(String stationName, String streamUrl, String playlistUrl) {
         setStationName(stationName);
@@ -17,25 +23,18 @@ public class RadioDetails implements Parcelable {
         setPlaylistUrl(playlistUrl);
     }
 
-    public RadioDetails(String name, String streamUrl, String playlistUrl, long duration) {
-        if (!StringUtils.IsNullOrEmpty(name)) {
-            setStationName(name);
-        }
-        if (!StringUtils.IsNullOrEmpty(playlistUrl)) {
-            setPlaylistUrl(playlistUrl);
-        }
-        if (!StringUtils.IsNullOrEmpty(streamUrl)) {
-            setStreamUrl(streamUrl);
-        }
-        if (duration > 0) {
-            setDuration(duration);
-        }
+    public RadioDetails(String name, String streamUrl, String playlistUrl, long duration, long recordingType) {
+        this(name, streamUrl, playlistUrl);
+        setDuration(duration);
+        setRecordingType(recordingType);
     }
 
     public RadioDetails(Parcel parcel) {
         setStationName(parcel.readString());
         setStreamUrl(parcel.readString());
         setPlaylistUrl(parcel.readString());
+        setDuration(parcel.readLong());
+        setRecordingType(parcel.readLong());
     }
 
     public RadioDetails() {
@@ -87,6 +86,14 @@ public class RadioDetails implements Parcelable {
         _duration = duration;
     }
 
+    public void setRecordingType(long type) {
+        _recordingType = type;
+    }
+
+    public long getRecordingType() {
+        return _recordingType;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n\nName = ");
@@ -95,6 +102,12 @@ public class RadioDetails implements Parcelable {
         sb.append(getStreamUrl());
         sb.append("\nPlaylistUrl = ");
         sb.append(getPlaylistUrl());
+        sb.append("\n");
+        sb.append("\nDuration = ");
+        sb.append(getDuration());
+        sb.append("\n");
+        sb.append("\nRecordingType = ");
+        sb.append(getRecordingType());
         sb.append("\n");
         return sb.toString();
     }
@@ -107,5 +120,7 @@ public class RadioDetails implements Parcelable {
         parcel.writeString(getStationName());
         parcel.writeString(getStreamUrl());
         parcel.writeString(getPlaylistUrl());
+        parcel.writeLong(getDuration());
+        parcel.writeLong(getRecordingType());
     }
 }

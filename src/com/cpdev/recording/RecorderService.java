@@ -11,6 +11,8 @@ import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.cpdev.NotificationHelper;
 import com.cpdev.R;
 import com.cpdev.RadioDetails;
+import com.cpdev.filehandling.M3uHandler;
+import com.cpdev.filehandling.PlsHandler;
 import com.cpdev.utils.StringUtils;
 
 import java.io.File;
@@ -44,11 +46,20 @@ public class RecorderService extends WakefulIntentService {
     protected void doWakefulWork(Intent intent) {
 
         Bundle bundle = intent.getExtras();
-        RadioDetails radioDetails = new RadioDetails(
-                bundle.getString(getString(R.string.timed_recorder_service_name_key)),
-                bundle.getString(getString(R.string.timed_recorder_service_url_key)),
-                null,
-                bundle.getLong(getString(R.string.timed_recorder_service_recording_duration)));
+        RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
+
+        Log.d(TAG, "RadioDetails: \n" + radioDetails);
+
+        if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
+            if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
+                radioDetails = PlsHandler.parse(radioDetails);
+            } else {
+                radioDetails = M3uHandler.parse(radioDetails);
+            }
+        } else {
+            radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
+        }
+
 
         CharSequence ticketText = new StringBuilder()
                 .append("Recording ")
@@ -56,12 +67,10 @@ public class RecorderService extends WakefulIntentService {
                 .toString();
 
         Log.d(TAG, ticketText.toString());
-        Log.d(TAG, "radioDetails.getStreamUrl() = " + radioDetails.getStreamUrl());
 
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
 
-        long startTime = System.currentTimeMillis();
 
         try {
             URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
@@ -99,20 +108,30 @@ public class RecorderService extends WakefulIntentService {
             }
 
             byte[] buffer = new byte[4096];
-            int len;
+            int len = 0;
+
+            Log.d(TAG, "RadioDetails = " + radioDetails);
 
             if (radioDetails.getDuration() > 0) {
+
                 // Timed recording
-                long endTime = startTime + radioDetails.getDuration();
-                while (System.currentTimeMillis() < endTime && (len = inputStream.read(buffer)) > 0) {
+                Log.d(TAG, "Starting timed recording of " + radioDetails.getStationName() +
+                        "for " + radioDetails.getDuration() / 1000 + " seconds");
+
+                long endTime = System.currentTimeMillis() + radioDetails.getDuration();
+
+                while ((System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
                     fileOutputStream.write(buffer, 0, len);
                 }
+
             } else {
+
                 // Manual recording
                 Log.d(TAG, "Starting manual recording...");
                 while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
                     fileOutputStream.write(buffer, 0, len);
                 }
+
             }
 
             Log.d(TAG, "Finished writing stream");

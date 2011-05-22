@@ -25,7 +25,7 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
         setContentView(R.layout.edit_fav_pop_up);
 
         Bundle bundle = this.getIntent().getExtras();
-        RadioDetails radioDetails = bundle.getParcelable("RadioDetails");
+        RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
 
         EditText txtName = (EditText) findViewById(R.id.edit_fav_pop_up_txt_name);
         EditText txtUrl = (EditText) findViewById(R.id.edit_fav_pop_up_txt_url);
