@@ -37,11 +37,6 @@
                 <action android:name="com.cpdev.recording.RecorderService"/>
             </intent-filter>
         </service>
-        <service android:name=".recording.TimedRecorderService">
-            <intent-filter>
-                <action android:name="com.cpdev.recording.TimedRecorderService"/>
-            </intent-filter>
-        </service>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

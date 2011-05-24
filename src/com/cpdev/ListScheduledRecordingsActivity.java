@@ -1,11 +1,14 @@
 package com.cpdev;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -39,6 +42,28 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
         scheduledRecordings.setAdapter(adapter);
         dbHelper.close();
 
+        scheduledRecordings.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
+                new AlertDialog.Builder(view.getContext())
+                        .setMessage("Delete scheduled recording?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                DatabaseHelper databaseHelper = prepareDatabaseHelper();
+                                databaseHelper.deleteScheduledRecording(id);
+                                databaseHelper.close();
+                                scheduledRecordingsCursor.requery();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .show();
+
+                return false;
+            }
+        });
+
         Button addNewButton = (Button) findViewById(R.id.list_recording_schedule_new_button);
         addNewButton.setOnClickListener(this);
     }
@@ -60,4 +85,6 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
 
         return dbHelper;
     }
+
+
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import com.cpdev.AlarmHelper;
 import com.cpdev.DatabaseHelper;
 import com.cpdev.R;
 import com.cpdev.RadioDetails;
@@ -40,7 +41,7 @@ public class RecordingBroadcastReceiver extends BroadcastReceiver {
 
         RecorderService.sendWakefulWork(context, newIntent);
 
-        if (radioDetails.getRecordingType() == RadioDetails.ONE_OFF_SCHEDULED_RECORDING && databaseId > 0) {
+        if (radioDetails.getRecordingType() == AlarmHelper.ONE_OFF_SCHEDULED_RECORDING && databaseId > 0) {
             DatabaseHelper databaseHelper = new DatabaseHelper(context);
             try {
                 databaseHelper.createDataBase();

@@ -11,12 +11,6 @@ public class RadioDetails implements Parcelable {
     private long _duration = 0;
     private long _recordingType = 0;
 
-    // Table not zero indexed, so starts at 1
-    public static final int ONE_OFF_SCHEDULED_RECORDING = 1;
-    public static final int DAILY_SCHEDULED_RECORDING = 2;
-    public static final int WEEKLY_SCHEDULED_RECORDING = 3;
-
-
     public RadioDetails(String stationName, String streamUrl, String playlistUrl) {
         setStationName(stationName);
         setStreamUrl(streamUrl);

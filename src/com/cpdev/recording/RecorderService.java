@@ -169,7 +169,6 @@ public class RecorderService extends WakefulIntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy called");
     }
 
     @Override
@@ -202,7 +201,7 @@ public class RecorderService extends WakefulIntentService {
         StringBuilder sb = new StringBuilder();
         sb.append(Environment.getExternalStorageDirectory().getAbsolutePath());
         sb.append(File.separator);
-        sb.append("Recordio");
+        sb.append(getString(R.string.app_name));
         return sb.toString();
     }
 
@@ -211,7 +210,7 @@ public class RecorderService extends WakefulIntentService {
     }
 
     public static void cancelRecording() {
-        Log.d(TAG, "Cancel recording requested");
+        Log.d(TAG, "Cancel recording stream");
         cancelRecordingFlag = true;
     }
 }
