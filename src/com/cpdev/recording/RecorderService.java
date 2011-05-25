@@ -145,6 +145,7 @@ public class RecorderService extends WakefulIntentService {
             Log.d(TAG, "IOException: " + e.getMessage(), e);
             // Expected when stream closes
         } finally {
+
             try {
                 if (inputStream != null) {
                     inputStream.close();
@@ -155,11 +156,13 @@ public class RecorderService extends WakefulIntentService {
                     fileOutputStream.close();
                     fileOutputStream = null;
                 }
+                if (wifiLock != null) {
+                    wifiLock.release();
+                }
 
-
-                wifiLock.release();
                 recordingState = false;
                 cancelRecordingFlag = false;
+
             } catch (IOException e) {
                 Log.e(TAG, "Error flushing and close output stream", e);
             }

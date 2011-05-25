@@ -18,13 +18,10 @@ import java.io.OutputStream;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String DB_PATH = "/data/data/com.cpdev/databases/";
-
     private static final String DB_NAME = "db";
 
     private SQLiteDatabase myDataBase;
-
     private final Context myContext;
-
 
     public static final String FAVOURITES_TABLE = "stations";
     public static final String FAVOURITES_ID = "_id";
