@@ -110,9 +110,6 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
             long cursorStartDateTime = cursor.getLong(1);
             long cursorEndDateTime = cursor.getLong(2);
 
-            Log.d(TAG, "startDateTime=" + startDateTime + ", cursorStartDateTime=" + cursorStartDateTime);
-            Log.d(TAG, "endDateTime=" + endDateTime + ", cursorEndDateTime=" + cursorEndDateTime);
-
             if ((startDateTime > cursorStartDateTime && startDateTime < cursorEndDateTime) ||
                     (startDateTime > cursorStartDateTime && startDateTime < cursorEndDateTime)) {
 
