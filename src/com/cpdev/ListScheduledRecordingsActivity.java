@@ -17,12 +17,15 @@ import java.io.IOException;
 
 public class ListScheduledRecordingsActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "ListScheduledRecordingsActivity";
+    DatabaseHelper dbHelper;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbHelper = prepareDatabaseHelper();
+
         setContentView(R.layout.list_recording_schedule);
 
-        DatabaseHelper dbHelper = prepareDatabaseHelper();
         final Cursor scheduledRecordingsCursor = dbHelper.getScheduledRecordingsList();
 
         final ScheduledRecordingsCursorAdaptor adapter = new ScheduledRecordingsCursorAdaptor(this,
@@ -40,7 +43,6 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
 
         ListView scheduledRecordings = (ListView) findViewById(R.id.list_recording_schedule_list_view);
         scheduledRecordings.setAdapter(adapter);
-        dbHelper.close();
 
         scheduledRecordings.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
@@ -52,6 +54,7 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
                                 databaseHelper.deleteScheduledRecording(id);
                                 databaseHelper.close();
                                 scheduledRecordingsCursor.requery();
+                                new AlarmHelper().cancelAlarm(getApplicationContext(), id);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -66,6 +69,14 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
 
         Button addNewButton = (Button) findViewById(R.id.list_recording_schedule_new_button);
         addNewButton.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 
     public void onClick(View view) {

@@ -42,7 +42,6 @@ public class RecorderService extends WakefulIntentService {
         super("RecorderService");
     }
 
-
     @Override
     protected void doWakefulWork(Intent intent) {
 

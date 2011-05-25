@@ -30,6 +30,7 @@ public class AlarmHelper {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, RecordingBroadcastReceiver.class);
+        intent.setType(String.valueOf(databaseId));
 
         intent.putExtra(context.getString(R.string.timed_recorder_service_database_id_key), databaseId);
         intent.putExtra(context.getString(R.string.radio_details_name_key), radioDetails.getStationName());
@@ -55,8 +56,18 @@ public class AlarmHelper {
                 break;
 
         }
+    }
 
+    public void cancelAlarm(Context context, long databaseId) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
+        Intent intent = new Intent(context, RecordingBroadcastReceiver.class);
+        intent.setType(String.valueOf(databaseId));
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+
+        Log.d(TAG, "Cancelled alarm id " + databaseId);
     }
 
     private DatabaseHelper prepareDatabaseHelper(Context context) {
