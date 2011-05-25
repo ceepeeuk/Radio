@@ -1,6 +1,7 @@
 package com.cpdev.recording;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -48,122 +49,139 @@ public class RecorderService extends WakefulIntentService {
         Bundle bundle = intent.getExtras();
         RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
 
+        if (!android.os.Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
-        if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
-            if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
-                radioDetails = PlsHandler.parse(radioDetails);
-            } else {
-                radioDetails = M3uHandler.parse(radioDetails);
-            }
+            // Cannot write to SDCARD, so stuffed!
+
+            String error = new StringBuilder()
+                    .append("Failed to record ")
+                    .append(radioDetails.getStationName())
+                    .append(" as sd-card is not writable")
+                    .toString();
+
+            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+
         } else {
-            radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
-        }
 
-        CharSequence ticketText = new StringBuilder()
-                .append("Recording ")
-                .append(radioDetails.getStationName())
-                .toString();
+            // SDCARD must be writable
 
-
-        Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
-        startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
-
-
-        try {
-            URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
-            inputStream = url.getInputStream();
-
-            String recFolder = GetRecordingsFolder();
-
-            if (!new File(recFolder).exists()) {
-                new File(recFolder).mkdir();
-                Log.d(TAG, "Recordio directory was not found, so created it");
-            }
-
-            StringBuilder outputSource = new StringBuilder()
-                    .append(recFolder)
-                    .append(File.separator);
-
-            if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
-                outputSource.append(radioDetails.getStationName())
-                        .append("-");
-            }
-
-            outputSource.append(getTimestamp())
-                    .append(".mp3");
-
-
-            Log.d(TAG, "Writing stream to : " + outputSource);
-            fileOutputStream = new FileOutputStream(outputSource.toString());
-            recordingState = true;
-
-
-            WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "MyWifiLock");
-            if (!wifiLock.isHeld()) {
-                wifiLock.acquire();
-            }
-
-            byte[] buffer = new byte[4096];
-            int len = 0;
-
-            if (radioDetails.getDuration() > 0) {
-
-                // Timed recording
-                StringBuilder logText = new StringBuilder()
-                        .append("Starting timed recording of ")
-                        .append(radioDetails.getStationName())
-                        .append(" for ")
-                        .append(radioDetails.getDuration() / 1000 / 60)
-                        .append(" minutes, into ")
-                        .append(outputSource);
-
-                Log.d(TAG, logText.toString());
-
-                long endTime = System.currentTimeMillis() + radioDetails.getDuration();
-
-                while ((System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, len);
+            if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
+                if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
+                    radioDetails = PlsHandler.parse(radioDetails);
+                } else {
+                    radioDetails = M3uHandler.parse(radioDetails);
                 }
-
             } else {
-
-                // Manual recording
-                Log.d(TAG, "Starting manual recording...");
-                while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, len);
-                }
-
+                radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
             }
 
-            Log.d(TAG, "Finished writing stream");
+            CharSequence ticketText = new StringBuilder()
+                    .append("Recording ")
+                    .append(radioDetails.getStationName())
+                    .toString();
 
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
-        } catch (IOException e) {
-            Log.d(TAG, "IOException: " + e.getMessage(), e);
-            // Expected when stream closes
-        } finally {
+
+            Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText);
+            startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
+
 
             try {
-                if (inputStream != null) {
-                    inputStream.close();
-                    inputStream = null;
-                }
-                if (fileOutputStream != null) {
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
-                    fileOutputStream = null;
-                }
-                if (wifiLock != null) {
-                    wifiLock.release();
+                URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
+                inputStream = url.getInputStream();
+
+                String recFolder = GetRecordingsFolder();
+
+                if (!new File(recFolder).exists()) {
+                    new File(recFolder).mkdir();
+                    Log.d(TAG, "Recordio directory was not found, so created it");
                 }
 
-                recordingState = false;
-                cancelRecordingFlag = false;
+                StringBuilder outputSource = new StringBuilder()
+                        .append(recFolder)
+                        .append(File.separator);
 
+                if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+                    outputSource.append(radioDetails.getStationName())
+                            .append("-");
+                }
+
+                outputSource.append(getTimestamp())
+                        .append(".mp3");
+
+
+                Log.d(TAG, "Writing stream to : " + outputSource);
+                fileOutputStream = new FileOutputStream(outputSource.toString());
+                recordingState = true;
+
+
+                WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "MyWifiLock");
+                if (!wifiLock.isHeld()) {
+                    wifiLock.acquire();
+                }
+
+                byte[] buffer = new byte[4096];
+                int len = 0;
+
+                if (radioDetails.getDuration() > 0) {
+
+                    // Timed recording
+                    StringBuilder logText = new StringBuilder()
+                            .append("Starting timed recording of ")
+                            .append(radioDetails.getStationName())
+                            .append(" for ")
+                            .append(radioDetails.getDuration() / 1000 / 60)
+                            .append(" minutes, into ")
+                            .append(outputSource);
+
+                    Log.d(TAG, logText.toString());
+
+                    long endTime = System.currentTimeMillis() + radioDetails.getDuration();
+
+                    while ((System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
+                        fileOutputStream.write(buffer, 0, len);
+                    }
+
+                } else {
+
+                    // Manual recording
+                    Log.d(TAG, "Starting manual recording...");
+                    while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
+                        fileOutputStream.write(buffer, 0, len);
+                    }
+
+                }
+
+                Log.d(TAG, "Finished writing stream");
+
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
             } catch (IOException e) {
-                Log.e(TAG, "Error flushing and close output stream", e);
+                Log.d(TAG, "IOException: " + e.getMessage(), e);
+                // Expected when stream closes
+            } finally {
+
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                        inputStream = null;
+                    }
+                    if (fileOutputStream != null) {
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                        fileOutputStream = null;
+                    }
+                    if (wifiLock != null) {
+                        wifiLock.release();
+                    }
+
+                    recordingState = false;
+                    cancelRecordingFlag = false;
+
+                } catch (IOException e) {
+                    Log.e(TAG, "Error flushing and close output stream", e);
+                }
             }
         }
     }

@@ -138,7 +138,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         mDateTimeDialogView.findViewById(R.id.SetDateTime).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+
                 StringBuilder date = new StringBuilder();
 
                 if (mDateTimePicker.is24HourView()) {
@@ -163,17 +163,22 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
 
                 switch (originalViewId) {
                     case R.id.add_new_scheduled_recording_set_start_time_button:
-                        startDateTime = mDateTimePicker.getDateTimeMillis();
+                        startDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
                         ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(date);
                         break;
                     case R.id.add_new_scheduled_recording_end_time_button:
-                        endDateTime = mDateTimePicker.getDateTimeMillis();
-                        Log.d(TAG, "endDateTime = " + endDateTime);
+                        endDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
                         ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(date);
                         break;
                 }
 
                 mDateTimeDialog.dismiss();
+            }
+
+            private long roundDownToMinute(long dateTimeMillis) {
+                long MILLISECONDS_PER_MINUTE = 60 * 1000L;
+                long msRem = dateTimeMillis % MILLISECONDS_PER_MINUTE;
+                return dateTimeMillis - msRem;
             }
         });
 
