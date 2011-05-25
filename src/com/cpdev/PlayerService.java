@@ -1,5 +1,6 @@
 package com.cpdev;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -20,12 +21,7 @@ public class PlayerService extends Service {
 
     public boolean alreadyPlaying() {
         MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
-        if (mediaPlayer != null) {
-            boolean playing = mediaPlayer.isPlaying();
-            return playing;
-        } else {
-            return false;
-        }
+        return mediaPlayer != null && mediaPlayer.isPlaying();
     }
 
     @Override
@@ -109,7 +105,7 @@ public class PlayerService extends Service {
                     String operation = "Playing ";
                     CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
                     CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-                    startForeground(NotificationHelper.NOTIFICATION_PLAYING_ID, NotificationHelper.getNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText));
+                    startForeground(NotificationHelper.NOTIFICATION_PLAYING_ID, NotificationHelper.getNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText, Notification.FLAG_ONGOING_EVENT));
                 }
             });
 

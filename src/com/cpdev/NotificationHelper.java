@@ -10,7 +10,7 @@ public abstract class NotificationHelper {
     public static final int NOTIFICATION_PLAYING_ID = 1;
     public static final int NOTIFICATION_RECORDING_ID = 2;
 
-    public static Notification getNotification(Context context, int notificationId, RadioDetails radioDetails, CharSequence tickerText, CharSequence contentText) {
+    public static Notification getNotification(Context context, int notificationId, RadioDetails radioDetails, CharSequence tickerText, CharSequence contentText, int flag) {
         long when = System.currentTimeMillis();
         Notification notification;
 
@@ -30,7 +30,7 @@ public abstract class NotificationHelper {
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
         notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        notification.flags = flag;
 
         return notification;
     }
