@@ -29,4 +29,7 @@
     <string name="add_new_scheduled_recording_end_time_not_set">Please enter an end time</string>
     <string name="add_new_scheduled_recording_start_and_end_time_not_set">Please enter both a start and end time
     </string>
+    <string name="add_new_scheduled_recording_recording_already_scheduled">Sorry, there is already a recording schedule
+        for this time period.
+    </string>
 </resources>

@@ -79,9 +79,15 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent RadioActivityIntent = new Intent(ListScheduledRecordingsActivity.this, RadioActivity.class);
+        startActivity(RadioActivityIntent);
+    }
+
     public void onClick(View view) {
-        Intent scheduledRecordingsIntent = new Intent(ListScheduledRecordingsActivity.this, AddNewScheduledRecordingActivity.class);
-        startActivity(scheduledRecordingsIntent);
+        Intent addNewScheduledRecordingActivityIntent = new Intent(ListScheduledRecordingsActivity.this, AddNewScheduledRecordingActivity.class);
+        startActivity(addNewScheduledRecordingActivityIntent);
     }
 
     private DatabaseHelper prepareDatabaseHelper() {

@@ -20,7 +20,7 @@
             android:id="@+id/txt_url"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="Enter a stream url..."
             android:textSize="15sp"
             android:singleLine="true"
             android:layout_alignParentTop="true"

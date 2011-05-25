@@ -85,6 +85,10 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                     Toast.makeText(this, R.string.add_new_scheduled_recording_end_time_not_set, Toast.LENGTH_SHORT).show();
                     break;
                 }
+                if (validateStartTimeIsNotAlreadyInUse(this.startDateTime, this.endDateTime)) {
+                    Toast.makeText(this, R.string.add_new_scheduled_recording_recording_already_scheduled, Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 addNewScheduledRecording();
                 startActivity(listScheduledRecordingsIntent);
                 break;
@@ -92,6 +96,35 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                 startActivity(listScheduledRecordingsIntent);
                 break;
         }
+    }
+
+    private boolean validateStartTimeIsNotAlreadyInUse(long startDateTime, long endDateTime) {
+
+        boolean result = false;
+        DatabaseHelper dbhHelper = prepareDatabaseHelper();
+        Cursor cursor = dbhHelper.getAllScheduledRecordings();
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+
+            long cursorStartDateTime = cursor.getLong(1);
+            long cursorEndDateTime = cursor.getLong(2);
+
+            Log.d(TAG, "startDateTime=" + startDateTime + ", cursorStartDateTime=" + cursorStartDateTime);
+            Log.d(TAG, "endDateTime=" + endDateTime + ", cursorEndDateTime=" + cursorEndDateTime);
+
+            if ((startDateTime > cursorStartDateTime && startDateTime < cursorEndDateTime) ||
+                    (startDateTime > cursorStartDateTime && startDateTime < cursorEndDateTime)) {
+
+                dbhHelper.close();
+                return true;
+            }
+
+            cursor.moveToNext();
+        }
+
+        dbhHelper.close();
+        return result;
     }
 
     private void addNewScheduledRecording() {
