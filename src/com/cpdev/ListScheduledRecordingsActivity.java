@@ -15,7 +15,7 @@ import android.widget.ListView;
 import java.io.IOException;
 
 public class ListScheduledRecordingsActivity extends Activity implements View.OnClickListener {
-    private static final String TAG = "ListScheduledRecordingsActivity";
+    private static final String TAG = "com.cpdev.ListScheduledRecordingsActivity";
     DatabaseHelper dbHelper;
 
     @Override

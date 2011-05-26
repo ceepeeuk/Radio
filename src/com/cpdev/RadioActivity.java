@@ -246,8 +246,6 @@ public class RadioActivity extends Activity {
 
     private void record(final RadioDetails radioDetails) {
 
-        Log.d(TAG, "RadioDetails for calling service: \n" + radioDetails);
-
         if (RecorderService.alreadyRecording()) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

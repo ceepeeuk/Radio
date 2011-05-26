@@ -18,7 +18,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
 
     private long startDateTime = 0;
     private long endDateTime = 0;
-    private static final String TAG = "AddNewScheduledRecordingActivity";
+    private static final String TAG = "com.cpdev.AddNewScheduledRecordingActivity";
 
     public void onCreate(Bundle savedInstanceState) {
 

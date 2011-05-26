@@ -10,7 +10,7 @@ import com.cpdev.recording.RecordingBroadcastReceiver;
 import java.io.IOException;
 
 public class AlarmHelper {
-    private static final String TAG = "AlarmHelper";
+    private static final String TAG = "com.cpdev.AlarmHelper";
 
 
     // Table not zero indexed, so starts at 1
