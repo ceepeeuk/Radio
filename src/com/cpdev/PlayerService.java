@@ -8,6 +8,8 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import com.cpdev.filehandling.M3uHandler;
+import com.cpdev.filehandling.PlsHandler;
 import com.cpdev.utils.StringUtils;
 
 import java.io.IOException;
@@ -60,7 +62,7 @@ public class PlayerService extends Service {
         return mBinder;
     }
 
-    public void startPlaying(RadioActivity view, final RadioDetails radioDetails) {
+    public void startPlaying(RadioActivity view, RadioDetails radioDetails) {
 
         caller = view;
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
@@ -83,29 +85,43 @@ public class PlayerService extends Service {
 
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                    Log.e(TAG, "Damn error occurred");
+                    Log.e(TAG, "Error occurred");
                     caller.setStatus("Error");
                     return true;
                 }
             });
 
+            if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
+                if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
+                    radioDetails = PlsHandler.parse(radioDetails);
+                } else {
+                    radioDetails = M3uHandler.parse(radioDetails);
+                }
+            } else {
+                radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
+            }
+
             mediaPlayer.setDataSource(radioDetails.getStreamUrl());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.prepareAsync();
+
+            final RadioDetails radioDetailsToPlay = radioDetails;
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
                     StringBuilder status = new StringBuilder("Playing ");
-                    if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
-                        status.append(radioDetails.getStationName());
+                    if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
+                        status.append(radioDetailsToPlay.getStationName());
                     }
                     caller.setStatus(status.toString());
 
                     String operation = "Playing ";
-                    CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-                    CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? operation : operation + radioDetails.getStationName();
-                    startForeground(NotificationHelper.NOTIFICATION_PLAYING_ID, NotificationHelper.getNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, tickerText, contentText, Notification.FLAG_ONGOING_EVENT));
+                    CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName()) ? operation : operation + radioDetailsToPlay.getStationName();
+                    CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName()) ? operation : operation + radioDetailsToPlay.getStationName();
+                    startForeground(NotificationHelper.NOTIFICATION_PLAYING_ID,
+                            NotificationHelper.getNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID,
+                                    radioDetailsToPlay, tickerText, contentText, Notification.FLAG_ONGOING_EVENT));
                 }
             });
 

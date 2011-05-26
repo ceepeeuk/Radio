@@ -67,7 +67,8 @@ public class RecorderService extends WakefulIntentService {
             return;
         }
 
-        // SDCARD must be writable and network available
+        // SDCARD must be writable and network available, so here we go...
+
         if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
             if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
                 radioDetails = PlsHandler.parse(radioDetails);
@@ -201,8 +202,10 @@ public class RecorderService extends WakefulIntentService {
 
         } catch (IOException ignored) {
             try {
+                // 1 second delay
                 Thread.sleep(1000);
             } catch (InterruptedException ignored2) {
+                Log.d(TAG, "Sleep interrupted");
             }
         }
     }
