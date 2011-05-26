@@ -35,8 +35,6 @@ public class RecorderService extends WakefulIntentService {
     private FileOutputStream fileOutputStream;
     private InputStream inputStream;
 
-    private WifiManager.WifiLock wifiLock = null;
-
     private static boolean recordingState = false;
     private static boolean cancelRecordingFlag = false;
 
@@ -88,75 +86,66 @@ public class RecorderService extends WakefulIntentService {
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText, Notification.FLAG_ONGOING_EVENT);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
 
+        String recFolder = GetRecordingsFolder();
+
+        if (!new File(recFolder).exists()) {
+            if (!(new File(recFolder).mkdir())) {
+                //Failed to create dir, so have to quit
+                String error = buildErrorMessage(radioDetails, "cannot create directory to store recordings");
+                Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+                return;
+            }
+            Log.d(TAG, "Recordio directory was not found, so created it");
+        }
+
+        StringBuilder outputSource = new StringBuilder()
+                .append(recFolder)
+                .append(File.separator);
+
+        if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+            outputSource.append(radioDetails.getStationName())
+                    .append("-");
+        }
+
+        outputSource.append(getTimestamp())
+                .append(".mp3");
+
+        Log.d(TAG, "Writing stream to : " + outputSource);
+
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager.WifiLock wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "MyWifiLock");
+
+        if (!wifiLock.isHeld()) {
+            wifiLock.acquire();
+        }
+
         try {
 
-            URLConnection url = new URL(radioDetails.getStreamUrl())
-                    .openConnection();
-            inputStream = url.getInputStream();
-
-            String recFolder = GetRecordingsFolder();
-
-            if (!new File(recFolder).exists()) {
-                if (!(new File(recFolder).mkdir())) {
-                    //Failed to create dir, so have to quit
-                    String error = buildErrorMessage(radioDetails, "cannot create directory to store recordings");
-                    Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
-                    ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
-                    return;
-                }
-                Log.d(TAG, "Recordio directory was not found, so created it");
-            }
-
-            StringBuilder outputSource = new StringBuilder()
-                    .append(recFolder)
-                    .append(File.separator);
-
-            if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
-                outputSource.append(radioDetails.getStationName())
-                        .append("-");
-            }
-
-            outputSource.append(getTimestamp())
-                    .append(".mp3");
-
-            Log.d(TAG, "Writing stream to : " + outputSource);
-
-            fileOutputStream = new FileOutputStream(outputSource.toString());
-            recordingState = true;
-
-            WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "MyWifiLock");
-            if (!wifiLock.isHeld()) {
-                wifiLock.acquire();
-            }
 
             byte[] buffer = new byte[4096];
             int len;
 
             if (radioDetails.getDuration() > 0) {
-
                 // Timed recording
-                StringBuilder logText = new StringBuilder()
-                        .append("Starting timed recording of ")
-                        .append(radioDetails.getStationName())
-                        .append(" for ")
-                        .append(radioDetails.getDuration() / 1000 / 60)
-                        .append(" minutes, into ")
-                        .append(outputSource);
-
-                Log.d(TAG, logText.toString());
-
+                URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
+                inputStream = url.getInputStream();
+                fileOutputStream = new FileOutputStream(outputSource.toString());
+                recordingState = true;
                 long endTime = System.currentTimeMillis() + radioDetails.getDuration();
 
-                while ((System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, len);
+                while (System.currentTimeMillis() < endTime) {
+                    //fileOutputStream.write(buffer, 0, len);
+                    record(radioDetails, outputSource.toString(), buffer, endTime);
                 }
 
             } else {
 
                 // Manual recording
-                while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, len);
+                recordingState = true;
+                Log.d(TAG, "Starting manual recording...");
+                while (!cancelRecordingFlag) {
+                    record(radioDetails, outputSource.toString(), buffer, 0);
                 }
             }
 
@@ -165,8 +154,8 @@ public class RecorderService extends WakefulIntentService {
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
         } catch (IOException e) {
-            // Expected when stream closes
             Log.d(TAG, "IOException: " + e.getMessage(), e);
+            // Expected when stream closes
         } finally {
 
             try {
@@ -190,6 +179,31 @@ public class RecorderService extends WakefulIntentService {
                 Log.e(TAG, "Error flushing and close output stream", e);
             }
 
+        }
+    }
+
+    private void record(RadioDetails radioDetails, String outputSource, byte[] buffer, long endTime) {
+        try {
+            int len;
+            URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
+            inputStream = url.getInputStream();
+            fileOutputStream = new FileOutputStream(outputSource, true);
+
+            if (endTime > 0) {
+                while ((System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
+                }
+            } else {
+                while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
+                }
+            }
+
+        } catch (IOException ignored) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored2) {
+            }
         }
     }
 
