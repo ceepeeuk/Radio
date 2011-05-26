@@ -55,15 +55,17 @@ public class RecorderService extends WakefulIntentService {
             String error = buildErrorMessage(radioDetails, "cannot write to SD Card");
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+            Log.e(TAG, error);
             return;
         }
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager.getActiveNetworkInfo() == null || connectivityManager.getActiveNetworkInfo().isAvailable() || connectivityManager.getActiveNetworkInfo().isConnected()) {
-            // Cannot write to SDCARD, so stuffed!
+        if (connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnected()) {
+            // No network connection
             String error = buildErrorMessage(radioDetails, "cannot get network connection");
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+            Log.e(TAG, error);
             return;
         }
 
@@ -83,13 +85,13 @@ public class RecorderService extends WakefulIntentService {
                 .append(radioDetails.getStationName())
                 .toString();
 
-
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText, Notification.FLAG_ONGOING_EVENT);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
 
-
         try {
-            URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
+
+            URLConnection url = new URL(radioDetails.getStreamUrl())
+                    .openConnection();
             inputStream = url.getInputStream();
 
             String recFolder = GetRecordingsFolder();
@@ -117,11 +119,10 @@ public class RecorderService extends WakefulIntentService {
             outputSource.append(getTimestamp())
                     .append(".mp3");
 
-
             Log.d(TAG, "Writing stream to : " + outputSource);
+
             fileOutputStream = new FileOutputStream(outputSource.toString());
             recordingState = true;
-
 
             WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "MyWifiLock");
@@ -154,11 +155,9 @@ public class RecorderService extends WakefulIntentService {
             } else {
 
                 // Manual recording
-                Log.d(TAG, "Starting manual recording...");
                 while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
                     fileOutputStream.write(buffer, 0, len);
                 }
-
             }
 
             Log.d(TAG, "Finished writing stream");
@@ -166,8 +165,8 @@ public class RecorderService extends WakefulIntentService {
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
         } catch (IOException e) {
-            Log.d(TAG, "IOException: " + e.getMessage(), e);
             // Expected when stream closes
+            Log.d(TAG, "IOException: " + e.getMessage(), e);
         } finally {
 
             try {
