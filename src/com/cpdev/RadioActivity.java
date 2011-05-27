@@ -126,18 +126,14 @@ public class RadioActivity extends Activity {
 
             case STOP_PLAYING:
                 if (playerServiceBound && playerService.alreadyPlaying()) {
-                    //if (!RecorderService.alreadyRecording()) {
                     updateUIForPlaying(false, "");
-                    //}
                     playerService.stopPlaying(this);
                 }
                 return true;
 
             case STOP_RECORDING:
                 if (RecorderService.alreadyRecording()) {
-                    //if (playerServiceBound && !playerService.alreadyPlaying()) {
                     updateUIForRecording(false, "");
-                    //}
                     RecorderService.cancelRecording();
                 }
                 return true;
@@ -168,7 +164,6 @@ public class RadioActivity extends Activity {
 
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
-
         Log.d(TAG, "url is: " + source);
 
         if (source.isEmpty()) {
