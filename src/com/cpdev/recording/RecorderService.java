@@ -12,6 +12,7 @@ import android.util.Log;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.cpdev.NotificationHelper;
 import com.cpdev.R;
+import com.cpdev.RadioApplication;
 import com.cpdev.RadioDetails;
 import com.cpdev.filehandling.M3uHandler;
 import com.cpdev.filehandling.PlsHandler;
@@ -80,7 +81,8 @@ public class RecorderService extends WakefulIntentService {
         }
 
         CharSequence ticketText = new StringBuilder()
-                .append("Recording ")
+                .append(getString(R.string.recording_string))
+                .append(" ")
                 .append(radioDetails.getStationName())
                 .toString();
 
@@ -120,6 +122,8 @@ public class RecorderService extends WakefulIntentService {
         if (!wifiLock.isHeld()) {
             wifiLock.acquire();
         }
+
+        ((RadioApplication) getApplication()).setRecordingStation(radioDetails);
 
         try {
 

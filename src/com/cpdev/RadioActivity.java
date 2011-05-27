@@ -196,8 +196,8 @@ public class RadioActivity extends Activity {
                                 record(finalRadioDetails);
                                 break;
                             case 2:
-                                //TODO implement do both
-                                showToast("Both clicked");
+                                play(finalRadioDetails);
+                                record(finalRadioDetails);
                                 break;
                             default:
                                 Log.e(TAG, "Unexpected option returned from dialog, option #" + item);
@@ -222,8 +222,8 @@ public class RadioActivity extends Activity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Stopping play");
-                                playerService.stopPlaying(null);
-                                updateUIForPlaying(true, "Buffering");
+                                playerService.stopPlaying(RadioActivity.this);
+                                updateUIForPlaying(true, getString(R.string.buffering_string));
                                 playerService.startPlaying(RadioActivity.this, radioDetails);
                             }
                         })
@@ -236,7 +236,7 @@ public class RadioActivity extends Activity {
             } else {
                 Log.d(TAG, "Starting play");
                 playerService.startPlaying(this, radioDetails);
-                updateUIForPlaying(true, "Buffering");
+                updateUIForPlaying(true, getString(R.string.buffering_string));
             }
         } else {
             Log.e(TAG, "Playerservice unbound so cannot start playing");
@@ -257,20 +257,28 @@ public class RadioActivity extends Activity {
                             RecorderService.cancelRecording();
                             // Fire start intent
                             RecorderService.sendWakefulWork(getApplicationContext(), createRecordingIntent(radioDetails));
-                            updateUIForRecording(true, "Recording");
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                         }
                     });
+
             builder.create().show();
 
         } else {
+
             Log.d(TAG, "Starting recording");
             Intent intent = createRecordingIntent(radioDetails);
             RecorderService.sendWakefulWork(this, intent);
-            updateUIForRecording(true, "Recording");
+
+            String recordingStatus = new StringBuilder()
+                    .append(getString(R.string.recording_string))
+                    .append(" ")
+                    .append(radioDetails.getStationName() != null ? radioDetails.getStationName() : "")
+                    .toString();
+
+            updateUIForRecording(true, recordingStatus);
         }
     }
 
@@ -284,23 +292,41 @@ public class RadioActivity extends Activity {
 
     public void updateUIForPlaying(boolean playingNow, String status) {
         StringBuilder sb = new StringBuilder();
-        sb.append(status);
-        if (RecorderService.alreadyRecording()) {
-            TextView txtStatus = (TextView) findViewById(R.id.txt_status);
-            sb.append(" | ");
-            sb.append(txtStatus.getText());
+        String currentStatus = ((TextView) findViewById(R.id.txt_status)).getText().toString();
+
+        if (playingNow) {
+            sb.append(status);
+            if (currentStatus.contains(getString(R.string.recording_string))) {
+                sb.append(" | ");
+                sb.append(currentStatus.substring(currentStatus.indexOf(getString(R.string.recording_string))));
+            }
+        } else {
+            if (currentStatus.contains(getString(R.string.recording_string))) {
+                sb.append(currentStatus.substring(currentStatus.indexOf(getString(R.string.recording_string))));
+            }
         }
         setStatus(sb.toString());
     }
 
     public void updateUIForRecording(boolean recordingNow, String status) {
         StringBuilder sb = new StringBuilder();
-        if (playerService != null && playerService.alreadyPlaying()) {
-            TextView txtStatus = (TextView) findViewById(R.id.txt_status);
-            sb.append(txtStatus.getText());
-            sb.append(" | ");
+        String currentStatus = ((TextView) findViewById(R.id.txt_status)).getText().toString();
+
+        if (recordingNow) {
+            if (currentStatus.startsWith(getString(R.string.playing_string)) || currentStatus.startsWith(getString(R.string.buffering_string))) {
+                sb.append(currentStatus);
+                sb.append(currentStatus.endsWith(" | ") ? "" : " | ");
+            }
+
+            if (!currentStatus.contains(getString(R.string.recording_string))) {
+                sb.append(status);
+            }
+        } else {
+            if (currentStatus.startsWith(getString(R.string.playing_string)) || currentStatus.startsWith(getString(R.string.buffering_string))) {
+                sb.append(currentStatus.substring(0, currentStatus.indexOf("|")));
+            }
         }
-        sb.append(status);
+
         setStatus(sb.toString());
     }
 
@@ -318,9 +344,10 @@ public class RadioActivity extends Activity {
             playerServiceBound = true;
 
             if (playerService.alreadyPlaying()) {
-                StringBuilder sb = new StringBuilder("Playing ");
+                StringBuilder sb = new StringBuilder(getString(R.string.playing_string));
                 RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
                 if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+                    sb.append(" ");
                     sb.append(radioDetails.getStationName());
                 }
                 updateUIForPlaying(true, sb.toString());
@@ -328,7 +355,13 @@ public class RadioActivity extends Activity {
 
 
             if (RecorderService.alreadyRecording()) {
-                updateUIForRecording(true, "Recording");
+                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getRecordingStation();
+                String recordingStatus = new StringBuilder()
+                        .append(getString(R.string.recording_string))
+                        .append(" ")
+                        .append(radioDetails != null && !StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? radioDetails.getStationName() : "")
+                        .toString();
+                updateUIForRecording(true, recordingStatus);
             }
         }
 

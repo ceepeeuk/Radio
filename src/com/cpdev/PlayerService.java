@@ -108,16 +108,14 @@ public class PlayerService extends Service {
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
-                    StringBuilder status = new StringBuilder("Playing ");
+                    StringBuilder status = new StringBuilder(getString(R.string.playing_string));
                     if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
-                        status.append(radioDetailsToPlay.getStationName());
+                        status.append(" ")
+                                .append(radioDetailsToPlay.getStationName());
                     }
                     caller.updateUIForPlaying(true, status.toString());
 
-                    String operation = "Playing ";
-                    CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName()) ? operation : operation + radioDetailsToPlay.getStationName();
-                    CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName()) ? operation : operation + radioDetailsToPlay.getStationName();
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetailsToPlay, tickerText, contentText);
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetailsToPlay, status.toString(), status.toString());
                 }
             });
 

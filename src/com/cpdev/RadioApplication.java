@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 public class RadioApplication extends Application {
 
     private RadioDetails _playingStation;
+    private RadioDetails _recordingStation;
     private MediaPlayer _mediaPlayer;
 
     public MediaPlayer getMediaPlayer() {
@@ -22,5 +23,13 @@ public class RadioApplication extends Application {
 
     public void setPlayingStation(RadioDetails playingStation) {
         _playingStation = playingStation;
+    }
+
+    public RadioDetails getRecordingStation() {
+        return _recordingStation;
+    }
+
+    public void setRecordingStation(RadioDetails recordingStation) {
+        _recordingStation = recordingStation;
     }
 }

@@ -32,4 +32,7 @@
     <string name="add_new_scheduled_recording_recording_already_scheduled">Sorry, there is already a recording schedule
         for this time period.
     </string>
+    <string name="playing_string">Playing</string>
+    <string name="buffering_string">Buffering</string>
+    <string name="recording_string">Recording</string>
 </resources>
