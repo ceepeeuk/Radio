@@ -1,6 +1,5 @@
 package com.cpdev;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -53,8 +52,8 @@ public class PlayerService extends Service {
             mediaPlayer.reset();
         }
 
-        view.setStatus("Stopped playing");
-        stopForeground(true);
+        view.updateUIForPlaying(false, "");
+        NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
     }
 
     @Override
@@ -85,7 +84,7 @@ public class PlayerService extends Service {
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                     Log.e(TAG, "Error occurred");
-                    caller.setStatus("Error");
+                    caller.updateUIForPlaying(false, "Error playing");
                     return true;
                 }
             });
@@ -113,14 +112,12 @@ public class PlayerService extends Service {
                     if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
                         status.append(radioDetailsToPlay.getStationName());
                     }
-                    caller.setStatus(status.toString());
+                    caller.updateUIForPlaying(true, status.toString());
 
                     String operation = "Playing ";
                     CharSequence tickerText = StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName()) ? operation : operation + radioDetailsToPlay.getStationName();
                     CharSequence contentText = StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName()) ? operation : operation + radioDetailsToPlay.getStationName();
-                    startForeground(NotificationHelper.NOTIFICATION_PLAYING_ID,
-                            NotificationHelper.getNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID,
-                                    radioDetailsToPlay, tickerText, contentText, Notification.FLAG_ONGOING_EVENT));
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetailsToPlay, tickerText, contentText);
                 }
             });
 
