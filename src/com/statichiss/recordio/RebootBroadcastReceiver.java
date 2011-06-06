@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.util.Log;
 import java.io.IOException;
 
 public class RebootBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = "com.cpdev.RebootBroadcastReceiver";
+    private static final String TAG = "com.statichiss.recordio.RebootBroadcastReceiver";
 
     public void onReceive(Context context, Intent intent) {
 
@@ -29,7 +29,7 @@ public class RebootBroadcastReceiver extends BroadcastReceiver {
 
         cursor.moveToFirst();
 
-        while (cursor.isAfterLast() == false) {
+        while (!cursor.isAfterLast()) {
             alarmHelper.setAlarm(context, cursor.getLong(0), cursor.getLong(3), cursor.getLong(4), cursor.getLong(1), cursor.getLong(2));
             Log.d(TAG, "Setting alarm for: \n\n" + "\tRecordingId: " + cursor.getLong(0));
             cursor.moveToNext();

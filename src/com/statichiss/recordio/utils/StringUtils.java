@@ -1,4 +1,4 @@
-package com.cpdev.utils;
+package com.statichiss.recordio.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

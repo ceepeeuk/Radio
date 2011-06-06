@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.cpdev"
+          package="com.statichiss"
           android:versionCode="1"
           android:versionName="1.0">
-    <application android:name=".RadioApplication" android:label="@string/app_name" android:icon="@drawable/ic_launcher"
+    <application android:name=".recordio.RadioApplication" android:label="@string/app_name"
+                 android:icon="@drawable/ic_launcher"
                  android:debuggable="true">
-        <activity android:name="RadioActivity"
+        <activity android:name=".recordio.RadioActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="stateUnchanged">
@@ -14,32 +15,33 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ConfirmDetailsActivity" android:label="@string/app_name_confirm_details_activity"
+        <activity android:name=".recordio.ConfirmDetailsActivity"
+                  android:label="@string/app_name_confirm_details_activity"
                   android:screenOrientation="portrait"/>
-        <activity android:name=".ListScheduledRecordingsActivity"
+        <activity android:name=".recordio.ListScheduledRecordingsActivity"
                   android:label="@string/app_name_list_scheduled_recordings"
                   android:screenOrientation="portrait"/>
-        <activity android:name=".AddNewScheduledRecordingActivity"
+        <activity android:name=".recordio.AddNewScheduledRecordingActivity"
                   android:label="@string/app_name_add_new_scheduled_recordings"
                   android:screenOrientation="portrait"/>
-        <receiver android:name=".recording.RecordingBroadcastReceiver">
+        <receiver android:name=".recordio.recording.RecordingBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.cpdev.recording.RecordingBroadcastReceiver"/>
+                <action android:name="com.statichiss.recordio.recording.RecordingBroadcastReceiver"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".RebootBroadcastReceiver">
+        <receiver android:name=".recordio.RebootBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-        <service android:name=".PlayerService">
+        <service android:name=".recordio.PlayerService">
             <intent-filter>
-                <action android:name="com.cpdev.PlayerService"/>
+                <action android:name="com.statichiss.recordio.PlayerService"/>
             </intent-filter>
         </service>
-        <service android:name=".recording.RecorderService">
+        <service android:name=".recordio.recording.RecorderService">
             <intent-filter>
-                <action android:name="com.cpdev.recording.RecorderService"/>
+                <action android:name="com.statichiss.recordio.recording.RecorderService"/>
             </intent-filter>
         </service>
     </application>

@@ -1,8 +1,8 @@
-package com.cpdev.filehandling;
+package com.statichiss.recordio.filehandling;
 
 import android.util.Log;
-import com.cpdev.RadioDetails;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.recordio.RadioDetails;
+import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class PlsHandler extends FileHandler {
-    private static final String PLSTAG = "com.cpdev.filehandling.PlsHandler";
+    private static final String PLSTAG = "com.statichiss.recordio.filehandling.PlsHandler";
 
     public static RadioDetails parse(RadioDetails radioDetails) {
 

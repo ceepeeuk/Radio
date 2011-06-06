@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,11 +11,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import com.statichiss.R;
 
 import java.io.IOException;
 
 public class ListScheduledRecordingsActivity extends Activity implements View.OnClickListener {
-    private static final String TAG = "com.cpdev.ListScheduledRecordingsActivity";
+    private static final String TAG = "com.statichiss.recordio.ListScheduledRecordingsActivity";
     DatabaseHelper dbHelper;
 
     @Override

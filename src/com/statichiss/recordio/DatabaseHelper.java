@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static String DB_PATH = "/data/data/com.cpdev/databases/";
+    private static String DB_PATH = "/data/data/com.statichiss/databases/";
     private static final String DB_NAME = "db";
 
     private SQLiteDatabase myDataBase;
@@ -44,7 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SCHEDULED_RECORDINGS_STATION = "station";
     public static final String SCHEDULED_RECORDINGS_TYPE = "type";
 
-    private static final String TAG = "com.cpdev.DatabaseHelper";
+    private static final String TAG = "com.statichiss.recordio.DatabaseHelper";
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);

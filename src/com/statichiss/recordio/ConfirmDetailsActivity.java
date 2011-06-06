@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,14 +10,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.R;
+import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
 
 
 public class ConfirmDetailsActivity extends Activity implements View.OnClickListener {
 
-    private static final String TAG = "com.cpdev.ConfirmDetailsActivity";
+    private static final String TAG = "com.statichiss.recordio.ConfirmDetailsActivity";
 
     @Override
     public void onCreate(Bundle icicle) {

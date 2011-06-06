@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,8 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import com.cpdev.recording.RecorderService;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.R;
+import com.statichiss.recordio.recording.RecorderService;
+import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
 
@@ -21,9 +22,9 @@ public class RadioActivity extends Activity {
     private PlayerService playerService;
     private boolean playerServiceBound = false;
 
-    private Intent playerIntent = new Intent("com.cpdev.PlayerService");
+    private Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
 
-    private String TAG = "com.cpdev.RadioActivity";
+    private String TAG = "com.statichiss.recordio.RadioActivity";
 
     private static final int STOP_PLAYING = 0;
     private static final int STOP_RECORDING = 1;
@@ -278,7 +279,7 @@ public class RadioActivity extends Activity {
     }
 
     private Intent createRecordingIntent(RadioDetails radioDetails) {
-        Intent intent = new Intent("com.cpdev.recording.RecorderService");
+        Intent intent = new Intent("com.statichiss.recordio.recording.RecorderService");
         if (radioDetails != null) {
             intent.putExtra(getString(R.string.radio_details_key), radioDetails);
         }

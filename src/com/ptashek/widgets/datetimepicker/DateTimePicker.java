@@ -23,7 +23,7 @@ import android.view.View;
 import android.widget.*;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.TimePicker.OnTimeChangedListener;
-import com.cpdev.R;
+import com.statichiss.R;
 
 import java.util.Calendar;
 
@@ -73,8 +73,8 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
         timePicker.setOnTimeChangedListener(this);
 
         // Handle button clicks
-        ((Button) findViewById(R.id.SwitchToTime)).setOnClickListener(this); // shows the time picker
-        ((Button) findViewById(R.id.SwitchToDate)).setOnClickListener(this); // shows the date picker
+        findViewById(R.id.SwitchToTime).setOnClickListener(this); // shows the time picker
+        findViewById(R.id.SwitchToDate).setOnClickListener(this); // shows the date picker
 
         // Populate ViewSwitcher
         viewSwitcher.addView(datePickerView, 0);

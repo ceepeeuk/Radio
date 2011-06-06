@@ -1,4 +1,4 @@
-package com.cpdev.filehandling;
+package com.statichiss.recordio.filehandling;
 
 import android.util.Log;
 import org.apache.http.util.ByteArrayBuffer;
@@ -8,8 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public abstract class FileHandler {
-    private static final String PATH = "/data/data/com.cpdev/";  //put the downloaded file here
-    private static final String TAG = "com.cpdev.filehandling.FileHandler";
+    private static final String PATH = "/data/data/com.statichiss/";  //put the downloaded file here
+    private static final String TAG = "com.statichiss.recordio.filehandling.FileHandler";
 
     public static String getFile(String plsUrl) {
 
@@ -25,7 +25,7 @@ public abstract class FileHandler {
 
             // Read bytes to the Buffer until there inputStream nothing more to read(-1).
             ByteArrayBuffer baf = new ByteArrayBuffer(50);
-            int current = 0;
+            int current;
             while ((current = bufferedInputStream.read()) != -1) {
                 baf.append((byte) current);
             }

@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -9,7 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.*;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.R;
+import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -18,7 +19,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
 
     private long startDateTime = 0;
     private long endDateTime = 0;
-    private static final String TAG = "com.cpdev.AddNewScheduledRecordingActivity";
+    private static final String TAG = "com.statichiss.recordio.AddNewScheduledRecordingActivity";
 
     public void onCreate(Bundle savedInstanceState) {
 

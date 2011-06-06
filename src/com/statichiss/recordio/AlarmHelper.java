@@ -1,16 +1,17 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.cpdev.recording.RecordingBroadcastReceiver;
+import com.statichiss.R;
+import com.statichiss.recordio.recording.RecordingBroadcastReceiver;
 
 import java.io.IOException;
 
 public class AlarmHelper {
-    private static final String TAG = "com.cpdev.AlarmHelper";
+    private static final String TAG = "com.statichiss.recordio.AlarmHelper";
 
 
     // Table not zero indexed, so starts at 1

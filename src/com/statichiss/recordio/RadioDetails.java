@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.os.Parcel;
 import android.os.Parcelable;

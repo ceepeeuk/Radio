@@ -1,4 +1,4 @@
-package com.cpdev.recording;
+package com.statichiss.recordio.recording;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,13 +10,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
-import com.cpdev.NotificationHelper;
-import com.cpdev.R;
-import com.cpdev.RadioApplication;
-import com.cpdev.RadioDetails;
-import com.cpdev.filehandling.M3uHandler;
-import com.cpdev.filehandling.PlsHandler;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.R;
+import com.statichiss.recordio.NotificationHelper;
+import com.statichiss.recordio.RadioApplication;
+import com.statichiss.recordio.RadioDetails;
+import com.statichiss.recordio.filehandling.M3uHandler;
+import com.statichiss.recordio.filehandling.PlsHandler;
+import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,7 +31,7 @@ import java.util.TimeZone;
 
 public class RecorderService extends WakefulIntentService {
 
-    private static final String TAG = "com.cpdev.recording.RecorderService";
+    private static final String TAG = "com.statichiss.recordio.RecorderService";
 
     private FileOutputStream fileOutputStream;
     private InputStream inputStream;

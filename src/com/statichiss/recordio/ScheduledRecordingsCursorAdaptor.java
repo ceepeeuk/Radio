@@ -1,4 +1,4 @@
-package com.cpdev;
+package com.statichiss.recordio;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import com.cpdev.utils.StringUtils;
+import com.statichiss.R;
+import com.statichiss.recordio.utils.StringUtils;
 
 public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
 

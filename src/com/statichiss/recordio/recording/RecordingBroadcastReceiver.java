@@ -1,21 +1,21 @@
-package com.cpdev.recording;
+package com.statichiss.recordio.recording;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import com.cpdev.AlarmHelper;
-import com.cpdev.DatabaseHelper;
-import com.cpdev.R;
-import com.cpdev.RadioDetails;
+import com.statichiss.R;
+import com.statichiss.recordio.AlarmHelper;
+import com.statichiss.recordio.DatabaseHelper;
+import com.statichiss.recordio.RadioDetails;
 
 import java.io.IOException;
 
 public class RecordingBroadcastReceiver extends BroadcastReceiver {
 
 
-    private static final String TAG = "com.cpdev.recording.RecordingBroadcastReceiver";
+    private static final String TAG = "com.statichiss.recordio.recording.RecordingBroadcastReceiver";
 
     @Override
     public void onReceive(Context context, Intent receivedIntent) {
@@ -36,7 +36,7 @@ public class RecordingBroadcastReceiver extends BroadcastReceiver {
         );
 
         // Need to fire off service request here and then if one-off delete from table.
-        Intent newIntent = new Intent("com.cpdev.recording.RecorderService");
+        Intent newIntent = new Intent("com.statichiss.recordio.recording.RecorderService");
         newIntent.putExtra(context.getString(R.string.radio_details_key), radioDetails);
 
         RecorderService.sendWakefulWork(context, newIntent);
