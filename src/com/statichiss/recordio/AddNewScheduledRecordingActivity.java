@@ -121,6 +121,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
             cursor.moveToNext();
         }
 
+        cursor.close();
         dbhHelper.close();
         return result;
     }

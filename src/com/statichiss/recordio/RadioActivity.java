@@ -167,7 +167,7 @@ public class RadioActivity extends Activity {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
         Log.d(TAG, "url is: " + source);
 
-        if (source.isEmpty()) {
+        if (StringUtils.IsNullOrEmpty(source)) {
             showToast("Please supply a URL");
         } else {
             decideStreamOption(new RadioDetails(null, null, source));
