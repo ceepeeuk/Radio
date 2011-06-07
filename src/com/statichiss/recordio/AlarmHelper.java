@@ -29,6 +29,7 @@ public class AlarmHelper {
         radioDetails.setRecordingType(typeId);
         radioDetails.setDuration(endDateTime - startDateTime);
 
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, RecordingBroadcastReceiver.class);
         intent.setType(String.valueOf(databaseId));

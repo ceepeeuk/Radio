@@ -41,17 +41,33 @@ public class RecordingBroadcastReceiver extends BroadcastReceiver {
 
         RecorderService.sendWakefulWork(context, newIntent);
 
-        if (radioDetails.getRecordingType() == AlarmHelper.ONE_OFF_SCHEDULED_RECORDING && databaseId > 0) {
+        if (databaseId > 0) {
+
             DatabaseHelper databaseHelper = new DatabaseHelper(context);
             try {
                 databaseHelper.createDataBase();
                 databaseHelper.openDataBase();
-                databaseHelper.deleteScheduledRecording(databaseId);
+
+                switch ((int) radioDetails.getRecordingType()) {
+                    case AlarmHelper.ONE_OFF_SCHEDULED_RECORDING:
+                        databaseHelper.deleteScheduledRecording(databaseId);
+                        break;
+                    case AlarmHelper.DAILY_SCHEDULED_RECORDING:
+                        databaseHelper.updateScheduledRecordingAddDay(databaseId);
+                        break;
+                    case AlarmHelper.WEEKLY_SCHEDULED_RECORDING:
+                        databaseHelper.updateScheduledRecordingAddWeek(databaseId);
+                        break;
+                    default:
+                        Log.e(TAG, "Unexpected recordingType received - " + radioDetails.getRecordingType());
+                }
+
             } catch (IOException e) {
                 Log.e(TAG, "IOException thrown when trying to access DB", e);
             } finally {
                 databaseHelper.close();
             }
+
         }
     }
 

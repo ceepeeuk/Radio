@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import com.statichiss.recordio.utils.DateUtils;
 import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.FileOutputStream;
@@ -174,6 +175,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteScheduledRecording(long id) {
         myDataBase.delete(SCHEDULED_RECORDINGS_TABLE, "_id=?", new String[]{Long.toString(id)});
+    }
+
+    public void updateScheduledRecordingAddDay(long databaseId) {
+        Cursor cursor = myDataBase.query(SCHEDULED_RECORDINGS_TABLE,
+                new String[]{SCHEDULED_RECORDINGS_START_TIME, SCHEDULED_RECORDINGS_END_TIME},
+                " _ID = ?",
+                new String[]{String.valueOf(databaseId)}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(SCHEDULED_RECORDINGS_START_TIME, DateUtils.addDay(cursor.getLong(0)));
+            contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addDay(cursor.getLong(1)));
+            myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(databaseId)});
+        }
+        cursor.close();
+    }
+
+    public void updateScheduledRecordingAddWeek(long databaseId) {
+        Cursor cursor = myDataBase.query(SCHEDULED_RECORDINGS_TABLE,
+                new String[]{SCHEDULED_RECORDINGS_START_TIME, SCHEDULED_RECORDINGS_END_TIME},
+                " _ID = ?",
+                new String[]{String.valueOf(databaseId)}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(SCHEDULED_RECORDINGS_START_TIME, DateUtils.addWeek(cursor.getLong(0)));
+            contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addWeek(cursor.getLong(1)));
+            myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(databaseId)});
+        }
+        cursor.close();
     }
 
     public Cursor getScheduledRecordingsList() {

@@ -129,7 +129,6 @@ public class RecorderService extends WakefulIntentService {
 
 
             byte[] buffer = new byte[4096];
-            int len;
 
             if (radioDetails.getDuration() > 0) {
                 // Timed recording
