@@ -69,6 +69,13 @@ public class RadioActivity extends Activity {
             }
         });
 
+        final EditText url = (EditText) findViewById(R.id.txt_url);
+        url.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                url.setText("");
+            }
+        });
+
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
