@@ -17,7 +17,8 @@ import java.io.IOException;
 public class PlayerService extends Service {
 
     private static final String TAG = "com.statichiss.recordio.PlayerService";
-    RadioActivity caller;
+    private RadioActivity caller;
+    private boolean buffering = false;
 
     private final IBinder mBinder = new RadioServiceBinder();
 
@@ -100,15 +101,24 @@ public class PlayerService extends Service {
                 radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
             }
 
+            // need to check we aren't buffering before proceeding
+            if (buffering) {
+                Log.d(TAG, "Buffering already, so resetting MediaPlayer before starting again");
+                mediaPlayer.reset();
+                buffering = false;
+            }
+
             mediaPlayer.setDataSource(radioDetails.getStreamUrl());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.prepareAsync();
+            buffering = true;
 
             final RadioDetails radioDetailsToPlay = radioDetails;
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
+                    buffering = false;
                     StringBuilder status = new StringBuilder(getString(R.string.playing_string));
                     if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
                         status.append(" ")

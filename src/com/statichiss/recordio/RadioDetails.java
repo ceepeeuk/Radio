@@ -2,6 +2,7 @@ package com.statichiss.recordio;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.statichiss.recordio.utils.StringUtils;
 
 public class RadioDetails implements Parcelable {
 
@@ -49,7 +50,7 @@ public class RadioDetails implements Parcelable {
 
 
     public String getStationName() {
-        return _stationName;
+        return StringUtils.IsNullOrEmpty(_stationName) ? "" : _stationName;
     }
 
     public void setStationName(String stationName) {

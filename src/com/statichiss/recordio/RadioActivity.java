@@ -219,7 +219,12 @@ public class RadioActivity extends Activity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Stopping play");
                                 playerService.stopPlaying(RadioActivity.this);
-                                updateUIForPlaying(true, getString(R.string.buffering_string));
+
+                                StringBuilder status = new StringBuilder(getString(R.string.buffering_string))
+                                        .append(" ")
+                                        .append(radioDetails.getStationName());
+
+                                updateUIForPlaying(true, status.toString());
                                 playerService.startPlaying(RadioActivity.this, radioDetails);
                             }
                         })
@@ -232,7 +237,10 @@ public class RadioActivity extends Activity {
             } else {
                 Log.d(TAG, "Starting play");
                 playerService.startPlaying(this, radioDetails);
-                updateUIForPlaying(true, getString(R.string.buffering_string));
+                StringBuilder status = new StringBuilder(getString(R.string.buffering_string))
+                        .append(" ")
+                        .append(radioDetails.getStationName());
+                updateUIForPlaying(true, status.toString());
             }
         } else {
             Log.e(TAG, "Playerservice unbound so cannot start playing");
