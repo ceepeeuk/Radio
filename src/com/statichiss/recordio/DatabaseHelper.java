@@ -168,8 +168,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SCHEDULED_RECORDINGS_START_TIME, startTime);
         contentValues.put(SCHEDULED_RECORDINGS_END_TIME, endTime);
-        contentValues.put(SCHEDULED_RECORDINGS_STATION, station + 1);
-        contentValues.put(SCHEDULED_RECORDINGS_TYPE, type + 1);
+        contentValues.put(SCHEDULED_RECORDINGS_STATION, station);
+        contentValues.put(SCHEDULED_RECORDINGS_TYPE, type);
         return myDataBase.insert(SCHEDULED_RECORDINGS_TABLE, SCHEDULED_RECORDINGS_START_TIME, contentValues);
     }
 
@@ -177,34 +177,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         myDataBase.delete(SCHEDULED_RECORDINGS_TABLE, "_id=?", new String[]{Long.toString(id)});
     }
 
+
+    public void updateScheduledRecording(long scheduledRecordingId, long startDateTime, long endDateTime, int station, int type) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SCHEDULED_RECORDINGS_STATION, station);
+        contentValues.put(SCHEDULED_RECORDINGS_TYPE, type);
+        contentValues.put(SCHEDULED_RECORDINGS_START_TIME, startDateTime);
+        contentValues.put(SCHEDULED_RECORDINGS_START_TIME, startDateTime);
+        contentValues.put(SCHEDULED_RECORDINGS_END_TIME, endDateTime);
+        myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(scheduledRecordingId)});
+    }
+
     public void updateScheduledRecordingAddDay(long databaseId) {
+        ScheduledRecording scheduledRecording = GetScheduledRecording(databaseId);
+
+        if (scheduledRecording != null) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(SCHEDULED_RECORDINGS_START_TIME, DateUtils.addDay(scheduledRecording.startDateTime));
+            contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addDay(scheduledRecording.endDateTime));
+            myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(databaseId)});
+        }
+    }
+
+    public ScheduledRecording GetScheduledRecording(long databaseId) {
+
         Cursor cursor = myDataBase.query(SCHEDULED_RECORDINGS_TABLE,
-                new String[]{SCHEDULED_RECORDINGS_START_TIME, SCHEDULED_RECORDINGS_END_TIME},
+                new String[]{SCHEDULED_RECORDINGS_STATION,
+                        SCHEDULED_RECORDINGS_TYPE,
+                        SCHEDULED_RECORDINGS_START_TIME,
+                        SCHEDULED_RECORDINGS_END_TIME},
                 " _ID = ?",
                 new String[]{String.valueOf(databaseId)}, null, null, null);
 
+        ScheduledRecording scheduledRecording = new ScheduledRecording();
+
         if (cursor.moveToFirst()) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(SCHEDULED_RECORDINGS_START_TIME, DateUtils.addDay(cursor.getLong(0)));
-            contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addDay(cursor.getLong(1)));
-            myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(databaseId)});
+            scheduledRecording.station = cursor.getInt(0);
+            scheduledRecording.type = cursor.getInt(1);
+            scheduledRecording.startDateTime = cursor.getLong(2);
+            scheduledRecording.endDateTime = cursor.getLong(3);
         }
+
         cursor.close();
+        return scheduledRecording;
     }
 
     public void updateScheduledRecordingAddWeek(long databaseId) {
-        Cursor cursor = myDataBase.query(SCHEDULED_RECORDINGS_TABLE,
-                new String[]{SCHEDULED_RECORDINGS_START_TIME, SCHEDULED_RECORDINGS_END_TIME},
-                " _ID = ?",
-                new String[]{String.valueOf(databaseId)}, null, null, null);
+        ScheduledRecording scheduledRecording = GetScheduledRecording(databaseId);
 
-        if (cursor.moveToFirst()) {
+        if (scheduledRecording != null) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(SCHEDULED_RECORDINGS_START_TIME, DateUtils.addWeek(cursor.getLong(0)));
-            contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addWeek(cursor.getLong(1)));
+            contentValues.put(SCHEDULED_RECORDINGS_START_TIME, DateUtils.addWeek(scheduledRecording.startDateTime));
+            contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addWeek(scheduledRecording.endDateTime));
             myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(databaseId)});
         }
-        cursor.close();
     }
 
     public Cursor getScheduledRecordingsList() {
@@ -233,6 +259,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             radioDetails.setStationName(cursor.getString(0));
             radioDetails.setPlaylistUrl(cursor.getString(1));
         }
+        cursor.close();
         return radioDetails;
+    }
+
+    public class ScheduledRecording {
+        public int station;
+        public int type;
+        public long startDateTime;
+        public long endDateTime;
     }
 }

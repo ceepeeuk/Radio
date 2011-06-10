@@ -44,26 +44,32 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
         ListView scheduledRecordings = (ListView) findViewById(R.id.list_recording_schedule_list_view);
         scheduledRecordings.setAdapter(adapter);
 
-        scheduledRecordings.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
-                new AlertDialog.Builder(view.getContext())
-                        .setMessage("Delete scheduled recording?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                DatabaseHelper databaseHelper = prepareDatabaseHelper();
-                                databaseHelper.deleteScheduledRecording(id);
-                                databaseHelper.close();
-                                scheduledRecordingsCursor.requery();
-                                new AlarmHelper().cancelAlarm(getApplicationContext(), id);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        })
-                        .show();
+        scheduledRecordings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                return false;
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, final long id) {
+
+                CharSequence[] favOptions = {"Edit", "Delete"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+
+                builder.setTitle("Scheduled Recording")
+                        .setItems(favOptions, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int item) {
+                                switch (item) {
+                                    case 0:
+                                        Intent addNewScheduledRecordingActivityIntent = new Intent(ListScheduledRecordingsActivity.this, AddNewScheduledRecordingActivity.class);
+                                        addNewScheduledRecordingActivityIntent.putExtra(getString(R.string.edit_scheduled_recording_id), id);
+                                        startActivity(addNewScheduledRecordingActivityIntent);
+                                        break;
+                                    case 1:
+                                        DatabaseHelper databaseHelper = prepareDatabaseHelper();
+                                        databaseHelper.deleteScheduledRecording(id);
+                                        databaseHelper.close();
+                                        scheduledRecordingsCursor.requery();
+                                        AlarmHelper.cancelAlarm(getApplicationContext(), id);
+                                        break;
+                                }
+                            }
+                        }).show();
             }
         });
 

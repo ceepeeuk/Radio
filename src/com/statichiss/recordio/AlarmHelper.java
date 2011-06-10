@@ -20,7 +20,7 @@ public class AlarmHelper {
     public static final int WEEKLY_SCHEDULED_RECORDING = 3;
 
 
-    public void setAlarm(Context context, long databaseId, long stationId, long typeId, long startDateTime, long endDateTime) {
+    public static void setAlarm(Context context, long databaseId, long stationId, long typeId, long startDateTime, long endDateTime) {
 
         DatabaseHelper databaseHelper = prepareDatabaseHelper(context);
         RadioDetails radioDetails = databaseHelper.getRadioDetail(stationId);
@@ -60,7 +60,7 @@ public class AlarmHelper {
         }
     }
 
-    public void cancelAlarm(Context context, long databaseId) {
+    public static void cancelAlarm(Context context, long databaseId) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(context, RecordingBroadcastReceiver.class);
@@ -72,7 +72,7 @@ public class AlarmHelper {
         Log.d(TAG, "Cancelled alarm id " + databaseId);
     }
 
-    private DatabaseHelper prepareDatabaseHelper(Context context) {
+    private static DatabaseHelper prepareDatabaseHelper(Context context) {
 
         DatabaseHelper dbHelper = new DatabaseHelper(context);
 

@@ -16,7 +16,6 @@ public class RebootBroadcastReceiver extends BroadcastReceiver {
         Log.d(TAG, "onReceive called");
 
         DatabaseHelper dbHelper = new DatabaseHelper(context);
-        AlarmHelper alarmHelper = new AlarmHelper();
         Cursor cursor = null;
 
         try {
@@ -28,7 +27,7 @@ public class RebootBroadcastReceiver extends BroadcastReceiver {
             cursor.moveToFirst();
 
             while (!cursor.isAfterLast()) {
-                alarmHelper.setAlarm(context, cursor.getLong(0), cursor.getLong(3), cursor.getLong(4), cursor.getLong(1), cursor.getLong(2));
+                AlarmHelper.setAlarm(context, cursor.getLong(0), cursor.getLong(3), cursor.getLong(4), cursor.getLong(1), cursor.getLong(2));
                 Log.d(TAG, "Setting alarm for: \n\n" + "\tRecordingId: " + cursor.getLong(0));
                 cursor.moveToNext();
             }

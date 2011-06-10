@@ -10,16 +10,17 @@ import android.view.View;
 import android.view.Window;
 import android.widget.*;
 import com.statichiss.R;
-import com.statichiss.recordio.utils.StringUtils;
+import com.statichiss.recordio.utils.DateUtils;
 
 import java.io.IOException;
-import java.util.Calendar;
 
 public class AddNewScheduledRecordingActivity extends Activity implements View.OnClickListener {
 
     private long startDateTime = 0;
     private long endDateTime = 0;
     private static final String TAG = "com.statichiss.recordio.AddNewScheduledRecordingActivity";
+    private boolean editMode = false;
+    private long scheduledRecordingId;
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -60,6 +61,19 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         recordingTypesAdapter.setDropDownViewResource(R.layout.add_new_scheduled_recording_types);
         recordingTypeSpinner.setAdapter(recordingTypesAdapter);
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.containsKey(getString(R.string.edit_scheduled_recording_id))) {
+            editMode = true;
+            scheduledRecordingId = bundle.getLong(getString(R.string.edit_scheduled_recording_id));
+            DatabaseHelper.ScheduledRecording scheduledRecording = dbHelper.GetScheduledRecording(scheduledRecordingId);
+            favouriteStationSpinner.setSelection(scheduledRecording.station - 1);
+            recordingTypeSpinner.setSelection(scheduledRecording.type - 1);
+            startDateTime = scheduledRecording.startDateTime;
+            ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(startDateTime));
+            endDateTime = scheduledRecording.endDateTime;
+            ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(endDateTime));
+        }
+
         dbHelper.close();
     }
 
@@ -90,7 +104,13 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                     Toast.makeText(this, R.string.add_new_scheduled_recording_recording_already_scheduled, Toast.LENGTH_SHORT).show();
                     break;
                 }
-                addNewScheduledRecording();
+
+                if (editMode) {
+                    updateScheduledRecording();
+                } else {
+                    addNewScheduledRecording();
+                }
+
                 startActivity(listScheduledRecordingsIntent);
                 break;
             case R.id.add_new_scheduled_recording_cancel_button:
@@ -131,12 +151,27 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         DatabaseHelper dbHelper = prepareDatabaseHelper();
         Spinner station = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
         Spinner type = (Spinner) findViewById(R.id.add_new_scheduled_recording_recording_type_spinner);
-        long dbId = dbHelper.insertScheduledRecording(startDateTime, endDateTime, station.getSelectedItemPosition(), type.getSelectedItemPosition());
+        long dbId = dbHelper.insertScheduledRecording(startDateTime, endDateTime, station.getSelectedItemPosition() + 1, type.getSelectedItemPosition() + 1);
 
         dbHelper.close();
 
         //Set alarm
-        new AlarmHelper().setAlarm(this, dbId, station.getSelectedItemId(), type.getSelectedItemId(), startDateTime, endDateTime);
+        AlarmHelper.setAlarm(this, dbId, station.getSelectedItemId(), type.getSelectedItemId(), startDateTime, endDateTime);
+    }
+
+    private void updateScheduledRecording() {
+        // Add to database
+        DatabaseHelper dbHelper = prepareDatabaseHelper();
+        Spinner station = (Spinner) findViewById(R.id.add_new_scheduled_recording_favourite_station_spinner);
+        Spinner type = (Spinner) findViewById(R.id.add_new_scheduled_recording_recording_type_spinner);
+        dbHelper.updateScheduledRecording(scheduledRecordingId, startDateTime, endDateTime, station.getSelectedItemPosition() + 1, type.getSelectedItemPosition() + 1);
+        dbHelper.close();
+
+        // Delete old alarm
+        AlarmHelper.cancelAlarm(this, scheduledRecordingId);
+
+        // Set new alarm
+        AlarmHelper.setAlarm(this, scheduledRecordingId, station.getSelectedItemId(), type.getSelectedItemId(), startDateTime, endDateTime);
     }
 
     private DatabaseHelper prepareDatabaseHelper() {
@@ -166,41 +201,54 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
         final boolean is24h = !(timeS == null || timeS.equals("12"));
 
+        if (editMode) {
+            switch (originalViewId) {
+                case R.id.add_new_scheduled_recording_set_start_time_button:
+                    mDateTimePicker.updateDate(DateUtils.getYear(startDateTime), DateUtils.getMonth(startDateTime), DateUtils.getDay(startDateTime));
+                    mDateTimePicker.updateTime(DateUtils.getHour(startDateTime), DateUtils.getMinute(startDateTime));
+                    break;
+                case R.id.add_new_scheduled_recording_end_time_button:
+                    mDateTimePicker.updateDate(DateUtils.getYear(endDateTime), DateUtils.getMonth(endDateTime), DateUtils.getDay(endDateTime));
+                    mDateTimePicker.updateTime(DateUtils.getHour(endDateTime), DateUtils.getMinute(endDateTime));
+                    break;
+            }
+        }
+
         // Update demo TextViews when the "OK" button is clicked
         mDateTimeDialogView.findViewById(R.id.SetDateTime).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
-                StringBuilder date = new StringBuilder();
-
-                if (mDateTimePicker.is24HourView()) {
-                    date.append(StringUtils.pad(mDateTimePicker.get(Calendar.HOUR_OF_DAY)))
-                            .append(":")
-                            .append(StringUtils.pad(mDateTimePicker.get(Calendar.MINUTE)))
-                            .append(" ");
-                } else {
-                    date.append(StringUtils.pad(mDateTimePicker.get(Calendar.HOUR)))
-                            .append(":")
-                            .append(StringUtils.pad(mDateTimePicker.get(Calendar.MINUTE)))
-                            .append(" ")
-                            .append((mDateTimePicker.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"))
-                            .append(" ");
-                }
-
-                date.append(mDateTimePicker.get(Calendar.DAY_OF_MONTH))
-                        .append("/")
-                        .append(mDateTimePicker.get(Calendar.MONTH) + 1)
-                        .append("/")
-                        .append(mDateTimePicker.get(Calendar.YEAR));
+//                StringBuilder date = new StringBuilder();
+//
+//                if (mDateTimePicker.is24HourView()) {
+//                    date.append(StringUtils.pad(mDateTimePicker.get(Calendar.HOUR_OF_DAY)))
+//                            .append(":")
+//                            .append(StringUtils.pad(mDateTimePicker.get(Calendar.MINUTE)))
+//                            .append(" ");
+//                } else {
+//                    date.append(StringUtils.pad(mDateTimePicker.get(Calendar.HOUR)))
+//                            .append(":")
+//                            .append(StringUtils.pad(mDateTimePicker.get(Calendar.MINUTE)))
+//                            .append(" ")
+//                            .append((mDateTimePicker.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"))
+//                            .append(" ");
+//                }
+//
+//                date.append(mDateTimePicker.get(Calendar.DAY_OF_MONTH))
+//                        .append("/")
+//                        .append(mDateTimePicker.get(Calendar.MONTH) + 1)
+//                        .append("/")
+//                        .append(mDateTimePicker.get(Calendar.YEAR));
 
                 switch (originalViewId) {
                     case R.id.add_new_scheduled_recording_set_start_time_button:
                         startDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
-                        ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(date);
+                        ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(startDateTime));
                         break;
                     case R.id.add_new_scheduled_recording_end_time_button:
                         endDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
-                        ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(date);
+                        ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(endDateTime));
                         break;
                 }
 
@@ -241,5 +289,4 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         // Display the dialog
         mDateTimeDialog.show();
     }
-
 }

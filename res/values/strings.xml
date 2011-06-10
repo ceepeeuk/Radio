@@ -35,4 +35,5 @@
     <string name="playing_string">Playing</string>
     <string name="buffering_string">Buffering</string>
     <string name="recording_string">Recording</string>
+    <string name="edit_scheduled_recording_id">id</string>
 </resources>
