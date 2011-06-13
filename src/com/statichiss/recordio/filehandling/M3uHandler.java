@@ -11,11 +11,11 @@ public class M3uHandler extends FileHandler {
 
     public static RadioDetails parse(RadioDetails radioDetails) {
 
-        String plsFile = getFile(radioDetails.getPlaylistUrl());
+        String m3uFile = getFile(radioDetails.getPlaylistUrl());
 
         try {
 
-            FileReader fileReader = new FileReader(plsFile);
+            FileReader fileReader = new FileReader(m3uFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             String line;
@@ -29,11 +29,11 @@ public class M3uHandler extends FileHandler {
             fileReader.close();
 
         } catch (FileNotFoundException e) {
-            Log.e(M3UTAG, plsFile + " cannot be found", e);
+            Log.e(M3UTAG, m3uFile + " cannot be found", e);
         } catch (IOException e) {
-            Log.e(M3UTAG, plsFile + " cannot be read", e);
+            Log.e(M3UTAG, m3uFile + " cannot be read", e);
         } finally {
-            new File(plsFile).delete();
+            new File(m3uFile).delete();
         }
 
         return radioDetails;

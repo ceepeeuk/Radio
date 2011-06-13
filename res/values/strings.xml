@@ -15,7 +15,7 @@
     <string name="player_service_operation_key">Operation</string>
     <string name="player_service_name_key">StationName</string>
     <string name="player_service_url_key">StationURL</string>
-    <string name="timed_recorder_service_database_id_key">databseId</string>
+    <string name="timed_recorder_service_database_id_key">databaseId</string>
     <string name="timed_recorder_service_operation_key">Operation</string>
     <string name="timed_recorder_service_name_key">StationName</string>
     <string name="timed_recorder_service_url_key">StationURL</string>
@@ -36,4 +36,12 @@
     <string name="buffering_string">Buffering</string>
     <string name="recording_string">Recording</string>
     <string name="edit_scheduled_recording_id">id</string>
+    <string name="first_run_flag">SplashFlag</string>
+    <string name="first_run_text">To play/record an mp3 stream, enter the URL (direct to the stream or to the m3u/pls
+        file) in the textbox and press the arrow button or select a favourite from the list below.\n\nTo stop
+        playing/recording, press menu and select from there.\n\nTo add a new favourite, press menu and select "Add New
+        Favourite" (if a stream is currently playing it will be prepopulated).\n\nTo set a new scheduled recording (or
+        list existing ones), press menu and select "Scheduled Recordings". To edit or delete, press on it from the list
+        on Scheduled Recordings.\n\nAll recordings are saved to the Recordio folder on the root of the SD-Card.
+    </string>
 </resources>

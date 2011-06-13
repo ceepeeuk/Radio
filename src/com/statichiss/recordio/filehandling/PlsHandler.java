@@ -4,10 +4,7 @@ import android.util.Log;
 import com.statichiss.recordio.RadioDetails;
 import com.statichiss.recordio.utils.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class PlsHandler extends FileHandler {
     private static final String PLSTAG = "com.statichiss.recordio.filehandling.PlsHandler";
@@ -37,6 +34,8 @@ public class PlsHandler extends FileHandler {
             Log.e(PLSTAG, plsFile + " cannot be found", e);
         } catch (IOException e) {
             Log.e(PLSTAG, plsFile + " cannot be read", e);
+        } finally {
+            new File(plsFile).delete();
         }
 
         return radioDetails;

@@ -2,6 +2,7 @@ package com.statichiss.recordio;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.*;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -31,7 +32,6 @@ public class RadioActivity extends Activity {
     private static final int ADD_FAVOURITE = 2;
     private static final int SCHEDULED_RECORDINGS = 3;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +42,16 @@ public class RadioActivity extends Activity {
     public void onStart() {
 
         super.onStart();
+
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+        if (preferences.getBoolean(getString(R.string.first_run_flag), true)) {
+            ShowFirstRunPopUp();
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(getString(R.string.first_run_flag), false);
+            editor.commit();
+        }
+
         bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
@@ -102,6 +112,25 @@ public class RadioActivity extends Activity {
 
         lstFavourites.setAdapter(adapter);
         dbHelper.close();
+    }
+
+    private void ShowFirstRunPopUp() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.first_run_popup);
+        dialog.setTitle(getString(R.string.app_name));
+        dialog.setCancelable(true);
+
+        TextView popUpText = (TextView) dialog.findViewById(R.id.popUpText);
+        popUpText.setText(R.string.first_run_text);
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.popUpCancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override
