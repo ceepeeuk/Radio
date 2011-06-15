@@ -51,7 +51,7 @@ public class RecorderService extends WakefulIntentService {
 
         if (!android.os.Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             // Cannot write to SDCARD, so stuffed!
-            String error = buildErrorMessage(radioDetails, "cannot write to SD Card");
+            String error = "Failed to record " + radioDetails.getStationName() + " cannot write to SD Card";
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
             Log.e(TAG, error);
@@ -61,7 +61,7 @@ public class RecorderService extends WakefulIntentService {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnected()) {
             // No network connection
-            String error = buildErrorMessage(radioDetails, "cannot get network connection");
+            String error = "Failed to record " + radioDetails.getStationName() + ", no network available";
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
             Log.e(TAG, error);
@@ -94,7 +94,7 @@ public class RecorderService extends WakefulIntentService {
         if (!new File(recFolder).exists()) {
             if (!(new File(recFolder).mkdir())) {
                 //Failed to create dir, so have to quit
-                String error = buildErrorMessage(radioDetails, "cannot create directory to store recordings");
+                String error = "Failed to record " + radioDetails.getStationName() + " cannot create directory to store recordings";
                 Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
                 ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
                 return;
@@ -211,15 +211,6 @@ public class RecorderService extends WakefulIntentService {
                 Log.d(TAG, "Sleep interrupted");
             }
         }
-    }
-
-    private String buildErrorMessage(RadioDetails radioDetails, String error) {
-        return new StringBuilder()
-                .append("Failed to record ")
-                .append(radioDetails.getStationName())
-                .append(" ")
-                .append(error)
-                .toString();
     }
 
     @Override

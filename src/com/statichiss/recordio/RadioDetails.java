@@ -91,19 +91,17 @@ public class RadioDetails implements Parcelable {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n\nName = ");
+        sb.append("RadioDetails = { StationName=");
         sb.append(getStationName());
-        sb.append("\nStreamUrl = ");
+        sb.append(", StreamUrl=");
         sb.append(getStreamUrl());
-        sb.append("\nPlaylistUrl = ");
+        sb.append(", PlaylistUrl=");
         sb.append(getPlaylistUrl());
-        sb.append("\n");
-        sb.append("\nDuration = ");
+        sb.append(", Duration=");
         sb.append(getDuration());
-        sb.append("\n");
-        sb.append("\nRecordingType = ");
+        sb.append(", RecordingType=");
         sb.append(getRecordingType());
-        sb.append("\n");
+        sb.append(" }");
         return sb.toString();
     }
 

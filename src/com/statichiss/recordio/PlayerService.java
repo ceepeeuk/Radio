@@ -1,9 +1,13 @@
 package com.statichiss.recordio;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -64,8 +68,22 @@ public class PlayerService extends Service {
     }
 
     public void startPlaying(RadioActivity view, RadioDetails radioDetails) {
-
+        final RadioDetails incomingRadioDetails = radioDetails;
         caller = view;
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnected()) {
+            // No network connection
+            String error = "Failed to play " + radioDetails.getStationName() + ", network unavailable";
+            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_PLAYING_ID, errorNotification);
+            caller.updateUIForPlaying(false, "Network Unavailable");
+            Log.e(TAG, error);
+            return;
+        }
+
+        caller.updateUIForPlaying(true, getString(R.string.buffering_string) + " " + radioDetails.getStationName());
+
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
@@ -84,10 +102,11 @@ public class PlayerService extends Service {
             });
 
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                    Log.e(TAG, "Error occurred");
-                    caller.updateUIForPlaying(false, "Error playing");
-                    return true;
+                public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+                    Log.e(TAG, "Error occurred trying to play: " + incomingRadioDetails);
+                    caller.updateUIForPlaying(true, "Error playing");
+                    caller.reportError(incomingRadioDetails, new Exception("onError invoked"));
+                    return false;
                 }
             });
 
@@ -110,6 +129,7 @@ public class PlayerService extends Service {
 
             mediaPlayer.setDataSource(radioDetails.getStreamUrl());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setLooping(false);
             mediaPlayer.prepareAsync();
             buffering = true;
 
@@ -130,16 +150,22 @@ public class PlayerService extends Service {
                 }
             });
 
-
-        } catch (IOException ioe) {
-            Log.e(TAG, "Error caught in play", ioe);
-            ioe.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalArgumentException iae) {
+            Log.e(TAG, "IllegalArgumentException caught in PlayService for url: " + radioDetails.getStreamUrl(), iae);
+            caller.updateUIForPlaying(false, "Error trying to play stream");
             mediaPlayer.reset();
+            caller.reportError(radioDetails, iae);
+        } catch (IOException ioe) {
+            Log.e(TAG, "IOException caught in PlayService for url: " + radioDetails.getStreamUrl(), ioe);
+            caller.updateUIForPlaying(false, "Error trying to play stream");
+            mediaPlayer.reset();
+            caller.reportError(radioDetails, ioe);
         } finally {
             radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
         }
     }
+
 
     public class RadioServiceBinder extends Binder {
         PlayerService getService() {

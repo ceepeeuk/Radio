@@ -255,12 +255,6 @@ public class RadioActivity extends Activity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Stopping play");
                                 playerService.stopPlaying(RadioActivity.this);
-
-                                StringBuilder status = new StringBuilder(getString(R.string.buffering_string))
-                                        .append(" ")
-                                        .append(radioDetails.getStationName());
-
-                                updateUIForPlaying(true, status.toString());
                                 playerService.startPlaying(RadioActivity.this, radioDetails);
                             }
                         })
@@ -273,10 +267,6 @@ public class RadioActivity extends Activity {
             } else {
                 Log.d(TAG, "Starting play");
                 playerService.startPlaying(this, radioDetails);
-                StringBuilder status = new StringBuilder(getString(R.string.buffering_string))
-                        .append(" ")
-                        .append(radioDetails.getStationName());
-                updateUIForPlaying(true, status.toString());
             }
         } else {
             Log.e(TAG, "Playerservice unbound so cannot start playing");
@@ -373,6 +363,33 @@ public class RadioActivity extends Activity {
     private void setStatus(String message) {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(message);
+    }
+
+    public void reportError(final RadioDetails radioDetails, final Exception e) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Sorry, cannot connect to this stream, would you like to send an error report so support can be added please?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuilder stringBuilder = new StringBuilder()
+                                .append("Exception caught trying to play stream: ")
+                                .append(e.getMessage())
+                                .append("\n\n")
+                                .append(radioDetails);
+
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("plain/text");
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"statichiss@gmail.com"});
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Stream Error Report");
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
+                        startActivity(Intent.createChooser(emailIntent, "Send Error Report"));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                })
+                .create().show();
     }
 
     private ServiceConnection playerConnection = new ServiceConnection() {
