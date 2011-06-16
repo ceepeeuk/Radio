@@ -130,29 +130,14 @@ public class RecorderService extends WakefulIntentService {
 
             byte[] buffer = new byte[4096];
 
-            if (radioDetails.getDuration() > 0) {
-                // Timed recording
-                URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
-                inputStream = url.getInputStream();
-                fileOutputStream = new FileOutputStream(outputSource.toString());
-                recordingState = true;
-                long endTime = System.currentTimeMillis() + radioDetails.getDuration();
+            URLConnection url = new URL(radioDetails.getStreamUrl()).openConnection();
+            inputStream = url.getInputStream();
+            fileOutputStream = new FileOutputStream(outputSource.toString());
+            recordingState = true;
 
-                while (System.currentTimeMillis() < endTime) {
-                    //fileOutputStream.write(buffer, 0, len);
-                    record(radioDetails, outputSource.toString(), buffer, endTime);
-                }
+            long endTime = radioDetails.getDuration() > 0 ? System.currentTimeMillis() + radioDetails.getDuration() : 0;
 
-            } else {
-
-                // Manual recording
-                recordingState = true;
-                Log.d(TAG, "Starting manual recording...");
-                while (!cancelRecordingFlag) {
-                    record(radioDetails, outputSource.toString(), buffer, 0);
-                }
-            }
-
+            record(radioDetails, outputSource.toString(), buffer, endTime);
             Log.d(TAG, "Finished writing stream");
 
         } catch (MalformedURLException e) {
@@ -172,10 +157,8 @@ public class RecorderService extends WakefulIntentService {
                     fileOutputStream.close();
                     fileOutputStream = null;
                 }
-                if (wifiLock != null) {
-                    wifiLock.release();
-                }
 
+                wifiLock.release();
                 recordingState = false;
                 cancelRecordingFlag = false;
 
@@ -194,10 +177,12 @@ public class RecorderService extends WakefulIntentService {
             fileOutputStream = new FileOutputStream(outputSource, true);
 
             if (endTime > 0) {
-                while ((System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
+                Log.d(TAG, "Starting timed recording for " + radioDetails.getStreamUrl());
+                while (!cancelRecordingFlag && (System.currentTimeMillis() < endTime) && (len = inputStream.read(buffer)) > 0) {
                     fileOutputStream.write(buffer, 0, len);
                 }
             } else {
+                Log.d(TAG, "Starting manual recording for " + radioDetails.getStreamUrl());
                 while (!cancelRecordingFlag && (len = inputStream.read(buffer)) > 0) {
                     fileOutputStream.write(buffer, 0, len);
                 }
