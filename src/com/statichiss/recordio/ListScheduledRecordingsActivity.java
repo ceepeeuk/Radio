@@ -100,7 +100,6 @@ public class ListScheduledRecordingsActivity extends Activity implements View.On
         DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         try {
-            dbHelper.createDataBase();
             dbHelper.openDataBase();
         } catch (IOException e) {
             Log.e(TAG, "IOException thrown when trying to access DB", e);

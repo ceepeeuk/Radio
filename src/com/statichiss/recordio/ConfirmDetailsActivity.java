@@ -80,7 +80,6 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
 
                 try {
-                    dbHelper.createDataBase();
                     dbHelper.openDataBase();
                     dbHelper.addFavourite(radioDetails);
                 } catch (IOException e) {

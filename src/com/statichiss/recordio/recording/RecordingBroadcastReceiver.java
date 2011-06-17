@@ -45,7 +45,6 @@ public class RecordingBroadcastReceiver extends BroadcastReceiver {
 
             DatabaseHelper databaseHelper = new DatabaseHelper(context);
             try {
-                databaseHelper.createDataBase();
                 databaseHelper.openDataBase();
 
                 switch ((int) radioDetails.getRecordingType()) {

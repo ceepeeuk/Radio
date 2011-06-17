@@ -19,11 +19,9 @@ public class RebootBroadcastReceiver extends BroadcastReceiver {
         Cursor cursor = null;
 
         try {
-            dbHelper.createDataBase();
+
             dbHelper.openDataBase();
-
             cursor = dbHelper.getAllScheduledRecordings();
-
             cursor.moveToFirst();
 
             while (!cursor.isAfterLast()) {

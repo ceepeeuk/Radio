@@ -77,7 +77,6 @@ public class AlarmHelper {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
 
         try {
-            dbHelper.createDataBase();
             dbHelper.openDataBase();
         } catch (IOException e) {
             Log.e(TAG, "IOException thrown when trying to access DB", e);

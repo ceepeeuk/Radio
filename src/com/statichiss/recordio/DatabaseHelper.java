@@ -3,7 +3,6 @@ package com.statichiss.recordio;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -53,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Creates a empty database on the system and rewrites it with your own database.
-    public void createDataBase() throws IOException {
+    private void createDataBase() throws IOException {
 
         boolean dbExist = checkDataBase();
 
@@ -119,8 +118,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         myInput.close();
     }
 
-    public void openDataBase() throws SQLException {
+    public void openDataBase() throws IOException {
         //Open the database
+        createDataBase();
         String myPath = DB_PATH + DB_NAME;
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
     }

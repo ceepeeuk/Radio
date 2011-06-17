@@ -56,7 +56,6 @@ public class RadioActivity extends Activity {
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         try {
-            dbHelper.createDataBase();
             dbHelper.openDataBase();
         } catch (IOException e) {
             Log.e(TAG, "IOException thrown when trying to access DB", e);
@@ -96,6 +95,11 @@ public class RadioActivity extends Activity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
+                                try {
+                                    dbHelper.openDataBase();
+                                } catch (IOException e) {
+                                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                }
                                 dbHelper.deleteFavourite(id);
                                 favouritesCursor.requery();
                             }
@@ -111,7 +115,7 @@ public class RadioActivity extends Activity {
         });
 
         lstFavourites.setAdapter(adapter);
-        dbHelper.close();
+        //dbHelper.close();
     }
 
     private void ShowFirstRunPopUp() {
