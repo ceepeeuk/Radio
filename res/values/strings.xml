@@ -8,6 +8,8 @@
     <string name="radio_details_name_key">radioDetails name</string>
     <string name="radio_details_stream_url_key">radioDetails stream</string>
     <string name="radio_details_playlist_url_key">radioDetails playlist</string>
+    <string name="main_stop_playing_btn">Stop Playing</string>
+    <string name="main_stop_recording_btn">Stop Recording</string>
     <string name="edit_fav_pop_up_btn_save">Save</string>
     <string name="edit_fav_pop_up_btn_cancel">Cancel</string>
     <string name="edit_fav_pop_up_lbl_name">Name</string>

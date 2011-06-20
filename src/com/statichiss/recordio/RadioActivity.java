@@ -85,6 +85,26 @@ public class RadioActivity extends Activity {
             }
         });
 
+        findViewById(R.id.main_stop_playing_btn).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (playerServiceBound && playerService.alreadyPlaying()) {
+                    updateUIForPlaying(false, "");
+                    playerService.stopPlaying(RadioActivity.this);
+                    findViewById(R.id.main_stop_playing_btn).setEnabled(false);
+                }
+            }
+        });
+
+        findViewById(R.id.main_stop_recording_btn).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (RecorderService.alreadyRecording()) {
+                    updateUIForRecording(false, "");
+                    RecorderService.cancelRecording();
+                    findViewById(R.id.main_stop_recording_btn).setEnabled(false);
+                }
+            }
+        });
+
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
@@ -98,7 +118,7 @@ public class RadioActivity extends Activity {
                                 try {
                                     dbHelper.openDataBase();
                                 } catch (IOException e) {
-                                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    Log.e(TAG, "Unable to open db to delete favourite", e);
                                 }
                                 dbHelper.deleteFavourite(id);
                                 favouritesCursor.requery();
@@ -154,8 +174,8 @@ public class RadioActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, STOP_PLAYING, Menu.NONE, "Stop Playing");
-        menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
+//        menu.add(Menu.NONE, STOP_PLAYING, Menu.NONE, "Stop Playing");
+//        menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
         menu.add(Menu.NONE, ADD_FAVOURITE, Menu.NONE, "Add Favourite");
         menu.add(Menu.NONE, SCHEDULED_RECORDINGS, Menu.NONE, "Scheduled Recordings");
         return (super.onCreateOptionsMenu(menu));
@@ -165,19 +185,19 @@ public class RadioActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            case STOP_PLAYING:
-                if (playerServiceBound && playerService.alreadyPlaying()) {
-                    updateUIForPlaying(false, "");
-                    playerService.stopPlaying(this);
-                }
-                return true;
-
-            case STOP_RECORDING:
-                if (RecorderService.alreadyRecording()) {
-                    updateUIForRecording(false, "");
-                    RecorderService.cancelRecording();
-                }
-                return true;
+//            case STOP_PLAYING:
+//                if (playerServiceBound && playerService.alreadyPlaying()) {
+//                    updateUIForPlaying(false, "");
+//                    playerService.stopPlaying(this);
+//                }
+//                return true;
+//
+//            case STOP_RECORDING:
+//                if (RecorderService.alreadyRecording()) {
+//                    updateUIForRecording(false, "");
+//                    RecorderService.cancelRecording();
+//                }
+//                return true;
 
             case ADD_FAVOURITE:
 
@@ -260,6 +280,7 @@ public class RadioActivity extends Activity {
                                 Log.d(TAG, "Stopping play");
                                 playerService.stopPlaying(RadioActivity.this);
                                 playerService.startPlaying(RadioActivity.this, radioDetails);
+                                findViewById(R.id.main_stop_playing_btn).setEnabled(true);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -271,6 +292,7 @@ public class RadioActivity extends Activity {
             } else {
                 Log.d(TAG, "Starting play");
                 playerService.startPlaying(this, radioDetails);
+                findViewById(R.id.main_stop_playing_btn).setEnabled(true);
             }
         } else {
             Log.e(TAG, "Playerservice unbound so cannot start playing");
@@ -291,6 +313,10 @@ public class RadioActivity extends Activity {
                             RecorderService.cancelRecording();
                             // Fire start intent
                             RecorderService.sendWakefulWork(getApplicationContext(), createRecordingIntent(radioDetails));
+
+                            String recordingStatus = getString(R.string.recording_string) + " " + (radioDetails.getStationName() != null ? radioDetails.getStationName() : "");
+                            updateUIForRecording(true, recordingStatus);
+                            findViewById(R.id.main_stop_recording_btn).setEnabled(true);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -306,13 +332,9 @@ public class RadioActivity extends Activity {
             Intent intent = createRecordingIntent(radioDetails);
             RecorderService.sendWakefulWork(this, intent);
 
-            String recordingStatus = new StringBuilder()
-                    .append(getString(R.string.recording_string))
-                    .append(" ")
-                    .append(radioDetails.getStationName() != null ? radioDetails.getStationName() : "")
-                    .toString();
-
+            String recordingStatus = getString(R.string.recording_string) + " " + (radioDetails.getStationName() != null ? radioDetails.getStationName() : "");
             updateUIForRecording(true, recordingStatus);
+            findViewById(R.id.main_stop_recording_btn).setEnabled(true);
         }
     }
 
@@ -334,6 +356,7 @@ public class RadioActivity extends Activity {
                 sb.append(" | ");
                 sb.append(currentStatus.substring(currentStatus.indexOf(getString(R.string.recording_string))));
             }
+            findViewById(R.id.main_stop_playing_btn).setEnabled(true);
         } else {
             if (currentStatus.contains(getString(R.string.recording_string))) {
                 sb.append(currentStatus.substring(currentStatus.indexOf(getString(R.string.recording_string))));
@@ -355,6 +378,8 @@ public class RadioActivity extends Activity {
             if (!currentStatus.contains(getString(R.string.recording_string))) {
                 sb.append(status);
             }
+
+            findViewById(R.id.main_stop_recording_btn).setEnabled(true);
         } else {
             if (currentStatus.startsWith(getString(R.string.playing_string)) || currentStatus.startsWith(getString(R.string.buffering_string))) {
                 sb.append(currentStatus.substring(0, currentStatus.indexOf("|")));

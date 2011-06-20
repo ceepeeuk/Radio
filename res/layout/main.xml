@@ -32,9 +32,35 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@+id/txt_url"
-            android:layout_above="@+id/lbl_status"
+            android:layout_above="@+id/main_stop_button_layout"
             >
     </ListView>
+    <LinearLayout
+            android:id="@+id/main_stop_button_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lbl_status"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            >
+        <Button
+                android:id="@+id/main_stop_playing_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_stop_playing_btn"
+                android:layout_weight="0.5"
+                android:enabled="false"
+                >
+        </Button>
+        <Button
+                android:id="@+id/main_stop_recording_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_stop_recording_btn"
+                android:layout_weight="0.5"
+                android:enabled="false"
+                >
+        </Button>
+    </LinearLayout>
     <TextView
             android:id="@+id/lbl_status"
             android:layout_width="wrap_content"
