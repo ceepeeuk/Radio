@@ -333,7 +333,7 @@ public class RadioActivity extends Activity {
             RecorderService.sendWakefulWork(this, intent);
 
             String recordingStatus = getString(R.string.recording_string) + " " + (radioDetails.getStationName() != null ? radioDetails.getStationName() : "");
-            updateUIForRecording(true, recordingStatus);
+            updateUIForRecording(false, recordingStatus);
             findViewById(R.id.main_stop_recording_btn).setEnabled(true);
         }
     }
@@ -356,7 +356,6 @@ public class RadioActivity extends Activity {
                 sb.append(" | ");
                 sb.append(currentStatus.substring(currentStatus.indexOf(getString(R.string.recording_string))));
             }
-            findViewById(R.id.main_stop_playing_btn).setEnabled(true);
         } else {
             if (currentStatus.contains(getString(R.string.recording_string))) {
                 sb.append(currentStatus.substring(currentStatus.indexOf(getString(R.string.recording_string))));
@@ -374,16 +373,16 @@ public class RadioActivity extends Activity {
                 sb.append(currentStatus);
                 sb.append(currentStatus.endsWith(" | ") ? "" : " | ");
             }
-
-            if (!currentStatus.contains(getString(R.string.recording_string))) {
-                sb.append(status);
-            }
-
-            findViewById(R.id.main_stop_recording_btn).setEnabled(true);
+            sb.append(status);
         } else {
             if (currentStatus.startsWith(getString(R.string.playing_string)) || currentStatus.startsWith(getString(R.string.buffering_string))) {
-                sb.append(currentStatus.substring(0, currentStatus.indexOf("|")));
+                if (currentStatus.contains("|")) {
+                    sb.append(currentStatus.substring(0, currentStatus.indexOf("|")));
+                } else {
+                    sb.append(currentStatus);
+                }
             }
+            sb.append(status);
         }
 
         setStatus(sb.toString());
