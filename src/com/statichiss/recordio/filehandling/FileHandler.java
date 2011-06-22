@@ -1,5 +1,6 @@
 package com.statichiss.recordio.filehandling;
 
+import android.os.Environment;
 import android.util.Log;
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -48,5 +49,14 @@ public abstract class FileHandler {
         filename.append("temp_");
         filename.append(plsUrl.substring(position + 1));
         return filename.toString();
+    }
+
+    public static String[] getListOfRecordings(String appName) {
+        File recFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + appName);
+        return recFolder.list(new FilenameFilter() {
+            public boolean accept(File file, String name) {
+                return name.endsWith("mp3");
+            }
+        });
     }
 }

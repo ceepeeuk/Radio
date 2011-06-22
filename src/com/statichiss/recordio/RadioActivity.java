@@ -27,10 +27,11 @@ public class RadioActivity extends Activity {
 
     private String TAG = "com.statichiss.recordio.RadioActivity";
 
-    private static final int STOP_PLAYING = 0;
-    private static final int STOP_RECORDING = 1;
+    //private static final int STOP_PLAYING = 0;
+    //private static final int STOP_RECORDING = 1;
     private static final int ADD_FAVOURITE = 2;
     private static final int SCHEDULED_RECORDINGS = 3;
+    private static final int RECORDINGS = 4;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,6 @@ public class RadioActivity extends Activity {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
         if (preferences.getBoolean(getString(R.string.first_run_flag), true)) {
             ShowFirstRunPopUp();
-
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(getString(R.string.first_run_flag), false);
             editor.commit();
@@ -178,6 +178,7 @@ public class RadioActivity extends Activity {
 //        menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
         menu.add(Menu.NONE, ADD_FAVOURITE, Menu.NONE, "Add Favourite");
         menu.add(Menu.NONE, SCHEDULED_RECORDINGS, Menu.NONE, "Scheduled Recordings");
+        menu.add(Menu.NONE, RECORDINGS, Menu.NONE, "Recordings");
         return (super.onCreateOptionsMenu(menu));
     }
 
@@ -210,13 +211,19 @@ public class RadioActivity extends Activity {
                 Intent confirmDetailsIntent = new Intent(RadioActivity.this, ConfirmDetailsActivity.class);
                 confirmDetailsIntent.putExtra(getString(R.string.radio_details_key), radioDetails);
                 startActivity(confirmDetailsIntent);
-
                 return true;
 
             case SCHEDULED_RECORDINGS:
 
                 Intent scheduledRecordingsIntent = new Intent(RadioActivity.this, ListScheduledRecordingsActivity.class);
                 startActivity(scheduledRecordingsIntent);
+                return true;
+
+            case RECORDINGS:
+
+                Intent recordingsIntent = new Intent(RadioActivity.this, RecordingsActivity.class);
+                startActivity(recordingsIntent);
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);

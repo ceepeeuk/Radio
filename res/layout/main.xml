@@ -49,6 +49,7 @@
                 android:text="@string/main_stop_playing_btn"
                 android:layout_weight="0.5"
                 android:enabled="false"
+                android:background="@drawable/custom_stop_button"
                 >
         </Button>
         <Button
@@ -58,6 +59,7 @@
                 android:text="@string/main_stop_recording_btn"
                 android:layout_weight="0.5"
                 android:enabled="false"
+                android:background="@drawable/custom_stop_button"
                 >
         </Button>
     </LinearLayout>

@@ -1,0 +1,8 @@
+<resources>
+    <color name="enabled_red">#FFFF0738</color>
+    <color name="enabled_red1">#FF750000</color>
+    <color name="enabled_red05">#00770606</color>
+    <color name="disabled_red">#FF5A1D1D</color>
+    <color name="disabled_red1">#FF5A3838</color>
+    <color name="disabled_red05">#00770606</color>
+</resources>

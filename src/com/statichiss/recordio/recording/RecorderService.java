@@ -89,7 +89,7 @@ public class RecorderService extends WakefulIntentService {
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText, Notification.FLAG_ONGOING_EVENT);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
 
-        String recFolder = GetRecordingsFolder();
+        String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name);
 
         if (!new File(recFolder).exists()) {
             if (!(new File(recFolder).mkdir())) {
@@ -227,14 +227,6 @@ public class RecorderService extends WakefulIntentService {
         timestamp.append(StringUtils.pad(calendar.get(Calendar.SECOND)));
 
         return timestamp.toString();
-    }
-
-    private String GetRecordingsFolder() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Environment.getExternalStorageDirectory().getAbsolutePath());
-        sb.append(File.separator);
-        sb.append(getString(R.string.app_name));
-        return sb.toString();
     }
 
     public static boolean alreadyRecording() {

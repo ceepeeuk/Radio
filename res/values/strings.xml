@@ -4,6 +4,7 @@
     <string name="app_name_confirm_details_activity">Recordio - Confirm New Favourite</string>
     <string name="app_name_list_scheduled_recordings">Recordio - Scheduled Recordings</string>
     <string name="app_name_add_new_scheduled_recordings">Recordio - Add New Scheduled Recording</string>
+    <string name="app_name_recordings">Recordio - Recordings</string>
     <string name="radio_details_key">radioDetails</string>
     <string name="radio_details_name_key">radioDetails name</string>
     <string name="radio_details_stream_url_key">radioDetails stream</string>
@@ -40,8 +41,8 @@
     <string name="edit_scheduled_recording_id">id</string>
     <string name="first_run_flag">SplashFlag</string>
     <string name="first_run_text">To play/record an mp3 stream, enter the URL (direct to the stream or to the m3u/pls
-        file) in the textbox and press the arrow button or select a favourite from the list below.\n\nTo stop
-        playing/recording, press menu and select from there.\n\nTo add a new favourite, press menu and select "Add New
+        file) in the textbox and press the arrow button or select a favourite from the list below.\n\nTo add a new
+        favourite, press menu and select "Add New
         Favourite" (if a stream is currently playing it will be prepopulated).\n\nTo set a new scheduled recording (or
         list existing ones), press menu and select "Scheduled Recordings". To edit or delete, press on it from the list
         on Scheduled Recordings.\n\nAll recordings are saved to the Recordio folder on the root of the SD-Card.
