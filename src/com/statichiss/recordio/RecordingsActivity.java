@@ -32,7 +32,12 @@ public class RecordingsActivity extends Activity {
         });
 
         final ArrayList<String> fileNames = new ArrayList<String>();
-        Collections.addAll(fileNames, files);
+
+        if (files != null && files.length > 0) {
+            Collections.addAll(fileNames, files);
+        } else {
+            fileNames.add("No recordings available");
+        }
 
         final ListView fileList = (ListView) findViewById(R.id.recordings_lst_files);
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.recordings_list_item, fileNames);
@@ -49,15 +54,17 @@ public class RecordingsActivity extends Activity {
                                     case 0:
                                         break;
                                     case 1:
-                                        Log.d(TAG, fileNames.get((int) id));
-                                        new File(recFolder, fileNames.get((int) id));
-                                        fileNames.remove(id);
+                                        new File(recFolder, fileNames.get((int) id)).delete();
+                                        fileNames.remove((int) id);
+                                        if (fileNames.size() == 0) {
+                                            fileNames.add("No recordings available");
+                                        }
+                                        adapter.notifyDataSetChanged();
                                         break;
                                     default:
                                         Log.e(TAG, "Unexpected option returned from File dialog, option #" + item);
                                         break;
                                 }
-                                adapter.notifyDataSetChanged();
                             }
                         });
                 builder.create().show();
