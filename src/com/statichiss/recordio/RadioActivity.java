@@ -3,10 +3,12 @@ package com.statichiss.recordio;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.*;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,10 +22,7 @@ import java.io.IOException;
 
 public class RadioActivity extends Activity {
 
-    private PlayerService playerService;
-    private boolean playerServiceBound = false;
-
-    private Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
+    private Intent playerIntent = new Intent("com.statichiss.recordio.WakefulPlayerService");
 
     private String TAG = "com.statichiss.recordio.RadioActivity";
 
@@ -52,7 +51,7 @@ public class RadioActivity extends Activity {
             editor.commit();
         }
 
-        bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
+        //bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         try {
@@ -87,9 +86,12 @@ public class RadioActivity extends Activity {
 
         findViewById(R.id.main_stop_playing_btn).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (playerServiceBound && playerService.alreadyPlaying()) {
+                MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     updateUIForPlaying(false, "");
-                    playerService.stopPlaying(RadioActivity.this);
+                    //playerService.stopPlaying(RadioActivity.this);
+                    //TODO
+                    //WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails));
                     findViewById(R.id.main_stop_playing_btn).setEnabled(false);
                 }
             }
@@ -160,16 +162,16 @@ public class RadioActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-        if (playerServiceBound) {
-            unbindService(playerConnection);
-            playerServiceBound = false;
-        }
+//        if (playerServiceBound) {
+//            unbindService(playerConnection);
+//            playerServiceBound = false;
+//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
+        //bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -204,7 +206,7 @@ public class RadioActivity extends Activity {
 
                 RadioDetails radioDetails = new RadioDetails();
 
-                if (playerServiceBound && playerService.alreadyPlaying()) {
+                if (alreadyPlaying()) {
                     radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
                 }
 
@@ -277,32 +279,30 @@ public class RadioActivity extends Activity {
     }
 
     private void play(final RadioDetails radioDetails) {
-        if (playerServiceBound) {
-            if (playerService.alreadyPlaying()) {
+        if (alreadyPlaying()) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Stop playing current station?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d(TAG, "Stopping play");
-                                playerService.stopPlaying(RadioActivity.this);
-                                playerService.startPlaying(RadioActivity.this, radioDetails);
-                                findViewById(R.id.main_stop_playing_btn).setEnabled(true);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-                builder.create().show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Stop playing current station?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Log.d(TAG, "Stopping play");
+                            //TODO
+//                            playerService.stopPlaying(RadioActivity.this);
+//                            playerService.startPlaying(RadioActivity.this, radioDetails);
+                            findViewById(R.id.main_stop_playing_btn).setEnabled(true);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    });
+            builder.create().show();
 
-            } else {
-                Log.d(TAG, "Starting play");
-                playerService.startPlaying(this, radioDetails);
-                findViewById(R.id.main_stop_playing_btn).setEnabled(true);
-            }
         } else {
-            Log.e(TAG, "Playerservice unbound so cannot start playing");
+            Log.d(TAG, "Starting play");
+            //playerService.startPlaying(this, radioDetails);
+            WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails, RadioApplication.StartPlayingRadio));
+            findViewById(R.id.main_stop_playing_btn).setEnabled(true);
         }
     }
 
@@ -353,6 +353,18 @@ public class RadioActivity extends Activity {
         return intent;
     }
 
+    private Intent createPlayingIntent(RadioDetails radioDetails, int operation) {
+        Intent intent = new Intent("com.statichiss.recordio.WakefulPlayerService");
+
+        if (radioDetails != null) {
+            intent.putExtra(getString(R.string.radio_details_key), radioDetails);
+        }
+
+        intent.putExtra(getString(R.string.player_service_operation_key), operation);
+
+        return intent;
+    }
+
     public void updateUIForPlaying(boolean playingNow, String status) {
         StringBuilder sb = new StringBuilder();
         String currentStatus = ((TextView) findViewById(R.id.txt_status)).getText().toString();
@@ -395,6 +407,11 @@ public class RadioActivity extends Activity {
         setStatus(sb.toString());
     }
 
+    public boolean alreadyPlaying() {
+        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
+        return mediaPlayer != null && mediaPlayer.isPlaying();
+    }
+
     private void setStatus(String message) {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(message);
@@ -427,38 +444,38 @@ public class RadioActivity extends Activity {
                 .create().show();
     }
 
-    private ServiceConnection playerConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-
-            PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
-            playerService = binder.getService();
-            playerServiceBound = true;
-
-            if (playerService.alreadyPlaying()) {
-                StringBuilder sb = new StringBuilder(getString(R.string.playing_string));
-                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
-                if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
-                    sb.append(" ");
-                    sb.append(radioDetails.getStationName());
-                }
-                updateUIForPlaying(true, sb.toString());
-            }
-
-
-            if (RecorderService.alreadyRecording()) {
-                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getRecordingStation();
-                String recordingStatus = new StringBuilder()
-                        .append(getString(R.string.recording_string))
-                        .append(" ")
-                        .append(radioDetails != null && !StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? radioDetails.getStationName() : "")
-                        .toString();
-                updateUIForRecording(true, recordingStatus);
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName componentName) {
-            playerServiceBound = false;
-        }
-    };
+//    private ServiceConnection playerConnection = new ServiceConnection() {
+//
+//        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//
+//            PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
+//            playerService = binder.getService();
+//            playerServiceBound = true;
+//
+//            if (playerService.alreadyPlaying()) {
+//                StringBuilder sb = new StringBuilder(getString(R.string.playing_string));
+//                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
+//                if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
+//                    sb.append(" ");
+//                    sb.append(radioDetails.getStationName());
+//                }
+//                updateUIForPlaying(true, sb.toString());
+//            }
+//
+//
+//            if (RecorderService.alreadyRecording()) {
+//                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getRecordingStation();
+//                String recordingStatus = new StringBuilder()
+//                        .append(getString(R.string.recording_string))
+//                        .append(" ")
+//                        .append(radioDetails != null && !StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? radioDetails.getStationName() : "")
+//                        .toString();
+//                updateUIForRecording(true, recordingStatus);
+//            }
+//        }
+//
+//        public void onServiceDisconnected(ComponentName componentName) {
+//            playerServiceBound = false;
+//        }
+//    };
 }

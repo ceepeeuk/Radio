@@ -35,6 +35,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".recordio.CallReceiver" android:label="CallReceiver"/>
         <service android:name=".recordio.PlayerService">
             <intent-filter>
                 <action android:name="com.statichiss.recordio.PlayerService"/>
@@ -43,6 +44,11 @@
         <service android:name=".recordio.recording.RecorderService">
             <intent-filter>
                 <action android:name="com.statichiss.recordio.recording.RecorderService"/>
+            </intent-filter>
+        </service>
+        <service android:name=".recordio.WakefulPlayerService" android:label="WakefulPlayerService">
+            <intent-filter>
+                <action android:name="com.statichiss.recordio.WakefulPlayerService"/>
             </intent-filter>
         </service>
     </application>
