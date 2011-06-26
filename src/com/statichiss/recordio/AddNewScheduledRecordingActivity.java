@@ -265,7 +265,6 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         mDateTimeDialogView.findViewById(R.id.CancelDialog).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 mDateTimeDialog.cancel();
             }
         });
@@ -274,7 +273,6 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         mDateTimeDialogView.findViewById(R.id.ResetDateTime).setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 mDateTimePicker.reset();
             }
         });

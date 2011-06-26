@@ -41,10 +41,7 @@ public class RecordingsActivity extends Activity {
                             public void onClick(DialogInterface dialogInterface, int item) {
                                 switch (item) {
                                     case 0:
-                                        //TODO
-                                        //Toast.makeText(getApplicationContext(), "Not implemented", Toast.LENGTH_SHORT).show();
                                         showRenamePopUp(recFolder.getAbsolutePath(), fileNames.get((int) id), fileNames, id);
-
                                         break;
                                     case 1:
                                         new File(recFolder, fileNames.get((int) id)).delete();
