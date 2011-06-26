@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import com.statichiss.R;
 
@@ -25,19 +26,7 @@ public class RecordingsActivity extends Activity {
         setContentView(R.layout.recordings);
 
         final File recFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name));
-        final String[] files = recFolder.list(new FilenameFilter() {
-            public boolean accept(File file, String name) {
-                return name.endsWith("mp3");
-            }
-        });
-
-        final ArrayList<String> fileNames = new ArrayList<String>();
-
-        if (files != null && files.length > 0) {
-            Collections.addAll(fileNames, files);
-        } else {
-            fileNames.add("No recordings available");
-        }
+        final ArrayList<String> fileNames = getFileList();
 
         final ListView fileList = (ListView) findViewById(R.id.recordings_lst_files);
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.recordings_list_item, fileNames);
@@ -52,6 +41,10 @@ public class RecordingsActivity extends Activity {
                             public void onClick(DialogInterface dialogInterface, int item) {
                                 switch (item) {
                                     case 0:
+                                        //TODO
+                                        //Toast.makeText(getApplicationContext(), "Not implemented", Toast.LENGTH_SHORT).show();
+                                        showRenamePopUp(recFolder.getAbsolutePath(), fileNames.get((int) id), fileNames, id);
+
                                         break;
                                     case 1:
                                         new File(recFolder, fileNames.get((int) id)).delete();
@@ -59,17 +52,61 @@ public class RecordingsActivity extends Activity {
                                         if (fileNames.size() == 0) {
                                             fileNames.add("No recordings available");
                                         }
-                                        adapter.notifyDataSetChanged();
                                         break;
                                     default:
                                         Log.e(TAG, "Unexpected option returned from File dialog, option #" + item);
                                         break;
                                 }
+                                adapter.notifyDataSetChanged();
                             }
                         });
                 builder.create().show();
                 return false;
             }
         });
+
+        //TODO: implement single press that sends file to playerservice and updates UI!
+    }
+
+    private void showRenamePopUp(final String recFolder, final String originalFileName, final ArrayList<String> fileNames, final long id) {
+
+        final EditText newName = new EditText(this);
+        newName.setSingleLine();
+        newName.setText(originalFileName);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Rename file")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new File(recFolder, originalFileName).renameTo(new File(recFolder, newName.getText().toString()));
+                        fileNames.set((int) id, newName.getText().toString());
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+        builder.setView(newName);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private ArrayList<String> getFileList() {
+        final File recFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name));
+        final String[] files = recFolder.list(new FilenameFilter() {
+            public boolean accept(File file, String name) {
+                return name.endsWith("mp3");
+            }
+        });
+
+        final ArrayList<String> fileNames = new ArrayList<String>();
+
+        if (files != null && files.length > 0) {
+            Collections.addAll(fileNames, files);
+        } else {
+            fileNames.add("No recordings available");
+        }
+        return fileNames;
     }
 }
