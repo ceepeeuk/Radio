@@ -40,11 +40,6 @@
                 <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
         </receiver>
-        <service android:name=".recordio.PlayerService">
-            <intent-filter>
-                <action android:name="com.statichiss.recordio.PlayerService"/>
-            </intent-filter>
-        </service>
         <service android:name=".recordio.recording.RecorderService">
             <intent-filter>
                 <action android:name="com.statichiss.recordio.recording.RecorderService"/>

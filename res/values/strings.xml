@@ -19,6 +19,12 @@
     <string name="player_service_operation_key">Operation</string>
     <string name="player_service_name_key">StationName</string>
     <string name="player_service_url_key">StationURL</string>
+    <string name="player_service_update_playing_error_key">com.statichiss.recordio.player.error</string>
+    <string name="player_service_update_playing_error_radio_details">radio details</string>
+    <string name="player_service_update_playing_error_exception">exception message</string>
+    <string name="player_service_update_playing_key">com.statichiss.recordio.player.status.update</string>
+    <string name="player_service_update_playing_status">status</string>
+    <string name="player_service_update_playing_text">text</string>
     <string name="timed_recorder_service_database_id_key">databaseId</string>
     <string name="timed_recorder_service_operation_key">Operation</string>
     <string name="timed_recorder_service_name_key">StationName</string>

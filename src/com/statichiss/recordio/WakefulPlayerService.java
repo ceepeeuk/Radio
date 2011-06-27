@@ -20,20 +20,11 @@ import java.io.IOException;
 public class WakefulPlayerService extends WakefulIntentService {
 
     private static final String TAG = "com.statichiss.recordio.WakefulPlayerService";
-    //private RadioActivity caller;
     private boolean buffering = false;
 
     public WakefulPlayerService() {
         super("WakefulPlayerService");
     }
-
-//    public boolean alreadyPlaying() {
-//        MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
-//        return mediaPlayer != null && mediaPlayer.isPlaying();
-//    }
-
-//    public void stopPlaying(RadioActivity view) {
-//    }
 
     @Override
     protected void doWakefulWork(Intent intent) {
@@ -53,7 +44,6 @@ public class WakefulPlayerService extends WakefulIntentService {
         switch (operation) {
             case RadioApplication.StartPlayingRadio:
                 RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
-                //RadioActivity caller = (RadioActivity) bundle.getParcelable(getString(R.string.radio_activity_key));
                 play(radioDetails);
                 break;
             case RadioApplication.PausePlayingRadio:
@@ -66,8 +56,22 @@ public class WakefulPlayerService extends WakefulIntentService {
                 stop();
                 break;
             default:
-                Log.e(TAG, "Unexpected operation delivered to PlayerService");
+                Log.e(TAG, "Unexpected operation delivered to WakefulPlayerService");
         }
+    }
+
+    private void updateActivity(boolean status, String text) {
+        Intent intent = new Intent(getString(R.string.player_service_update_playing_key));
+        intent.putExtra(getString(R.string.player_service_update_playing_status), status);
+        intent.putExtra(getString(R.string.player_service_update_playing_text), text);
+        getApplicationContext().sendBroadcast(intent);
+    }
+
+    private void sendError(String radioDetails, String exceptionMessage) {
+        Intent intent = new Intent(getString(R.string.player_service_update_playing_error_key));
+        intent.putExtra(getString(R.string.player_service_update_playing_error_radio_details), radioDetails);
+        intent.putExtra(getString(R.string.player_service_update_playing_error_exception), exceptionMessage);
+        getApplicationContext().sendBroadcast(intent);
     }
 
     private void play(RadioDetails radioDetails) {
@@ -79,12 +83,12 @@ public class WakefulPlayerService extends WakefulIntentService {
             String error = "Failed to play " + incomingRadioDetails.getStationName() + ", network unavailable";
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID, incomingRadioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_PLAYING_ID, errorNotification);
-            //caller.updateUIForPlaying(false, "Network Unavailable");
+            updateActivity(false, "Network Unavailable");
             Log.e(TAG, error);
             return;
         }
 
-//        caller.updateUIForPlaying(true, getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
+        updateActivity(true, getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
 
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
@@ -106,8 +110,8 @@ public class WakefulPlayerService extends WakefulIntentService {
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
                     Log.e(TAG, "Error occurred trying to play: " + incomingRadioDetails);
-                    //caller.updateUIForPlaying(true, "Error playing");
-                    //caller.reportError(incomingRadioDetails, new Exception("onError invoked"));
+                    updateActivity(true, "Error playing");
+                    sendError(incomingRadioDetails.toString(), "onError invoked");
                     return false;
                 }
             });
@@ -146,22 +150,21 @@ public class WakefulPlayerService extends WakefulIntentService {
                         status.append(" ")
                                 .append(radioDetailsToPlay.getStationName());
                     }
-                    //caller.updateUIForPlaying(true, status.toString());
-
+                    updateActivity(true, status.toString());
                     NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetailsToPlay, status.toString(), status.toString());
                 }
             });
 
         } catch (IllegalArgumentException iae) {
             Log.e(TAG, "IllegalArgumentException caught in PlayService for url: " + radioDetails.getStreamUrl(), iae);
-//            caller.updateUIForPlaying(false, "Error trying to play stream");
+            updateActivity(false, "Error trying to play stream");
             mediaPlayer.reset();
-//            caller.reportError(radioDetails, iae);
+            sendError(radioDetails.toString(), iae.toString());
         } catch (IOException ioe) {
             Log.e(TAG, "IOException caught in PlayService for url: " + radioDetails.getStreamUrl(), ioe);
-//            caller.updateUIForPlaying(false, "Error trying to play stream");
+            updateActivity(false, "Error trying to play stream");
             mediaPlayer.reset();
-//            caller.reportError(radioDetails, ioe);
+            sendError(radioDetails.toString(), ioe.getMessage());
         } finally {
             radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
@@ -176,7 +179,7 @@ public class WakefulPlayerService extends WakefulIntentService {
                 mediaPlayer.pause();
             }
         }
-//            caller.updateUIForPlaying(false, "Paused");
+        updateActivity(false, "Paused");
     }
 
     private void resume() {
@@ -185,7 +188,7 @@ public class WakefulPlayerService extends WakefulIntentService {
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
-//            caller.updateUIForPlaying(false, "Resumed");
+        updateActivity(false, "Resumed");
     }
 
     private void stop() {
@@ -200,7 +203,7 @@ public class WakefulPlayerService extends WakefulIntentService {
         }
 
         radioApplication.setMediaPlayer(null);
-        //view.updateUIForPlaying(false, "");
+        updateActivity(false, "");
         NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
     }
 

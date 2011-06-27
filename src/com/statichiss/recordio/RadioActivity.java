@@ -3,9 +3,7 @@ package com.statichiss.recordio;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -26,11 +24,10 @@ public class RadioActivity extends Activity {
 
     private String TAG = "com.statichiss.recordio.RadioActivity";
 
-    //private static final int STOP_PLAYING = 0;
-    //private static final int STOP_RECORDING = 1;
-    private static final int ADD_FAVOURITE = 2;
-    private static final int SCHEDULED_RECORDINGS = 3;
-    private static final int RECORDINGS = 4;
+    private static final int ADD_FAVOURITE = 1;
+    private static final int SCHEDULED_RECORDINGS = 2;
+    private static final int RECORDINGS = 3;
+    private static final int EXIT = 4;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,6 @@ public class RadioActivity extends Activity {
             editor.commit();
         }
 
-        //bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         try {
@@ -168,23 +164,32 @@ public class RadioActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-//        if (playerServiceBound) {
-//            unbindService(playerConnection);
-//            playerServiceBound = false;
-//        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.updateStatusBroadcastReceiver);
+        this.unregisterReceiver(this.sendErrorBroadcastReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //bindService(playerIntent, playerConnection, Context.BIND_AUTO_CREATE);
+
+        IntentFilter statusIntentFilter = new IntentFilter();
+        statusIntentFilter.addAction(getString(R.string.player_service_update_playing_key));
+        this.registerReceiver(this.updateStatusBroadcastReceiver, statusIntentFilter);
+
+        IntentFilter errorIntentFilter = new IntentFilter();
+        errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
+        this.registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        menu.add(Menu.NONE, STOP_PLAYING, Menu.NONE, "Stop Playing");
-//        menu.add(Menu.NONE, STOP_RECORDING, Menu.NONE, "Stop Recording");
         menu.add(Menu.NONE, ADD_FAVOURITE, Menu.NONE, "Add Favourite");
+        menu.add(Menu.NONE, EXIT, Menu.NONE, "Exit");
         menu.add(Menu.NONE, SCHEDULED_RECORDINGS, Menu.NONE, "Scheduled Recordings");
         menu.add(Menu.NONE, RECORDINGS, Menu.NONE, "Recordings");
         return (super.onCreateOptionsMenu(menu));
@@ -193,20 +198,6 @@ public class RadioActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
-//            case STOP_PLAYING:
-//                if (playerServiceBound && playerService.alreadyPlaying()) {
-//                    updateUIForPlaying(false, "");
-//                    playerService.stopPlaying(this);
-//                }
-//                return true;
-//
-//            case STOP_RECORDING:
-//                if (RecorderService.alreadyRecording()) {
-//                    updateUIForRecording(false, "");
-//                    RecorderService.cancelRecording();
-//                }
-//                return true;
 
             case ADD_FAVOURITE:
 
@@ -231,6 +222,11 @@ public class RadioActivity extends Activity {
 
                 Intent recordingsIntent = new Intent(RadioActivity.this, RecordingsActivity.class);
                 startActivity(recordingsIntent);
+                return true;
+
+            case EXIT:
+
+                finish();
                 return true;
 
             default:
@@ -291,10 +287,6 @@ public class RadioActivity extends Activity {
             builder.setMessage("Stop playing current station?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Log.d(TAG, "Stopping play");
-                            //TODO
-//                            playerService.stopPlaying(RadioActivity.this);
-//                            playerService.startPlaying(RadioActivity.this, radioDetails);
                             WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlayingRadio));
                             WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails, RadioApplication.StartPlayingRadio));
                             findViewById(R.id.main_stop_playing_btn).setEnabled(true);
@@ -307,7 +299,6 @@ public class RadioActivity extends Activity {
             builder.create().show();
 
         } else {
-            Log.d(TAG, "Starting play");
             WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails, RadioApplication.StartPlayingRadio));
             findViewById(R.id.main_stop_playing_btn).setEnabled(true);
         }
@@ -368,7 +359,6 @@ public class RadioActivity extends Activity {
         }
 
         intent.putExtra(getString(R.string.player_service_operation_key), operation);
-
         return intent;
     }
 
@@ -424,7 +414,7 @@ public class RadioActivity extends Activity {
         txtStatus.setText(message);
     }
 
-    public void reportError(final RadioDetails radioDetails, final Exception e) {
+    private void reportError(final String radioDetails, final String exception) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setMessage("Sorry, cannot connect to this stream, would you like to send an error report so support can be added please?")
@@ -432,7 +422,7 @@ public class RadioActivity extends Activity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         StringBuilder stringBuilder = new StringBuilder()
                                 .append("Exception caught trying to play stream: ")
-                                .append(e.getMessage())
+                                .append(exception)
                                 .append("\n\n")
                                 .append(radioDetails);
 
@@ -451,38 +441,25 @@ public class RadioActivity extends Activity {
                 .create().show();
     }
 
-//    private ServiceConnection playerConnection = new ServiceConnection() {
-//
-//        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-//
-//            PlayerService.RadioServiceBinder binder = (PlayerService.RadioServiceBinder) iBinder;
-//            playerService = binder.getService();
-//            playerServiceBound = true;
-//
-//            if (playerService.alreadyPlaying()) {
-//                StringBuilder sb = new StringBuilder(getString(R.string.playing_string));
-//                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getPlayingStation();
-//                if (!StringUtils.IsNullOrEmpty(radioDetails.getStationName())) {
-//                    sb.append(" ");
-//                    sb.append(radioDetails.getStationName());
-//                }
-//                updateUIForPlaying(true, sb.toString());
-//            }
-//
-//
-//            if (RecorderService.alreadyRecording()) {
-//                RadioDetails radioDetails = ((RadioApplication) getApplicationContext()).getRecordingStation();
-//                String recordingStatus = new StringBuilder()
-//                        .append(getString(R.string.recording_string))
-//                        .append(" ")
-//                        .append(radioDetails != null && !StringUtils.IsNullOrEmpty(radioDetails.getStationName()) ? radioDetails.getStationName() : "")
-//                        .toString();
-//                updateUIForRecording(true, recordingStatus);
-//            }
-//        }
-//
-//        public void onServiceDisconnected(ComponentName componentName) {
-//            playerServiceBound = false;
-//        }
-//    };
+    private BroadcastReceiver updateStatusBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            Boolean status = bundle.getBoolean(getString(R.string.player_service_update_playing_status));
+            String text = bundle.getString(getString(R.string.player_service_update_playing_text));
+            RadioActivity.this.updateUIForPlaying(status, text);
+        }
+    };
+
+    private BroadcastReceiver sendErrorBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
+            String exception = bundle.getString(getString(R.string.player_service_update_playing_error_exception));
+            RadioActivity.this.reportError(radioDetails, exception);
+        }
+    };
+
+
 }

@@ -15,7 +15,6 @@ public class CallReceiver extends BroadcastReceiver {
     private Context appContext;
 
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "CallReceiver.onReceive() invoked");
         RecordioPhoneStateListener recordioPhoneStateListener = new RecordioPhoneStateListener();
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(recordioPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -28,7 +27,6 @@ public class CallReceiver extends BroadcastReceiver {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
 
-            Log.d(TAG, "RecordioPhoneStateListener.onCallStateChanged, state=" + state);
             RadioApplication radioApplication = (RadioApplication) appContext.getApplicationContext();
             MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
