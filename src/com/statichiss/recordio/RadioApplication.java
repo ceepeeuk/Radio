@@ -9,6 +9,7 @@ public class RadioApplication extends Application {
     private RadioDetails _recordingStation;
     private MediaPlayer _mediaPlayer;
     private String _playingStatus;
+    private String _recordingStatus;
 
     public static final int StartPlayingRadio = 1;
     public static final int PausePlayingRadio = 2;
@@ -45,5 +46,13 @@ public class RadioApplication extends Application {
 
     public void setPlayingStatus(String playingStatus) {
         this._playingStatus = playingStatus;
+    }
+
+    public String getRecordingStatus() {
+        return _recordingStatus;
+    }
+
+    public void setRecordingStatus(String recordingStatus) {
+        this._recordingStatus = recordingStatus;
     }
 }

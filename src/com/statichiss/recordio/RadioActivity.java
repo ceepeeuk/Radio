@@ -186,6 +186,7 @@ public class RadioActivity extends Activity {
         this.registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
 
         updateUIForPlaying(alreadyPlaying(), ((RadioApplication) getApplication()).getPlayingStatus());
+        updateUIForRecording(RecorderService.alreadyRecording(), ((RadioApplication) getApplication()).getRecordingStatus());
     }
 
     @Override
@@ -402,7 +403,7 @@ public class RadioActivity extends Activity {
             }
             sb.append(status);
         }
-
+        ((RadioApplication) getApplication()).setRecordingStatus(sb.toString());
         setStatus(sb.toString());
     }
 
