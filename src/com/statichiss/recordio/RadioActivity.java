@@ -89,9 +89,7 @@ public class RadioActivity extends Activity {
                 MediaPlayer mediaPlayer = ((RadioApplication) getApplicationContext()).getMediaPlayer();
                 if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     updateUIForPlaying(false, "");
-                    //playerService.stopPlaying(RadioActivity.this);
-                    //TODO
-                    //WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails));
+                    WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlayingRadio));
                     findViewById(R.id.main_stop_playing_btn).setEnabled(false);
                 }
             }
@@ -297,6 +295,8 @@ public class RadioActivity extends Activity {
                             //TODO
 //                            playerService.stopPlaying(RadioActivity.this);
 //                            playerService.startPlaying(RadioActivity.this, radioDetails);
+                            WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlayingRadio));
+                            WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails, RadioApplication.StartPlayingRadio));
                             findViewById(R.id.main_stop_playing_btn).setEnabled(true);
                         }
                     })
@@ -308,7 +308,6 @@ public class RadioActivity extends Activity {
 
         } else {
             Log.d(TAG, "Starting play");
-            //playerService.startPlaying(this, radioDetails);
             WakefulPlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails, RadioApplication.StartPlayingRadio));
             findViewById(R.id.main_stop_playing_btn).setEnabled(true);
         }
