@@ -10,8 +10,9 @@ public class RadioApplication extends Application {
     private MediaPlayer _mediaPlayer;
 
     public static final int StartPlayingRadio = 1;
-    public static final int StopPlayingRadio = 2;
-    public static final int PausePlayingRadio = 3;
+    public static final int PausePlayingRadio = 2;
+    public static final int ResumePlayingRadio = 3;
+    public static final int StopPlayingRadio = 4;
 
     public MediaPlayer getMediaPlayer() {
         return _mediaPlayer;

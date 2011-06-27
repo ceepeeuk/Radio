@@ -35,7 +35,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".recordio.CallReceiver" android:label="CallReceiver"/>
+        <receiver android:name=".recordio.CallReceiver" android:label="CallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+        </receiver>
         <service android:name=".recordio.PlayerService">
             <intent-filter>
                 <action android:name="com.statichiss.recordio.PlayerService"/>
@@ -57,5 +61,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-sdk android:minSdkVersion="8" android:maxSdkVersion="11" android:targetSdkVersion="10"/>
 </manifest>

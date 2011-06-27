@@ -138,6 +138,14 @@ public class RadioActivity extends Activity {
 
         lstFavourites.setAdapter(adapter);
         //dbHelper.close();
+
+        if (alreadyPlaying()) {
+            findViewById(R.id.main_stop_playing_btn).setEnabled(true);
+        }
+
+        if (RecorderService.alreadyRecording()) {
+            findViewById(R.id.main_stop_recording_btn).setEnabled(true);
+        }
     }
 
     private void ShowFirstRunPopUp() {

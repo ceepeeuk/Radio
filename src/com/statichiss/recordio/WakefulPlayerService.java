@@ -33,18 +33,6 @@ public class WakefulPlayerService extends WakefulIntentService {
 //    }
 
 //    public void stopPlaying(RadioActivity view) {
-//        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
-//        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
-//
-//        if (mediaPlayer != null) {
-//            if (mediaPlayer.isPlaying()) {
-//                mediaPlayer.stop();
-//            }
-//            mediaPlayer.reset();
-//        }
-//
-//        view.updateUIForPlaying(false, "");
-//        NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
 //    }
 
     @Override
@@ -53,6 +41,7 @@ public class WakefulPlayerService extends WakefulIntentService {
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
         super.onCreate();
+
         if (mediaPlayer == null) {
             mediaPlayer = new MediaPlayer();
         }
@@ -64,19 +53,24 @@ public class WakefulPlayerService extends WakefulIntentService {
         switch (operation) {
             case RadioApplication.StartPlayingRadio:
                 RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
-                RadioActivity caller = (RadioActivity) bundle.getParcelable(getString(R.string.radio_activity_key));
-                play(radioDetails, caller);
+                //RadioActivity caller = (RadioActivity) bundle.getParcelable(getString(R.string.radio_activity_key));
+                play(radioDetails);
                 break;
             case RadioApplication.PausePlayingRadio:
+                pause();
+                break;
+            case RadioApplication.ResumePlayingRadio:
+                resume();
                 break;
             case RadioApplication.StopPlayingRadio:
+                stop();
                 break;
             default:
                 Log.e(TAG, "Unexpected operation delivered to PlayerService");
         }
     }
 
-    private void play(RadioDetails radioDetails, RadioActivity caller) {
+    private void play(RadioDetails radioDetails) {
         final RadioDetails incomingRadioDetails = radioDetails;
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -173,4 +167,42 @@ public class WakefulPlayerService extends WakefulIntentService {
             radioApplication.setPlayingStation(radioDetails);
         }
     }
+
+    private void pause() {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+            }
+        }
+//            caller.updateUIForPlaying(false, "Paused");
+    }
+
+    private void resume() {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+//            caller.updateUIForPlaying(false, "Resumed");
+    }
+
+    private void stop() {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.reset();
+        }
+
+        radioApplication.setMediaPlayer(null);
+        //view.updateUIForPlaying(false, "");
+        NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
+    }
+
+
 }
