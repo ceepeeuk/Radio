@@ -184,6 +184,8 @@ public class RadioActivity extends Activity {
         IntentFilter errorIntentFilter = new IntentFilter();
         errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
         this.registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
+
+        updateUIForPlaying(alreadyPlaying(), ((RadioApplication) getApplication()).getPlayingStatus());
     }
 
     @Override

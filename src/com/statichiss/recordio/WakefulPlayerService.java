@@ -65,6 +65,7 @@ public class WakefulPlayerService extends WakefulIntentService {
         intent.putExtra(getString(R.string.player_service_update_playing_status), status);
         intent.putExtra(getString(R.string.player_service_update_playing_text), text);
         getApplicationContext().sendBroadcast(intent);
+        ((RadioApplication) getApplication()).setPlayingStatus(text);
     }
 
     private void sendError(String radioDetails, String exceptionMessage) {
