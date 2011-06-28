@@ -1,6 +1,5 @@
 package com.statichiss.recordio;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
@@ -8,8 +7,6 @@ import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.statichiss.R;
@@ -18,15 +15,10 @@ import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
 
-public class RadioActivity extends Activity {
+public class RadioActivity extends RecordioBaseActivity {
 
     private Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
     private String TAG = "com.statichiss.recordio.RadioActivity";
-
-    private static final int ADD_FAVOURITE = 1;
-    private static final int SCHEDULED_RECORDINGS = 2;
-    private static final int RECORDINGS = 3;
-    private static final int EXIT = 4;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -190,55 +182,6 @@ public class RadioActivity extends Activity {
         updateUI();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, ADD_FAVOURITE, Menu.NONE, "Add Favourite");
-        menu.add(Menu.NONE, EXIT, Menu.NONE, "Exit");
-        menu.add(Menu.NONE, SCHEDULED_RECORDINGS, Menu.NONE, "Scheduled Recordings");
-        menu.add(Menu.NONE, RECORDINGS, Menu.NONE, "Recordings");
-        return (super.onCreateOptionsMenu(menu));
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        RadioApplication radioApplication = (RadioApplication) getApplication();
-        switch (item.getItemId()) {
-
-            case ADD_FAVOURITE:
-
-                RadioDetails radioDetails = new RadioDetails();
-
-                if (alreadyPlaying()) {
-                    radioDetails = radioApplication.getPlayingStation();
-                }
-
-                Intent confirmDetailsIntent = new Intent(RadioActivity.this, ConfirmDetailsActivity.class);
-                confirmDetailsIntent.putExtra(getString(R.string.radio_details_key), radioDetails);
-                startActivity(confirmDetailsIntent);
-                return true;
-
-            case SCHEDULED_RECORDINGS:
-
-                Intent scheduledRecordingsIntent = new Intent(RadioActivity.this, ListScheduledRecordingsActivity.class);
-                startActivity(scheduledRecordingsIntent);
-                return true;
-
-            case RECORDINGS:
-
-                Intent recordingsIntent = new Intent(RadioActivity.this, RecordingsActivity.class);
-                startActivity(recordingsIntent);
-                return true;
-
-            case EXIT:
-
-                finish();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     public void goClick(View view) {
         final String source = ((EditText) findViewById(R.id.txt_url)).getText().toString();
         Log.d(TAG, "url is: " + source);
@@ -390,12 +333,6 @@ public class RadioActivity extends Activity {
         txtStatus.setText(sb.toString());
     }
 
-
-    public boolean alreadyPlaying() {
-        RadioApplication radioApplication = (RadioApplication) getApplication();
-        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
-        return mediaPlayer != null && mediaPlayer.isPlaying();
-    }
 
     private void reportError(final String radioDetails, final String exception) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

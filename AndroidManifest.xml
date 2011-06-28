@@ -25,6 +25,7 @@
         <activity android:name=".recordio.RecordingsActivity"
                   android:label="@string/app_name_recordings"
                   android:screenOrientation="portrait"/>
+        <activity android:name=".recordio.RecordioBaseActivity"/>
         <receiver android:name=".recordio.recording.RecordingBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.statichiss.recordio.recording.RecordingBroadcastReceiver"/>

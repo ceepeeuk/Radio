@@ -1,6 +1,5 @@
 package com.statichiss.recordio;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,7 @@ import com.statichiss.R;
 
 import java.io.IOException;
 
-public class ListScheduledRecordingsActivity extends Activity implements View.OnClickListener {
+public class ListScheduledRecordingsActivity extends RecordioBaseActivity implements View.OnClickListener {
     private static final String TAG = "com.statichiss.recordio.ListScheduledRecordingsActivity";
     DatabaseHelper dbHelper;
 

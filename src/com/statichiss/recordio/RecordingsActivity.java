@@ -1,6 +1,5 @@
 package com.statichiss.recordio;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RecordingsActivity extends Activity {
+public class RecordingsActivity extends RecordioBaseActivity {
     private String TAG = "com.statichiss.recordio.RecordingsActivity";
 
     public void onCreate(Bundle savedInstanceState) {
@@ -29,18 +28,26 @@ public class RecordingsActivity extends Activity {
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.recordings_list_item, fileNames);
         fileList.setAdapter(adapter);
 
-        fileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, final long id) {
+
                 if (!fileNames.get(0).equals(getString(R.string.no_recordings_available))) {
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setTitle("File")
-                            .setItems(new String[]{"Rename", "Delete"}, new DialogInterface.OnClickListener() {
+                    builder.setTitle(fileNames.get((int) id))
+                            .setItems(new String[]{"Play", "Rename", "Delete"}, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int item) {
 
                                     switch (item) {
-
+                                        // Play
                                         case 0:
+
+                                            Toast.makeText(RecordingsActivity.this, "Not implemented", Toast.LENGTH_SHORT).show();
+                                            break;
+
+                                        // Rename
+                                        case 1:
                                             final EditText newName = new EditText(RecordingsActivity.this);
                                             newName.setSingleLine();
                                             newName.setText(fileNames.get((int) id));
@@ -54,6 +61,7 @@ public class RecordingsActivity extends Activity {
                                                                 Toast.makeText(getApplicationContext(), "Failed to rename file", Toast.LENGTH_SHORT).show();
                                                             }
                                                             fileNames.set((int) id, newName.getText().toString());
+                                                            adapter.notifyDataSetChanged();
                                                         }
                                                     })
                                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -66,7 +74,8 @@ public class RecordingsActivity extends Activity {
                                             dialog.show();
                                             break;
 
-                                        case 1:
+                                        // Delete
+                                        case 2:
 
                                             new AlertDialog.Builder(RecordingsActivity.this)
                                                     .setMessage("Delete " + fileNames.get((int) id) + "?")
@@ -100,7 +109,6 @@ public class RecordingsActivity extends Activity {
                             });
                     builder.create().show();
                 }
-                return false;
             }
         });
 
