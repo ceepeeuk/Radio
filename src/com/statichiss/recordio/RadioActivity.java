@@ -33,7 +33,7 @@ public class RadioActivity extends RecordioBaseActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
                             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlayingRadio));
+                                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
                             }
                             if (RecorderService.alreadyRecording()) {
                                 RecorderService.cancelRecording();
@@ -101,7 +101,7 @@ public class RadioActivity extends RecordioBaseActivity {
                 if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     radioApplication.setPlayingStatus("");
                     updateUI();
-                    PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlayingRadio));
+                    PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
                     findViewById(R.id.main_stop_playing_btn).setEnabled(false);
                 }
             }
@@ -263,7 +263,7 @@ public class RadioActivity extends RecordioBaseActivity {
             builder.setMessage("Stop playing current station?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlayingRadio));
+                            PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
                             PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(radioDetails, RadioApplication.StartPlayingRadio));
                             findViewById(R.id.main_stop_playing_btn).setEnabled(true);
                         }
@@ -359,6 +359,14 @@ public class RadioActivity extends RecordioBaseActivity {
 
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(sb.toString());
+
+        if (StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus())) {
+            findViewById(R.id.main_stop_playing_btn).setEnabled(false);
+        }
+
+        if (StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
+            findViewById(R.id.main_stop_recording_btn).setEnabled(false);
+        }
     }
 
 

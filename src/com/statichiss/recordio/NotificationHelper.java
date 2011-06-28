@@ -37,7 +37,7 @@ public abstract class NotificationHelper {
         return notification;
     }
 
-    public static void showNotification(Context context, int notificationId, RadioDetails radioDetails, CharSequence tickerText, CharSequence contentText) {
+    public static void showNotification(Context context, int notificationId, CharSequence tickerText, CharSequence contentText) {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

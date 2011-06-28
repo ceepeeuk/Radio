@@ -2,6 +2,7 @@ package com.statichiss.recordio;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -42,8 +43,13 @@ public class RecordingsActivity extends RecordioBaseActivity {
                                     switch (item) {
                                         // Play
                                         case 0:
+                                            Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
+                                            playerIntent.putExtra(getString(R.string.player_service_operation_key), RadioApplication.StartPlayingFile);
+                                            playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
+                                            PlayerService.sendWakefulWork(RecordingsActivity.this, playerIntent);
 
-                                            Toast.makeText(RecordingsActivity.this, "Not implemented", Toast.LENGTH_SHORT).show();
+                                            Intent radioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
+                                            startActivity(radioActivityIntent);
                                             break;
 
                                         // Rename

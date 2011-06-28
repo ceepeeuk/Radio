@@ -8,6 +8,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.statichiss.R;
@@ -15,6 +16,7 @@ import com.statichiss.recordio.filehandling.M3uHandler;
 import com.statichiss.recordio.filehandling.PlsHandler;
 import com.statichiss.recordio.utils.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 public class PlayerService extends WakefulIntentService {
@@ -44,15 +46,19 @@ public class PlayerService extends WakefulIntentService {
         switch (operation) {
             case RadioApplication.StartPlayingRadio:
                 RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
-                play(radioDetails);
+                playStream(radioDetails);
                 break;
-            case RadioApplication.PausePlayingRadio:
+            case RadioApplication.StartPlayingFile:
+                String file = bundle.getString(getString(R.string.player_service_file_name_key));
+                playFile(file);
+                break;
+            case RadioApplication.PausePlaying:
                 pause();
                 break;
-            case RadioApplication.ResumePlayingRadio:
+            case RadioApplication.ResumePlaying:
                 resume();
                 break;
-            case RadioApplication.StopPlayingRadio:
+            case RadioApplication.StopPlaying:
                 stop();
                 break;
             default:
@@ -73,7 +79,7 @@ public class PlayerService extends WakefulIntentService {
         getApplicationContext().sendBroadcast(intent);
     }
 
-    private void play(RadioDetails radioDetails) {
+    private void playStream(RadioDetails radioDetails) {
         RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         final RadioDetails incomingRadioDetails = radioDetails;
 
@@ -100,6 +106,7 @@ public class PlayerService extends WakefulIntentService {
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    Log.d(TAG, "onCompletion called");
                     if (mediaPlayer.isPlaying()) {    //should be false if error occurred
                         mediaPlayer.start();
                     }
@@ -150,7 +157,7 @@ public class PlayerService extends WakefulIntentService {
                                 .append(radioDetailsToPlay.getStationName());
                     }
                     updateActivity(status.toString());
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetailsToPlay, status.toString(), status.toString());
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status.toString(), status.toString());
                 }
             });
 
@@ -167,6 +174,66 @@ public class PlayerService extends WakefulIntentService {
         } finally {
             radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
+        }
+    }
+
+    private void playFile(final String file) {
+        Log.d(TAG, "Playing file: " + file);
+
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+
+        try {
+
+            if (mediaPlayer == null) {
+                mediaPlayer = new MediaPlayer();
+            }
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (mediaPlayer.isPlaying()) {    //should be false if error occurred
+                        NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
+                        updateActivity("");
+                        mediaPlayer.reset();
+                    }
+                }
+            });
+
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+                    Log.e(TAG, "Error occurred trying to play: " + file);
+                    updateActivity("Error playing " + file);
+                    return false;
+                }
+            });
+
+            String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name);
+
+            mediaPlayer.setDataSource(recFolder + File.separator + file);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setLooping(false);
+            mediaPlayer.prepareAsync();
+
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.start();
+                    StringBuilder status = new StringBuilder(getString(R.string.playing_string));
+                    updateActivity(getString(R.string.playing_string) + " " + file);
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status.toString(), status.toString());
+                }
+            });
+
+        } catch (IllegalArgumentException iae) {
+            Log.e(TAG, "IllegalArgumentException caught in PlayService for: " + file, iae);
+            updateActivity("Error trying to play stream");
+            mediaPlayer.reset();
+        } catch (IOException ioe) {
+            Log.e(TAG, "IOException caught in PlayService for: " + file, ioe);
+            updateActivity("Error trying to play stream");
+            mediaPlayer.reset();
+        } finally {
+            radioApplication.setMediaPlayer(mediaPlayer);
         }
     }
 

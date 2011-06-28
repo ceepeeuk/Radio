@@ -36,7 +36,7 @@ public class CallReceiver extends BroadcastReceiver {
                         // pause
                         if (mediaPlayer.isPlaying()) {
                             Log.d(TAG, "Phone ringing, need to pause playback");
-                            intent = createPlayingIntent(RadioApplication.PausePlayingRadio);
+                            intent = createPlayingIntent(RadioApplication.PausePlaying);
                             PlayerService.sendWakefulWork(appContext, intent);
                         }
                         break;
@@ -44,14 +44,14 @@ public class CallReceiver extends BroadcastReceiver {
                         // pause
                         if (mediaPlayer.isPlaying()) {
                             Log.d(TAG, "Phone offhook, need to pause playback");
-                            intent = createPlayingIntent(RadioApplication.PausePlayingRadio);
+                            intent = createPlayingIntent(RadioApplication.PausePlaying);
                             PlayerService.sendWakefulWork(appContext, intent);
                         }
                         break;
                     case TelephonyManager.CALL_STATE_IDLE:
                         // resume
                         Log.d(TAG, "Phone now idle, resuming playing");
-                        intent = createPlayingIntent(RadioApplication.ResumePlayingRadio);
+                        intent = createPlayingIntent(RadioApplication.ResumePlaying);
                         PlayerService.sendWakefulWork(appContext, intent);
                         break;
                 }

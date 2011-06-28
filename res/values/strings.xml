@@ -26,6 +26,7 @@
     <string name="player_service_update_playing_key">com.statichiss.recordio.player.status.update</string>
     <string name="player_service_update_playing_status">status</string>
     <string name="player_service_update_playing_text">text</string>
+    <string name="player_service_file_name_key">file</string>
     <string name="timed_recorder_service_database_id_key">databaseId</string>
     <string name="timed_recorder_service_operation_key">Operation</string>
     <string name="timed_recorder_service_name_key">StationName</string>
