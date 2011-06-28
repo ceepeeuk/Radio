@@ -144,11 +144,12 @@ public class RecorderService extends WakefulIntentService {
 
             record(radioDetails, outputSource.toString(), buffer, endTime);
             Log.d(TAG, "Finished writing stream");
+            updateActivity("");
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
         } catch (IOException e) {
-            Log.d(TAG, "IOException: " + e.getMessage(), e);
+            Log.e(TAG, "IOException: " + e.getMessage(), e);
             // Expected when stream closes
         } finally {
 

@@ -61,7 +61,10 @@ public class RecordioBaseActivity extends Activity {
 
             case EXIT:
                 // TODO - send an intent to RadioActivity, which lets it know that finish needs to be called.
-                finish();
+                Intent intent = new Intent(this, RadioActivity.class);
+                intent.putExtra(getString(R.string.finish_key), true);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
 
             default:

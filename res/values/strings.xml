@@ -9,7 +9,8 @@
     <string name="radio_details_name_key">radioDetails name</string>
     <string name="radio_details_stream_url_key">radioDetails stream</string>
     <string name="radio_details_playlist_url_key">radioDetails playlist</string>
-    <string name="radio_activity_key">RadioActivity</string>
+    <string name="radio_activity_key">com.statichiss.recordio.RadioActivity</string>
+    <string name="quit_flag_key">quit flag</string>
     <string name="main_stop_playing_btn">Stop Playing</string>
     <string name="main_stop_recording_btn">Stop Recording</string>
     <string name="edit_fav_pop_up_btn_save">Save</string>
@@ -45,6 +46,7 @@
     <string name="playing_string">Playing</string>
     <string name="buffering_string">Buffering</string>
     <string name="recording_string">Recording</string>
+    <string name="finish_key">Finish</string>
     <string name="no_recordings_available">No recordings available</string>
     <string name="edit_scheduled_recording_id">id</string>
     <string name="first_run_flag">SplashFlag</string>
