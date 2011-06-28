@@ -45,9 +45,9 @@
                 <action android:name="com.statichiss.recordio.recording.RecorderService"/>
             </intent-filter>
         </service>
-        <service android:name=".recordio.WakefulPlayerService" android:label="WakefulPlayerService">
+        <service android:name=".recordio.PlayerService" android:label="PlayerService">
             <intent-filter>
-                <action android:name="com.statichiss.recordio.WakefulPlayerService"/>
+                <action android:name="com.statichiss.recordio.PlayerService"/>
             </intent-filter>
         </service>
     </application>

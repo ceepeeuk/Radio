@@ -41,7 +41,7 @@ public class RadioApplication extends Application {
     }
 
     public String getPlayingStatus() {
-        return _playingStatus;
+        return _playingStatus == null ? "" : _playingStatus;
     }
 
     public void setPlayingStatus(String playingStatus) {
@@ -49,7 +49,7 @@ public class RadioApplication extends Application {
     }
 
     public String getRecordingStatus() {
-        return _recordingStatus;
+        return _recordingStatus == null ? "" : _recordingStatus;
     }
 
     public void setRecordingStatus(String recordingStatus) {

@@ -47,6 +47,7 @@ public class RecorderService extends WakefulIntentService {
     protected void doWakefulWork(Intent intent) {
 
         Bundle bundle = intent.getExtras();
+        RadioApplication radioApplication = (RadioApplication) getApplication();
         RadioDetails radioDetails = bundle.getParcelable(getString(R.string.radio_details_key));
 
         if (!android.os.Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -54,6 +55,7 @@ public class RecorderService extends WakefulIntentService {
             String error = "Failed to record " + radioDetails.getStationName() + " cannot write to SD Card";
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+            updateActivity(error);
             Log.e(TAG, error);
             return;
         }
@@ -64,6 +66,7 @@ public class RecorderService extends WakefulIntentService {
             String error = "Failed to record " + radioDetails.getStationName() + ", no network available";
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+            updateActivity(error);
             Log.e(TAG, error);
             return;
         }
@@ -88,6 +91,7 @@ public class RecorderService extends WakefulIntentService {
 
         Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText, Notification.FLAG_ONGOING_EVENT);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
+        updateActivity(ticketText.toString());
 
         String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name);
 
@@ -97,6 +101,7 @@ public class RecorderService extends WakefulIntentService {
                 String error = "Failed to record " + radioDetails.getStationName() + " cannot create directory to store recordings";
                 Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
                 ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
+                updateActivity(error);
                 return;
             }
             Log.d(TAG, "Recordio directory was not found, so created it");
@@ -123,7 +128,7 @@ public class RecorderService extends WakefulIntentService {
             wifiLock.acquire();
         }
 
-        ((RadioApplication) getApplication()).setRecordingStation(radioDetails);
+        radioApplication.setRecordingStation(radioDetails);
 
         try {
 
@@ -236,5 +241,11 @@ public class RecorderService extends WakefulIntentService {
     public static void cancelRecording() {
         Log.d(TAG, "Cancel recording stream");
         cancelRecordingFlag = true;
+    }
+
+    private void updateActivity(String text) {
+        Intent intent = new Intent(getString(R.string.player_service_update_playing_key));
+        ((RadioApplication) getApplication()).setRecordingStatus(text);
+        getApplicationContext().sendBroadcast(intent);
     }
 }

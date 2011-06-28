@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.*;
 import com.statichiss.R;
 
 import java.io.File;
@@ -35,58 +32,79 @@ public class RecordingsActivity extends Activity {
         fileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setTitle("File")
-                        .setItems(new String[]{"Rename", "Delete"}, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int item) {
-                                switch (item) {
-                                    case 0:
-                                        showRenamePopUp(recFolder.getAbsolutePath(), fileNames.get((int) id), fileNames, id);
-                                        break;
-                                    case 1:
-                                        new File(recFolder, fileNames.get((int) id)).delete();
-                                        fileNames.remove((int) id);
-                                        if (fileNames.size() == 0) {
-                                            fileNames.add("No recordings available");
-                                        }
-                                        break;
-                                    default:
-                                        Log.e(TAG, "Unexpected option returned from File dialog, option #" + item);
-                                        break;
+                if (!fileNames.get(0).equals(getString(R.string.no_recordings_available))) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setTitle("File")
+                            .setItems(new String[]{"Rename", "Delete"}, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int item) {
+
+                                    switch (item) {
+
+                                        case 0:
+                                            final EditText newName = new EditText(RecordingsActivity.this);
+                                            newName.setSingleLine();
+                                            newName.setText(fileNames.get((int) id));
+
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(RecordingsActivity.this)
+                                                    .setTitle("Rename file")
+                                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            if (!new File(recFolder, fileNames.get((int) id)).renameTo(new File(recFolder, newName.getText().toString()))) {
+                                                                Log.e(TAG, "Failed to rename " + fileNames.get((int) id) + " to " + newName.getText().toString());
+                                                                Toast.makeText(getApplicationContext(), "Failed to rename file", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                            fileNames.set((int) id, newName.getText().toString());
+                                                        }
+                                                    })
+                                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                        }
+                                                    });
+                                            builder.setView(newName);
+
+                                            AlertDialog dialog = builder.create();
+                                            dialog.show();
+                                            break;
+
+                                        case 1:
+
+                                            new AlertDialog.Builder(RecordingsActivity.this)
+                                                    .setMessage("Delete " + fileNames.get((int) id) + "?")
+                                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            if (!new File(recFolder, fileNames.get((int) id)).delete()) {
+                                                                Log.e(TAG, "Failed to delete " + fileNames.get((int) id));
+                                                                Toast.makeText(getApplicationContext(), "Failed to delete " + fileNames.get((int) id), Toast.LENGTH_SHORT).show();
+                                                            } else {
+                                                                fileNames.remove((int) id);
+                                                                if (fileNames.size() == 0) {
+                                                                    fileNames.add("No recordings available");
+                                                                }
+                                                                adapter.notifyDataSetChanged();
+                                                            }
+                                                        }
+                                                    })
+                                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                        }
+                                                    })
+                                                    .show();
+
+                                            break;
+
+                                        default:
+                                            Log.e(TAG, "Unexpected option returned from File dialog, option #" + item);
+                                            break;
+                                    }
                                 }
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                builder.create().show();
+                            });
+                    builder.create().show();
+                }
                 return false;
             }
         });
 
         //TODO: implement single press that sends file to playerservice and updates UI!
-    }
-
-    private void showRenamePopUp(final String recFolder, final String originalFileName, final ArrayList<String> fileNames, final long id) {
-
-        final EditText newName = new EditText(this);
-        newName.setSingleLine();
-        newName.setText(originalFileName);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle("Rename file")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        new File(recFolder, originalFileName).renameTo(new File(recFolder, newName.getText().toString()));
-                        fileNames.set((int) id, newName.getText().toString());
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
-        builder.setView(newName);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     private ArrayList<String> getFileList() {
@@ -102,7 +120,7 @@ public class RecordingsActivity extends Activity {
         if (files != null && files.length > 0) {
             Collections.addAll(fileNames, files);
         } else {
-            fileNames.add("No recordings available");
+            fileNames.add(getString(R.string.no_recordings_available));
         }
         return fileNames;
     }

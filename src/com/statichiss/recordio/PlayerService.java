@@ -17,13 +17,13 @@ import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
 
-public class WakefulPlayerService extends WakefulIntentService {
+public class PlayerService extends WakefulIntentService {
 
-    private static final String TAG = "com.statichiss.recordio.WakefulPlayerService";
+    private static final String TAG = "com.statichiss.recordio.PlayerService";
     private boolean buffering = false;
 
-    public WakefulPlayerService() {
-        super("WakefulPlayerService");
+    public PlayerService() {
+        super("PlayerService");
     }
 
     @Override
@@ -56,16 +56,14 @@ public class WakefulPlayerService extends WakefulIntentService {
                 stop();
                 break;
             default:
-                Log.e(TAG, "Unexpected operation delivered to WakefulPlayerService");
+                Log.e(TAG, "Unexpected operation delivered to PlayerService");
         }
     }
 
-    private void updateActivity(boolean status, String text) {
+    private void updateActivity(String text) {
         Intent intent = new Intent(getString(R.string.player_service_update_playing_key));
-        intent.putExtra(getString(R.string.player_service_update_playing_status), status);
-        intent.putExtra(getString(R.string.player_service_update_playing_text), text);
-        getApplicationContext().sendBroadcast(intent);
         ((RadioApplication) getApplication()).setPlayingStatus(text);
+        getApplicationContext().sendBroadcast(intent);
     }
 
     private void sendError(String radioDetails, String exceptionMessage) {
@@ -76,6 +74,7 @@ public class WakefulPlayerService extends WakefulIntentService {
     }
 
     private void play(RadioDetails radioDetails) {
+        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         final RadioDetails incomingRadioDetails = radioDetails;
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -84,14 +83,13 @@ public class WakefulPlayerService extends WakefulIntentService {
             String error = "Failed to play " + incomingRadioDetails.getStationName() + ", network unavailable";
             Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID, incomingRadioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_PLAYING_ID, errorNotification);
-            updateActivity(false, "Network Unavailable");
+            updateActivity("Network Unavailable");
             Log.e(TAG, error);
             return;
         }
 
-        updateActivity(true, getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
-
-        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        updateActivity(getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
+        radioApplication.setPlayingStatus(getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
         try {
@@ -111,7 +109,7 @@ public class WakefulPlayerService extends WakefulIntentService {
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
                     Log.e(TAG, "Error occurred trying to play: " + incomingRadioDetails);
-                    updateActivity(true, "Error playing");
+                    updateActivity("Error playing");
                     sendError(incomingRadioDetails.toString(), "onError invoked");
                     return false;
                 }
@@ -151,19 +149,19 @@ public class WakefulPlayerService extends WakefulIntentService {
                         status.append(" ")
                                 .append(radioDetailsToPlay.getStationName());
                     }
-                    updateActivity(true, status.toString());
+                    updateActivity(status.toString());
                     NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, radioDetailsToPlay, status.toString(), status.toString());
                 }
             });
 
         } catch (IllegalArgumentException iae) {
             Log.e(TAG, "IllegalArgumentException caught in PlayService for url: " + radioDetails.getStreamUrl(), iae);
-            updateActivity(false, "Error trying to play stream");
+            updateActivity("Error trying to play stream");
             mediaPlayer.reset();
             sendError(radioDetails.toString(), iae.toString());
         } catch (IOException ioe) {
             Log.e(TAG, "IOException caught in PlayService for url: " + radioDetails.getStreamUrl(), ioe);
-            updateActivity(false, "Error trying to play stream");
+            updateActivity("Error trying to play stream");
             mediaPlayer.reset();
             sendError(radioDetails.toString(), ioe.getMessage());
         } finally {
@@ -180,7 +178,7 @@ public class WakefulPlayerService extends WakefulIntentService {
                 mediaPlayer.pause();
             }
         }
-        updateActivity(false, "Paused");
+        updateActivity("Paused");
     }
 
     private void resume() {
@@ -189,7 +187,7 @@ public class WakefulPlayerService extends WakefulIntentService {
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
-        updateActivity(false, "Resumed");
+        updateActivity("Resumed playing " + radioApplication.getPlayingStation().getStationName());
     }
 
     private void stop() {
@@ -204,7 +202,7 @@ public class WakefulPlayerService extends WakefulIntentService {
         }
 
         radioApplication.setMediaPlayer(null);
-        updateActivity(false, "");
+        updateActivity("");
         NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
     }
 

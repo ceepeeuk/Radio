@@ -37,7 +37,7 @@ public class CallReceiver extends BroadcastReceiver {
                         if (mediaPlayer.isPlaying()) {
                             Log.d(TAG, "Phone ringing, need to pause playback");
                             intent = createPlayingIntent(RadioApplication.PausePlayingRadio);
-                            WakefulPlayerService.sendWakefulWork(appContext, intent);
+                            PlayerService.sendWakefulWork(appContext, intent);
                         }
                         break;
                     case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -45,14 +45,14 @@ public class CallReceiver extends BroadcastReceiver {
                         if (mediaPlayer.isPlaying()) {
                             Log.d(TAG, "Phone offhook, need to pause playback");
                             intent = createPlayingIntent(RadioApplication.PausePlayingRadio);
-                            WakefulPlayerService.sendWakefulWork(appContext, intent);
+                            PlayerService.sendWakefulWork(appContext, intent);
                         }
                         break;
                     case TelephonyManager.CALL_STATE_IDLE:
                         // resume
                         Log.d(TAG, "Phone now idle, resuming playing");
                         intent = createPlayingIntent(RadioApplication.ResumePlayingRadio);
-                        WakefulPlayerService.sendWakefulWork(appContext, intent);
+                        PlayerService.sendWakefulWork(appContext, intent);
                         break;
                 }
             }
@@ -60,7 +60,7 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     private Intent createPlayingIntent(int operation) {
-        Intent intent = new Intent("com.statichiss.recordio.WakefulPlayerService");
+        Intent intent = new Intent("com.statichiss.recordio.PlayerService");
         intent.putExtra(appContext.getString(R.string.player_service_operation_key), operation);
         return intent;
     }
