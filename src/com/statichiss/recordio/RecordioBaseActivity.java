@@ -1,23 +1,45 @@
 package com.statichiss.recordio;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.statichiss.R;
+import com.statichiss.recordio.recording.RecorderService;
 
 
 public class RecordioBaseActivity extends Activity {
 
     private static final int ADD_FAVOURITE = 1;
-    private static final int SCHEDULED_RECORDINGS = 2;
-    private static final int RECORDINGS = 3;
-    private static final int EXIT = 4;
+    private static final int EXIT = 2;
+    private static final int SCHEDULED_RECORDINGS = 3;
+    private static final int RECORDINGS = 4;
+    private static final String TAG = "com.statichiss.recordio.RecordioBaseActivity";
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @Override
+    public void onResume() {
+        if (((RadioApplication) getApplication()).getExitFlag()) {
+            if (getClass().getSimpleName().equals("RadioActivity")) {
+                MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
+                }
+                if (RecorderService.alreadyRecording()) {
+                    RecorderService.cancelRecording();
+                }
+                ((RadioApplication) getApplication()).setExitFlag(false);
+            }
+            finish();
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
     }
 
     @Override
@@ -61,10 +83,19 @@ public class RecordioBaseActivity extends Activity {
 
             case EXIT:
                 // TODO - send an intent to RadioActivity, which lets it know that finish needs to be called.
-                Intent intent = new Intent(this, RadioActivity.class);
-                intent.putExtra(getString(R.string.finish_key), true);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Exit Recordio?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                checkIfExitingFromRadioActivity();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        });
+                builder.create().show();
+
                 return true;
 
             default:
@@ -72,10 +103,44 @@ public class RecordioBaseActivity extends Activity {
         }
     }
 
+    private void checkIfExitingFromRadioActivity() {
+        if (getClass().getSimpleName().equals("RadioActivity")) {
+            MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
+            }
+            if (RecorderService.alreadyRecording()) {
+                RecorderService.cancelRecording();
+            }
+        } else {
+            ((RadioApplication) getApplication()).setExitFlag(true);
+        }
+        finish();
+    }
+
 
     public boolean alreadyPlaying() {
         RadioApplication radioApplication = (RadioApplication) getApplication();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
         return mediaPlayer != null && mediaPlayer.isPlaying();
+    }
+
+    protected Intent createRecordingIntent(RadioDetails radioDetails) {
+        Intent intent = new Intent("com.statichiss.recordio.recording.RecorderService");
+        if (radioDetails != null) {
+            intent.putExtra(getString(R.string.radio_details_key), radioDetails);
+        }
+        return intent;
+    }
+
+    protected Intent createPlayingIntent(RadioDetails radioDetails, int operation) {
+        Intent intent = new Intent("com.statichiss.recordio.PlayerService");
+
+        if (radioDetails != null) {
+            intent.putExtra(getString(R.string.radio_details_key), radioDetails);
+        }
+
+        intent.putExtra(getString(R.string.player_service_operation_key), operation);
+        return intent;
     }
 }

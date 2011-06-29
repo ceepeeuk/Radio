@@ -22,31 +22,32 @@ public class RadioActivity extends RecordioBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("RadioActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        Bundle bundle = getIntent().getExtras();
-
-        if (bundle != null && bundle.getBoolean(getString(R.string.finish_key), false)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Exit Recordio?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
-                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
-                            }
-                            if (RecorderService.alreadyRecording()) {
-                                RecorderService.cancelRecording();
-                            }
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    });
-            builder.create().show();
-        }
+//        Bundle bundle = getIntent().getExtras();
+//
+//        if (bundle != null && bundle.getBoolean(getString(R.string.finish_key), false)) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setMessage("Exit Recordio?")
+//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
+//                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+//                                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
+//                            }
+//                            if (RecorderService.alreadyRecording()) {
+//                                RecorderService.cancelRecording();
+//                            }
+//                            finish();
+//                        }
+//                    })
+//                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                        }
+//                    });
+//            builder.create().show();
+//        }
     }
 
     @Override
@@ -317,25 +318,6 @@ public class RadioActivity extends RecordioBaseActivity {
             updateUI();
             findViewById(R.id.main_stop_recording_btn).setEnabled(true);
         }
-    }
-
-    private Intent createRecordingIntent(RadioDetails radioDetails) {
-        Intent intent = new Intent("com.statichiss.recordio.recording.RecorderService");
-        if (radioDetails != null) {
-            intent.putExtra(getString(R.string.radio_details_key), radioDetails);
-        }
-        return intent;
-    }
-
-    private Intent createPlayingIntent(RadioDetails radioDetails, int operation) {
-        Intent intent = new Intent("com.statichiss.recordio.PlayerService");
-
-        if (radioDetails != null) {
-            intent.putExtra(getString(R.string.radio_details_key), radioDetails);
-        }
-
-        intent.putExtra(getString(R.string.player_service_operation_key), operation);
-        return intent;
     }
 
     private void updateUI() {

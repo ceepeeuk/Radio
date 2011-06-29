@@ -117,8 +117,6 @@ public class RecordingsActivity extends RecordioBaseActivity {
                 }
             }
         });
-
-        //TODO: implement single press that sends file to playerservice and updates UI!
     }
 
     private ArrayList<String> getFileList() {

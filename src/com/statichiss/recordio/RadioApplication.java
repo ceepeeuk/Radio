@@ -10,6 +10,7 @@ public class RadioApplication extends Application {
     private MediaPlayer _mediaPlayer;
     private String _playingStatus;
     private String _recordingStatus;
+    private boolean _exitFlag;
 
     public static final int StartPlayingRadio = 1;
     public static final int StartPlayingFile = 2;
@@ -55,5 +56,13 @@ public class RadioApplication extends Application {
 
     public void setRecordingStatus(String recordingStatus) {
         this._recordingStatus = recordingStatus;
+    }
+
+    public boolean getExitFlag() {
+        return _exitFlag;
+    }
+
+    public void setExitFlag(boolean exitFlag) {
+        _exitFlag = exitFlag;
     }
 }
