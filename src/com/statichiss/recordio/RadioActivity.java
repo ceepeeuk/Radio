@@ -156,11 +156,6 @@ public class RadioActivity extends RecordioBaseActivity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         this.unregisterReceiver(this.updateStatusBroadcastReceiver);
@@ -292,22 +287,24 @@ public class RadioActivity extends RecordioBaseActivity {
     }
 
     private void updateUI() {
+
         RadioApplication radioApplication = (RadioApplication) getApplication();
         StringBuilder sb = new StringBuilder();
 
         if (!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()) && !StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            sb.append(radioApplication.getPlayingStatus())
+            sb.append(radioApplication.getPlayingStatus().length() > 15 ? radioApplication.getPlayingStatus().substring(0, 12) + "..." : radioApplication.getPlayingStatus())
                     .append(" | ")
-                    .append(radioApplication.getRecordingStatus());
+                    .append(radioApplication.getRecordingStatus().length() > 15 ? radioApplication.getRecordingStatus().substring(0, 12) + "..." : radioApplication.getRecordingStatus());
         }
 
         if (!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()) && StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            sb.append(radioApplication.getPlayingStatus());
+            sb.append(radioApplication.getPlayingStatus().length() > 30 ? radioApplication.getPlayingStatus().substring(0, 27) + "..." : radioApplication.getPlayingStatus());
         }
 
         if (StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()) && !StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            sb.append(radioApplication.getRecordingStatus());
+            sb.append(radioApplication.getRecordingStatus().length() > 30 ? radioApplication.getRecordingStatus().substring(0, 27) + "..." : radioApplication.getRecordingStatus());
         }
+
         Log.d(TAG, sb.toString());
 
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
