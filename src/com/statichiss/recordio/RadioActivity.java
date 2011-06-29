@@ -17,7 +17,6 @@ import java.io.IOException;
 
 public class RadioActivity extends RecordioBaseActivity {
 
-    private Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
     private String TAG = "com.statichiss.recordio.RadioActivity";
 
     @Override
@@ -25,29 +24,6 @@ public class RadioActivity extends RecordioBaseActivity {
         Log.d("RadioActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-//        Bundle bundle = getIntent().getExtras();
-//
-//        if (bundle != null && bundle.getBoolean(getString(R.string.finish_key), false)) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setMessage("Exit Recordio?")
-//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
-//                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-//                                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
-//                            }
-//                            if (RecorderService.alreadyRecording()) {
-//                                RecorderService.cancelRecording();
-//                            }
-//                            finish();
-//                        }
-//                    })
-//                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                        }
-//                    });
-//            builder.create().show();
-//        }
     }
 
     @Override
@@ -189,7 +165,6 @@ public class RadioActivity extends RecordioBaseActivity {
         super.onPause();
         this.unregisterReceiver(this.updateStatusBroadcastReceiver);
         this.unregisterReceiver(this.sendErrorBroadcastReceiver);
-        this.unregisterReceiver(this.finishBroadcastReceiver);
     }
 
     @Override
@@ -203,10 +178,6 @@ public class RadioActivity extends RecordioBaseActivity {
         IntentFilter errorIntentFilter = new IntentFilter();
         errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
         this.registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
-
-        IntentFilter sendIntentFilter = new IntentFilter();
-        sendIntentFilter.addAction(getString(R.string.finish_key));
-        this.registerReceiver(this.finishBroadcastReceiver, sendIntentFilter);
 
         updateUI();
     }
@@ -393,24 +364,6 @@ public class RadioActivity extends RecordioBaseActivity {
             String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
             String exception = bundle.getString(getString(R.string.player_service_update_playing_error_exception));
             RadioActivity.this.reportError(radioDetails, exception);
-        }
-    };
-
-    private BroadcastReceiver finishBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-            builder.setMessage("Exit Recordio?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            RadioActivity.this.finish();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    });
-            builder.create().show();
         }
     };
 }
