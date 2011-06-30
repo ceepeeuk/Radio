@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.statichiss.R;
@@ -167,11 +168,16 @@ public class RadioActivity extends RecordioBaseActivity {
 
         IntentFilter statusIntentFilter = new IntentFilter();
         statusIntentFilter.addAction(getString(R.string.player_service_update_playing_key));
-        this.registerReceiver(this.updateStatusBroadcastReceiver, statusIntentFilter);
+        registerReceiver(this.updateStatusBroadcastReceiver, statusIntentFilter);
 
         IntentFilter errorIntentFilter = new IntentFilter();
         errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
-        this.registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
+        registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
+
+        MediaButtonIntentReceiver mMediaButtonReceiver = new MediaButtonIntentReceiver();
+        IntentFilter mediaFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+        mediaFilter.setPriority(0);
+        registerReceiver(mMediaButtonReceiver, mediaFilter);
 
         updateUI();
     }
@@ -360,4 +366,55 @@ public class RadioActivity extends RecordioBaseActivity {
             RadioActivity.this.reportError(radioDetails, exception);
         }
     };
+
+    public class MediaButtonIntentReceiver extends BroadcastReceiver {
+
+        public MediaButtonIntentReceiver() {
+            super();
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+            MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+
+            String intentAction = intent.getAction();
+            if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
+                return;
+            }
+            KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (event == null) {
+                return;
+            }
+            int action = event.getAction();
+            int keyCode = event.getKeyCode();
+            if (action == KeyEvent.ACTION_DOWN) {
+                Intent playerIntent;
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_MEDIA_STOP:
+                        if (mediaPlayer.isPlaying()) {
+                            Log.d(TAG, "Bluetooth stop received");
+                            playerIntent = createPlayingIntent(null, RadioApplication.StopPlaying);
+                            PlayerService.sendWakefulWork(getApplicationContext(), playerIntent);
+                        }
+                        break;
+                    case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                        if (mediaPlayer.isPlaying()) {
+                            Log.d(TAG, "Bluetooth pause received");
+                            playerIntent = createPlayingIntent(null, RadioApplication.PausePlaying);
+                            PlayerService.sendWakefulWork(getApplicationContext(), playerIntent);
+                        } else {
+                            Log.d(TAG, "Bluetooth resume received");
+                            playerIntent = createPlayingIntent(null, RadioApplication.ResumePlaying);
+                            PlayerService.sendWakefulWork(getApplicationContext(), playerIntent);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            abortBroadcast();
+        }
+    }
+
 }

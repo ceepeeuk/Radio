@@ -58,5 +58,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-sdk android:minSdkVersion="8" android:maxSdkVersion="11" android:targetSdkVersion="10"/>
 </manifest>
