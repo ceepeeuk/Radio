@@ -19,6 +19,7 @@ import java.io.IOException;
 public class RadioActivity extends RecordioBaseActivity {
 
     private String TAG = "com.statichiss.recordio.RadioActivity";
+    MediaButtonIntentReceiver mMediaButtonReceiver = new MediaButtonIntentReceiver();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,6 +161,7 @@ public class RadioActivity extends RecordioBaseActivity {
         super.onPause();
         this.unregisterReceiver(this.updateStatusBroadcastReceiver);
         this.unregisterReceiver(this.sendErrorBroadcastReceiver);
+        this.unregisterReceiver(this.mMediaButtonReceiver);
     }
 
     @Override
@@ -174,7 +176,6 @@ public class RadioActivity extends RecordioBaseActivity {
         errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
         registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
 
-        MediaButtonIntentReceiver mMediaButtonReceiver = new MediaButtonIntentReceiver();
         IntentFilter mediaFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
         mediaFilter.setPriority(0);
         registerReceiver(mMediaButtonReceiver, mediaFilter);
