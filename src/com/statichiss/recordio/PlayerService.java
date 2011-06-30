@@ -218,9 +218,9 @@ public class PlayerService extends WakefulIntentService {
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
-                    StringBuilder status = new StringBuilder(getString(R.string.playing_string));
-                    updateActivity(getString(R.string.playing_string) + " " + file);
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status.toString(), status.toString());
+                    String status = getString(R.string.playing_string) + " " + file;
+                    updateActivity(status);
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status, status);
                 }
             });
 

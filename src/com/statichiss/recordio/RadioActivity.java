@@ -292,20 +292,18 @@ public class RadioActivity extends RecordioBaseActivity {
         StringBuilder sb = new StringBuilder();
 
         if (!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()) && !StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            sb.append(radioApplication.getPlayingStatus().length() > 15 ? radioApplication.getPlayingStatus().substring(0, 12) + "..." : radioApplication.getPlayingStatus())
+            sb.append(radioApplication.getPlayingStatus().length() > 23 ? radioApplication.getPlayingStatus().substring(0, 20) + "..." : radioApplication.getPlayingStatus())
                     .append(" | ")
-                    .append(radioApplication.getRecordingStatus().length() > 15 ? radioApplication.getRecordingStatus().substring(0, 12) + "..." : radioApplication.getRecordingStatus());
+                    .append(radioApplication.getRecordingStatus().length() > 23 ? radioApplication.getRecordingStatus().substring(0, 20) + "..." : radioApplication.getRecordingStatus());
         }
 
         if (!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()) && StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            sb.append(radioApplication.getPlayingStatus().length() > 30 ? radioApplication.getPlayingStatus().substring(0, 27) + "..." : radioApplication.getPlayingStatus());
+            sb.append(radioApplication.getPlayingStatus().length() > 46 ? radioApplication.getPlayingStatus().substring(0, 43) + "..." : radioApplication.getPlayingStatus());
         }
 
         if (StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()) && !StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            sb.append(radioApplication.getRecordingStatus().length() > 30 ? radioApplication.getRecordingStatus().substring(0, 27) + "..." : radioApplication.getRecordingStatus());
+            sb.append(radioApplication.getRecordingStatus().length() > 46 ? radioApplication.getRecordingStatus().substring(0, 43) + "..." : radioApplication.getRecordingStatus());
         }
-
-        Log.d(TAG, sb.toString());
 
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(sb.toString());

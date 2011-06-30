@@ -39,7 +39,7 @@
             android:id="@+id/main_stop_button_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/lbl_status"
+            android:layout_above="@+id/txt_status"
             xmlns:android="http://schemas.android.com/apk/res/android"
             >
         <Button
@@ -64,22 +64,11 @@
         </Button>
     </LinearLayout>
     <TextView
-            android:id="@+id/lbl_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Status: "
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:padding="6dip"
-            >
-    </TextView>
-    <TextView
             android:id="@+id/txt_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/txt_url"
             android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@id/lbl_status"
             android:padding="6dip"
             >
     </TextView>
