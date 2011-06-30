@@ -21,7 +21,6 @@ public class RadioActivity extends RecordioBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("RadioActivity", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
     }

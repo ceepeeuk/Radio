@@ -82,7 +82,6 @@ public class RecordioBaseActivity extends Activity {
                 return true;
 
             case EXIT:
-                // TODO - send an intent to RadioActivity, which lets it know that finish needs to be called.
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Exit Recordio?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {

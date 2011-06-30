@@ -9,8 +9,6 @@
     <string name="radio_details_name_key">radioDetails name</string>
     <string name="radio_details_stream_url_key">radioDetails stream</string>
     <string name="radio_details_playlist_url_key">radioDetails playlist</string>
-    <string name="radio_activity_key">com.statichiss.recordio.RadioActivity</string>
-    <string name="quit_flag_key">quit flag</string>
     <string name="main_stop_playing_btn">Stop Playing</string>
     <string name="main_stop_recording_btn">Stop Recording</string>
     <string name="edit_fav_pop_up_btn_save">Save</string>
@@ -18,19 +16,13 @@
     <string name="edit_fav_pop_up_lbl_name">Name</string>
     <string name="edit_fav_pop_up_lbl_url">URL</string>
     <string name="player_service_operation_key">Operation</string>
-    <string name="player_service_name_key">StationName</string>
-    <string name="player_service_url_key">StationURL</string>
     <string name="player_service_update_playing_error_key">com.statichiss.recordio.player.error</string>
     <string name="player_service_update_playing_error_radio_details">radio details</string>
     <string name="player_service_update_playing_error_exception">exception message</string>
     <string name="player_service_update_playing_key">com.statichiss.recordio.player.status.update</string>
-    <string name="player_service_update_playing_status">status</string>
-    <string name="player_service_update_playing_text">text</string>
     <string name="player_service_file_name_key">file</string>
     <string name="timed_recorder_service_database_id_key">databaseId</string>
     <string name="timed_recorder_service_operation_key">Operation</string>
-    <string name="timed_recorder_service_name_key">StationName</string>
-    <string name="timed_recorder_service_url_key">StationURL</string>
     <string name="timed_recorder_service_recording_duration">Duration</string>
     <string name="add_new_scheduled_recording_start_label_text">Start time:</string>
     <string name="add_new_scheduled_recording_end_label_text">End time:</string>
@@ -47,7 +39,6 @@
     <string name="playing_string">Playing</string>
     <string name="buffering_string">Buffering</string>
     <string name="recording_string">Recording</string>
-    <string name="finish_key">Finish</string>
     <string name="no_recordings_available">No recordings available</string>
     <string name="edit_scheduled_recording_id">id</string>
     <string name="first_run_flag">SplashFlag</string>
