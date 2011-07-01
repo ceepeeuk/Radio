@@ -47,6 +47,7 @@
         favourite, press menu and select "Add New
         Favourite" (if a stream is currently playing it will be prepopulated).\n\nTo set a new scheduled recording (or
         list existing ones), press menu and select "Scheduled Recordings". To edit or delete, press on it from the list
-        on Scheduled Recordings.\n\nAll recordings are saved to the Recordio folder on the root of the SD-Card.
+        on Scheduled Recordings.\n\nFrom the menu the "Recordings" page can be accessed, that allows playback, renaming
+        and deleting of recordings.
     </string>
 </resources>

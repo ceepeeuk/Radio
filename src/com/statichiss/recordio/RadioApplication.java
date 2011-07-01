@@ -11,6 +11,8 @@ public class RadioApplication extends Application {
     private String _playingStatus;
     private String _recordingStatus;
     private boolean _exitFlag;
+    private boolean _buffering = false;
+
 
     public static final int StartPlayingRadio = 1;
     public static final int StartPlayingFile = 2;
@@ -64,5 +66,13 @@ public class RadioApplication extends Application {
 
     public void setExitFlag(boolean exitFlag) {
         _exitFlag = exitFlag;
+    }
+
+    public boolean isBuffering() {
+        return _buffering;
+    }
+
+    public void setBuffering(boolean buffering) {
+        this._buffering = buffering;
     }
 }

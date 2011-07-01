@@ -17,17 +17,23 @@ import java.io.IOException;
 public class ListScheduledRecordingsActivity extends RecordioBaseActivity implements View.OnClickListener {
     private static final String TAG = "com.statichiss.recordio.ListScheduledRecordingsActivity";
     DatabaseHelper dbHelper;
+    ScheduledRecordingsCursorAdaptor adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         dbHelper = prepareDatabaseHelper();
 
         setContentView(R.layout.list_recording_schedule);
 
         final Cursor scheduledRecordingsCursor = dbHelper.getScheduledRecordingsList();
 
-        final ScheduledRecordingsCursorAdaptor adapter = new ScheduledRecordingsCursorAdaptor(this,
+        adapter = new ScheduledRecordingsCursorAdaptor(this,
                 R.layout.list_recording_schedule_list,
                 scheduledRecordingsCursor,
                 new String[]{DatabaseHelper.STATIONS_NAME,

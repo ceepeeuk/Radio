@@ -22,7 +22,6 @@ import java.io.IOException;
 public class PlayerService extends WakefulIntentService {
 
     private static final String TAG = "com.statichiss.recordio.PlayerService";
-    private boolean buffering = false;
 
     public PlayerService() {
         super("PlayerService");
@@ -80,7 +79,7 @@ public class PlayerService extends WakefulIntentService {
     }
 
     private void playStream(RadioDetails radioDetails) {
-        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        final RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         final RadioDetails incomingRadioDetails = radioDetails;
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -102,6 +101,7 @@ public class PlayerService extends WakefulIntentService {
 
             if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
+                radioApplication.setMediaPlayer(mediaPlayer);
             }
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -133,24 +133,29 @@ public class PlayerService extends WakefulIntentService {
             }
 
             // need to check we aren't buffering before proceeding
-            if (buffering) {
+            if (radioApplication.isBuffering()) {
                 Log.d(TAG, "Buffering already, so resetting MediaPlayer before starting again");
+                while (radioApplication.isBuffering()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
                 mediaPlayer.reset();
-                buffering = false;
             }
 
             mediaPlayer.setDataSource(radioDetails.getStreamUrl());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setLooping(false);
             mediaPlayer.prepareAsync();
-            buffering = true;
+            radioApplication.setBuffering(true);
 
             final RadioDetails radioDetailsToPlay = radioDetails;
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
-                    buffering = false;
+                    radioApplication.setBuffering(false);
                     StringBuilder status = new StringBuilder(getString(R.string.playing_string));
                     if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
                         status.append(" ")
@@ -172,7 +177,7 @@ public class PlayerService extends WakefulIntentService {
             mediaPlayer.reset();
             sendError(radioDetails.toString(), ioe.getMessage());
         } finally {
-            radioApplication.setMediaPlayer(mediaPlayer);
+            //radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
         }
     }
@@ -188,6 +193,7 @@ public class PlayerService extends WakefulIntentService {
 
             if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
+                radioApplication.setMediaPlayer(mediaPlayer);
             }
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -210,6 +216,19 @@ public class PlayerService extends WakefulIntentService {
 
             String recFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name);
 
+            // need to check we aren't buffering before proceeding
+            if (radioApplication.isBuffering()) {
+                Log.d(TAG, "Buffering already, so resetting MediaPlayer before starting again");
+                updateActivity("Preparing to play " + file);
+                while (radioApplication.isBuffering()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                mediaPlayer.reset();
+            }
+
             mediaPlayer.setDataSource(recFolder + File.separator + file);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setLooping(false);
@@ -225,15 +244,13 @@ public class PlayerService extends WakefulIntentService {
             });
 
         } catch (IllegalArgumentException iae) {
-            Log.e(TAG, "IllegalArgumentException caught in PlayService for: " + file, iae);
+            Log.e(TAG, "IllegalArgumentException caught in PlayService for file: " + file, iae);
             updateActivity("Error trying to play stream");
             mediaPlayer.reset();
         } catch (IOException ioe) {
-            Log.e(TAG, "IOException caught in PlayService for: " + file, ioe);
+            Log.e(TAG, "IOException caught in PlayService for file: " + file, ioe);
             updateActivity("Error trying to play stream");
             mediaPlayer.reset();
-        } finally {
-            radioApplication.setMediaPlayer(mediaPlayer);
         }
     }
 
