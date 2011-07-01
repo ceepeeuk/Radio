@@ -4,10 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.statichiss.R;
@@ -19,12 +19,15 @@ import java.io.IOException;
 public class RadioActivity extends RecordioBaseActivity {
 
     private String TAG = "com.statichiss.recordio.RadioActivity";
-    MediaButtonIntentReceiver mMediaButtonReceiver = new MediaButtonIntentReceiver();
+    private AudioManager mAudioManager;
+    private ComponentName mRemoteControlReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mRemoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
     }
 
     @Override
@@ -76,7 +79,8 @@ public class RadioActivity extends RecordioBaseActivity {
         findViewById(R.id.main_stop_playing_btn).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
-                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                // Bit of a hack looking at status!
+                if (mediaPlayer != null && mediaPlayer.isPlaying() || radioApplication.getPlayingStatus().contains("Paused")) {
                     radioApplication.setPlayingStatus("");
                     updateUI();
                     PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
@@ -161,7 +165,6 @@ public class RadioActivity extends RecordioBaseActivity {
         super.onPause();
         this.unregisterReceiver(this.updateStatusBroadcastReceiver);
         this.unregisterReceiver(this.sendErrorBroadcastReceiver);
-        this.unregisterReceiver(this.mMediaButtonReceiver);
     }
 
     @Override
@@ -176,11 +179,15 @@ public class RadioActivity extends RecordioBaseActivity {
         errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
         registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
 
-        IntentFilter mediaFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
-        mediaFilter.setPriority(0);
-        registerReceiver(mMediaButtonReceiver, mediaFilter);
+        mAudioManager.registerMediaButtonEventReceiver(mRemoteControlReceiver);
 
         updateUI();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAudioManager.unregisterMediaButtonEventReceiver(mRemoteControlReceiver);
     }
 
     public void goClick(View view) {
@@ -314,13 +321,8 @@ public class RadioActivity extends RecordioBaseActivity {
         TextView txtStatus = (TextView) findViewById(R.id.txt_status);
         txtStatus.setText(sb.toString());
 
-        if (StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus())) {
-            findViewById(R.id.main_stop_playing_btn).setEnabled(false);
-        }
-
-        if (StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus())) {
-            findViewById(R.id.main_stop_recording_btn).setEnabled(false);
-        }
+        findViewById(R.id.main_stop_playing_btn).setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()));
+        findViewById(R.id.main_stop_recording_btn).setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus()));
     }
 
 
@@ -367,55 +369,4 @@ public class RadioActivity extends RecordioBaseActivity {
             RadioActivity.this.reportError(radioDetails, exception);
         }
     };
-
-    public class MediaButtonIntentReceiver extends BroadcastReceiver {
-
-        public MediaButtonIntentReceiver() {
-            super();
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            RadioApplication radioApplication = (RadioApplication) getApplicationContext();
-            MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
-
-            String intentAction = intent.getAction();
-            if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
-                return;
-            }
-            KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if (event == null) {
-                return;
-            }
-            int action = event.getAction();
-            int keyCode = event.getKeyCode();
-            if (action == KeyEvent.ACTION_DOWN) {
-                Intent playerIntent;
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_MEDIA_STOP:
-                        if (mediaPlayer.isPlaying()) {
-                            Log.d(TAG, "Bluetooth stop received");
-                            playerIntent = createPlayingIntent(null, RadioApplication.StopPlaying);
-                            PlayerService.sendWakefulWork(getApplicationContext(), playerIntent);
-                        }
-                        break;
-                    case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                        if (mediaPlayer.isPlaying()) {
-                            Log.d(TAG, "Bluetooth pause received");
-                            playerIntent = createPlayingIntent(null, RadioApplication.PausePlaying);
-                            PlayerService.sendWakefulWork(getApplicationContext(), playerIntent);
-                        } else {
-                            Log.d(TAG, "Bluetooth resume received");
-                            playerIntent = createPlayingIntent(null, RadioApplication.ResumePlaying);
-                            PlayerService.sendWakefulWork(getApplicationContext(), playerIntent);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            abortBroadcast();
-        }
-    }
-
 }
