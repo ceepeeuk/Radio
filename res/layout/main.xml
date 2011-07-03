@@ -32,9 +32,15 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@+id/txt_url"
-            android:layout_above="@+id/main_stop_button_layout"
+            android:layout_above="@+id/seekProgress"
             >
     </ListView>
+    <SeekBar
+            android:id="@+id/seek_Progress"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/main_stop_button_layout"
+            />
     <LinearLayout
             android:id="@+id/main_stop_button_layout"
             android:layout_width="fill_parent"

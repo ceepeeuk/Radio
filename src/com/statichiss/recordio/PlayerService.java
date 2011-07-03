@@ -156,6 +156,7 @@ public class PlayerService extends WakefulIntentService {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaPlayer.start();
                     radioApplication.setBuffering(false);
+                    radioApplication.setPlayingType(RadioApplication.PlayingStream);
                     StringBuilder status = new StringBuilder(getString(R.string.playing_string));
                     if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
                         status.append(" ")
@@ -183,10 +184,8 @@ public class PlayerService extends WakefulIntentService {
     }
 
     private void playFile(final String file) {
-        Log.d(TAG, "Playing file: " + file);
 
-        RadioApplication radioApplication = (RadioApplication) getApplicationContext();
-
+        final RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
         try {
@@ -236,6 +235,8 @@ public class PlayerService extends WakefulIntentService {
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
+                    radioApplication.setPlayingType(RadioApplication.PlayingFile);
+                    radioApplication.setPlayingFileDetails(new PlayingFile(mediaPlayer.getDuration()));
                     mediaPlayer.start();
                     String status = getString(R.string.playing_string) + " " + file;
                     updateActivity(status);

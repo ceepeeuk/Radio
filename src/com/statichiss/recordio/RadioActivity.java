@@ -181,6 +181,53 @@ public class RadioActivity extends RecordioBaseActivity {
 
         mAudioManager.registerMediaButtonEventReceiver(mRemoteControlReceiver);
 
+        if (alreadyPlaying()) {
+
+            final RadioApplication radioApplication = (RadioApplication) getApplication();
+
+            if (radioApplication.getPlayingType() == RadioApplication.PlayingFile) {
+                Log.d(TAG, "PLaying file...");
+                final SeekBar seekProgress = (SeekBar) findViewById(R.id.seek_Progress);
+                final MediaPlayer mp = radioApplication.getMediaPlayer();
+                seekProgress.setVisibility(View.VISIBLE);
+                final int duration = radioApplication.getPlayingFileDetails().getDuration();
+                seekProgress.setMax(duration);
+                seekProgress.setProgress(mp.getCurrentPosition());
+
+                seekProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (fromUser) {
+                            mp.seekTo(progress);
+                        }
+                    }
+
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        while (mp != null && mp.getCurrentPosition() < duration) {
+                            int currentPosition = 0;
+                            try {
+                                Thread.sleep(1000);
+                                currentPosition = mp.getCurrentPosition();
+                            } catch (InterruptedException e) {
+                                return;
+                            } catch (Exception e) {
+                                return;
+                            }
+                            seekProgress.setProgress(currentPosition);
+                        }
+                    }
+                }).start();
+            }
+        }
+
         updateUI();
     }
 

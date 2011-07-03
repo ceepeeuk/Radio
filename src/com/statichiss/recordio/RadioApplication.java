@@ -12,6 +12,8 @@ public class RadioApplication extends Application {
     private String _recordingStatus;
     private boolean _exitFlag;
     private boolean _buffering = false;
+    private PlayingFile _playingFileDetails;
+    private int _playingType;
 
 
     public static final int StartPlayingRadio = 1;
@@ -19,6 +21,9 @@ public class RadioApplication extends Application {
     public static final int PausePlaying = 3;
     public static final int ResumePlaying = 4;
     public static final int StopPlaying = 5;
+
+    public static final int PlayingFile = 1;
+    public static final int PlayingStream = 2;
 
     public MediaPlayer getMediaPlayer() {
         return _mediaPlayer;
@@ -74,5 +79,21 @@ public class RadioApplication extends Application {
 
     public void setBuffering(boolean buffering) {
         this._buffering = buffering;
+    }
+
+    public void setPlayingFileDetails(PlayingFile playingFile) {
+        _playingFileDetails = playingFile;
+    }
+
+    public PlayingFile getPlayingFileDetails() {
+        return _playingFileDetails;
+    }
+
+    public int getPlayingType() {
+        return _playingType;
+    }
+
+    public void setPlayingType(int playingType) {
+        _playingType = playingType;
     }
 }
