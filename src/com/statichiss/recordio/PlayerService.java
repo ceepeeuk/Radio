@@ -228,6 +228,8 @@ public class PlayerService extends WakefulIntentService {
                 mediaPlayer.reset();
             }
 
+            // TODO - cater for already playing stream
+
             mediaPlayer.setDataSource(recFolder + File.separator + file);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setLooping(false);

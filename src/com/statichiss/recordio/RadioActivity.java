@@ -6,6 +6,7 @@ import android.content.*;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.statichiss.recordio.recording.RecorderService;
 import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class RadioActivity extends RecordioBaseActivity {
 
@@ -183,14 +185,20 @@ public class RadioActivity extends RecordioBaseActivity {
 
         if (alreadyPlaying()) {
 
+
             final RadioApplication radioApplication = (RadioApplication) getApplication();
 
             if (radioApplication.getPlayingType() == RadioApplication.PlayingFile) {
-                Log.d(TAG, "PLaying file...");
-                final SeekBar seekProgress = (SeekBar) findViewById(R.id.seek_Progress);
+                Log.d(TAG, "Playing file...");
+                findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
+
+                final SeekBar seekProgress = (SeekBar) findViewById(R.id.seek_progress);
+                final TextView timeElapsed = (TextView) findViewById(R.id.time_elapsed);
+                final TextView timeRemaining = (TextView) findViewById(R.id.time_remaining);
                 final MediaPlayer mp = radioApplication.getMediaPlayer();
-                seekProgress.setVisibility(View.VISIBLE);
                 final int duration = radioApplication.getPlayingFileDetails().getDuration();
+
+                seekProgress.setVisibility(View.VISIBLE);
                 seekProgress.setMax(duration);
                 seekProgress.setProgress(mp.getCurrentPosition());
 
@@ -198,6 +206,8 @@ public class RadioActivity extends RecordioBaseActivity {
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
                             mp.seekTo(progress);
+                            timeElapsed.setText(millisecondsToMinutes(progress));
+                            timeRemaining.setText(millisecondsToMinutes(duration - progress));
                         }
                     }
 
@@ -208,27 +218,51 @@ public class RadioActivity extends RecordioBaseActivity {
                     }
                 });
 
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        while (mp != null && mp.getCurrentPosition() < duration) {
-                            int currentPosition = 0;
-                            try {
-                                Thread.sleep(1000);
-                                currentPosition = mp.getCurrentPosition();
-                            } catch (InterruptedException e) {
-                                return;
-                            } catch (Exception e) {
-                                return;
-                            }
-                            seekProgress.setProgress(currentPosition);
-                        }
-                    }
-                }).start();
+                new UpdateProgressTask().execute();
             }
         }
 
         updateUI();
+    }
+
+    private class UpdateProgressTask extends AsyncTask<Void, Integer, Void> {
+
+        RadioApplication radioApplication = (RadioApplication) getApplication();
+        MediaPlayer mp = radioApplication.getMediaPlayer();
+        int duration = radioApplication.getPlayingFileDetails().getDuration();
+        SeekBar seekProgress = (SeekBar) findViewById(R.id.seek_progress);
+        TextView timeElapsed = (TextView) findViewById(R.id.time_elapsed);
+        TextView timeRemaining = (TextView) findViewById(R.id.time_remaining);
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            while (mp != null && mp.isPlaying() && mp.getCurrentPosition() < duration) {
+                publishProgress(mp.getCurrentPosition());
+
+            }
+            // Send final msg to reset UI to non playing state?
+            publishProgress(-1);
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... currentPosition) {
+            if (currentPosition[0] > 0) {
+                seekProgress.setProgress(currentPosition[0]);
+                timeElapsed.setText(millisecondsToMinutes(currentPosition[0]));
+                timeRemaining.setText(millisecondsToMinutes(duration - currentPosition[0]));
+            }
+
+            if (currentPosition[0] == -1) {
+                //Reset UI
+                findViewById(R.id.progress_layout).setVisibility(View.GONE);
+                updateUI();
+            }
+        }
+    }
+
+    private String millisecondsToMinutes(int milliseconds) {
+        return String.format("%d:%d", TimeUnit.MILLISECONDS.toMinutes(milliseconds), TimeUnit.MILLISECONDS.toSeconds(milliseconds));
     }
 
     @Override
@@ -346,7 +380,7 @@ public class RadioActivity extends RecordioBaseActivity {
         }
     }
 
-    private void updateUI() {
+    protected void updateUI() {
 
         RadioApplication radioApplication = (RadioApplication) getApplication();
         StringBuilder sb = new StringBuilder();
