@@ -193,11 +193,9 @@ public class PlayerService extends WakefulIntentService {
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    if (mediaPlayer.isPlaying()) {    //should be false if error occurred
-                        NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
-                        updateActivity("");
-                        mediaPlayer.reset();
-                    }
+                    NotificationHelper.cancelNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID);
+                    updateActivity("");
+                    mediaPlayer.reset();
                 }
             });
 

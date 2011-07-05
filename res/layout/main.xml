@@ -49,7 +49,8 @@
         <TextView android:id="@+id/time_remaining"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_toRightOf="@+id/seek_progress"/>
+                  android:layout_toRightOf="@+id/seek_progress"
+                  android:padding="6dip"/>
     </LinearLayout>
 
     <LinearLayout android:id="@+id/main_stop_button_layout"
