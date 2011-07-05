@@ -14,7 +14,6 @@ import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.statichiss.R;
 import com.statichiss.recordio.filehandling.M3uHandler;
 import com.statichiss.recordio.filehandling.PlsHandler;
-import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,8 +92,6 @@ public class PlayerService extends WakefulIntentService {
             return;
         }
 
-        updateActivity(getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
-        radioApplication.setPlayingStatus(getString(R.string.buffering_string) + " " + incomingRadioDetails.getStationName());
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
         try {
@@ -132,6 +129,9 @@ public class PlayerService extends WakefulIntentService {
                 radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
             }
 
+            updateActivity(getString(R.string.buffering_string) + " " + radioDetails.getStationName());
+            radioApplication.setPlayingStatus(getString(R.string.buffering_string) + " " + radioDetails.getStationName());
+
             // need to check we aren't buffering before proceeding
             if (radioApplication.isBuffering()) {
                 Log.d(TAG, "Buffering already, so resetting MediaPlayer before starting again");
@@ -157,13 +157,9 @@ public class PlayerService extends WakefulIntentService {
                     mediaPlayer.start();
                     radioApplication.setBuffering(false);
                     radioApplication.setPlayingType(RadioApplication.PlayingStream);
-                    StringBuilder status = new StringBuilder(getString(R.string.playing_string));
-                    if (!StringUtils.IsNullOrEmpty(radioDetailsToPlay.getStationName())) {
-                        status.append(" ")
-                                .append(radioDetailsToPlay.getStationName());
-                    }
-                    updateActivity(status.toString());
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status.toString(), status.toString());
+                    String status = getString(R.string.playing_string) + " " + radioDetailsToPlay.getStationName();
+                    updateActivity(status);
+                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status, status);
                 }
             });
 
@@ -238,7 +234,7 @@ public class PlayerService extends WakefulIntentService {
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     radioApplication.setPlayingType(RadioApplication.PlayingFile);
-                    radioApplication.setPlayingFileDetails(new PlayingFile(mediaPlayer.getDuration()));
+                    radioApplication.setPlayingFileDetails(new PlayingFile(mediaPlayer.getDuration(), file));
                     mediaPlayer.start();
                     String status = getString(R.string.playing_string) + " " + file;
                     updateActivity(status);

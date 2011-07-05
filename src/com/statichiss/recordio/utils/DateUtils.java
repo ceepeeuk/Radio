@@ -55,4 +55,12 @@ public class DateUtils {
         StringBuilder dateString = new StringBuilder(format.format(dateTimeMillis));
         return Integer.parseInt(dateString.toString());
     }
+
+    public static String getHoursAndMinutes(long dateTimeMillis) {
+        String format = String.format("%%0%dd", 2);
+        long elapsedTime = dateTimeMillis / 1000;
+        String minutes = String.format(format, (elapsedTime % 3600) / 60);
+        String hours = String.format(format, elapsedTime / 3600);
+        return hours + ":" + minutes;
+    }
 }

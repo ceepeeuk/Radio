@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.*;
 import com.statichiss.R;
 import com.statichiss.recordio.recording.RecorderService;
+import com.statichiss.recordio.utils.DateUtils;
 import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
@@ -206,8 +207,8 @@ public class RadioActivity extends RecordioBaseActivity {
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
                             mp.seekTo(progress);
-                            timeElapsed.setText(millisecondsToMinutes(progress));
-                            timeRemaining.setText(millisecondsToMinutes(duration - progress));
+                            timeElapsed.setText(DateUtils.getHoursAndMinutes(progress));
+                            timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - progress));
                         }
                     }
 
@@ -238,7 +239,6 @@ public class RadioActivity extends RecordioBaseActivity {
         protected Void doInBackground(Void... voids) {
             while (mp != null && mp.isPlaying() && mp.getCurrentPosition() < duration) {
                 publishProgress(mp.getCurrentPosition());
-
             }
             // Send final msg to reset UI to non playing state?
             publishProgress(-1);
@@ -249,8 +249,8 @@ public class RadioActivity extends RecordioBaseActivity {
         protected void onProgressUpdate(Integer... currentPosition) {
             if (currentPosition[0] > 0) {
                 seekProgress.setProgress(currentPosition[0]);
-                timeElapsed.setText(millisecondsToMinutes(currentPosition[0]));
-                timeRemaining.setText(millisecondsToMinutes(duration - currentPosition[0]));
+                timeElapsed.setText(DateUtils.getHoursAndMinutes(currentPosition[0]));
+                timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - currentPosition[0]));
             }
 
             if (currentPosition[0] == -1) {
@@ -321,7 +321,13 @@ public class RadioActivity extends RecordioBaseActivity {
         if (alreadyPlaying()) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Stop playing current station?")
+
+            RadioApplication radioApplication = (RadioApplication) getApplication();
+            StringBuilder sb = new StringBuilder("Stop playing ")
+                    .append(radioApplication.getPlayingType() == RadioApplication.PlayingStream ? radioApplication.getPlayingStation().getStationName() : radioApplication.getPlayingFileDetails().getName())
+                    .append("?");
+
+            builder.setMessage(sb.toString())
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));

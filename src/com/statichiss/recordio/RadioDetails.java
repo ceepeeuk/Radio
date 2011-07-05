@@ -50,7 +50,7 @@ public class RadioDetails implements Parcelable {
 
 
     public String getStationName() {
-        return StringUtils.IsNullOrEmpty(_stationName) ? "" : _stationName;
+        return StringUtils.IsNullOrEmpty(_stationName) ? _streamUrl : _stationName;
     }
 
     public void setStationName(String stationName) {

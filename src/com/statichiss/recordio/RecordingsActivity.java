@@ -43,13 +43,55 @@ public class RecordingsActivity extends RecordioBaseActivity {
                                     switch (item) {
                                         // Play
                                         case 0:
-                                            Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
-                                            playerIntent.putExtra(getString(R.string.player_service_operation_key), RadioApplication.StartPlayingFile);
-                                            playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
-                                            PlayerService.sendWakefulWork(RecordingsActivity.this, playerIntent);
+                                            final RadioApplication radioApplication = (RadioApplication) getApplication();
 
-                                            Intent radioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
-                                            startActivity(radioActivityIntent);
+                                            if (alreadyPlaying() || radioApplication.isBuffering()) {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(RecordingsActivity.this);
+
+                                                StringBuilder sb = new StringBuilder("Stop playing ");
+                                                if (!radioApplication.isBuffering()) {
+                                                    sb.append(radioApplication.getPlayingType() == RadioApplication.PlayingStream ? radioApplication.getPlayingStation().getStationName() : radioApplication.getPlayingFileDetails().getName());
+                                                }
+                                                sb.append("?");
+
+                                                builder.setMessage(sb.toString())
+                                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                // Need to wait until buffering is complete before continuing
+                                                                updateActivity("Preparing to play" + fileNames.get((int) id));
+                                                                while (radioApplication.isBuffering()) {
+                                                                    try {
+                                                                        Thread.sleep(500);
+                                                                    } catch (InterruptedException ignored) {
+                                                                    }
+                                                                }
+                                                                radioApplication.getMediaPlayer().reset();
+                                                                Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
+                                                                playerIntent.putExtra(getString(R.string.player_service_operation_key), RadioApplication.StartPlayingFile);
+                                                                playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
+                                                                PlayerService.sendWakefulWork(RecordingsActivity.this, playerIntent);
+
+                                                                Intent radioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
+                                                                startActivity(radioActivityIntent);
+                                                            }
+                                                        })
+                                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                            }
+                                                        });
+                                                builder.create().show();
+
+                                            } else {
+
+                                                Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
+                                                playerIntent.putExtra(getString(R.string.player_service_operation_key), RadioApplication.StartPlayingFile);
+                                                playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
+                                                PlayerService.sendWakefulWork(RecordingsActivity.this, playerIntent);
+
+                                                Intent radioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
+                                                startActivity(radioActivityIntent);
+                                            }
+
                                             break;
 
                                         // Rename
@@ -135,5 +177,11 @@ public class RecordingsActivity extends RecordioBaseActivity {
             fileNames.add(getString(R.string.no_recordings_available));
         }
         return fileNames;
+    }
+
+    private void updateActivity(String text) {
+        Intent intent = new Intent(getString(R.string.player_service_update_playing_key));
+        ((RadioApplication) getApplication()).setPlayingStatus(text);
+        getApplicationContext().sendBroadcast(intent);
     }
 }
