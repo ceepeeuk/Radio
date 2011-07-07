@@ -17,7 +17,6 @@ import com.statichiss.recordio.utils.DateUtils;
 import com.statichiss.recordio.utils.StringUtils;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class RadioActivity extends RecordioBaseActivity {
 
@@ -259,10 +258,6 @@ public class RadioActivity extends RecordioBaseActivity {
                 updateUI();
             }
         }
-    }
-
-    private String millisecondsToMinutes(int milliseconds) {
-        return String.format("%d:%d", TimeUnit.MILLISECONDS.toMinutes(milliseconds), TimeUnit.MILLISECONDS.toSeconds(milliseconds));
     }
 
     @Override
