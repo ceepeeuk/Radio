@@ -6,6 +6,7 @@ import com.statichiss.recordio.utils.StringUtils;
 
 public class RadioDetails implements Parcelable {
 
+    private long _id;
     private String _stationName;
     private String _streamUrl;
     private String _playlistUrl;
@@ -16,6 +17,11 @@ public class RadioDetails implements Parcelable {
         setStationName(stationName);
         setStreamUrl(streamUrl);
         setPlaylistUrl(playlistUrl);
+    }
+
+    public RadioDetails(long id, String stationName, String streamUrl, String playlistUrl) {
+        this(stationName, streamUrl, playlistUrl);
+        this._id = id;
     }
 
     public RadioDetails(String name, String streamUrl, String playlistUrl, long duration, long recordingType) {
@@ -48,6 +54,14 @@ public class RadioDetails implements Parcelable {
         }
     };
 
+
+    public long getId() {
+        return _id;
+    }
+
+    public void setId(long id) {
+        _id = id;
+    }
 
     public String getStationName() {
         return StringUtils.IsNullOrEmpty(_stationName) ? _streamUrl : _stationName;

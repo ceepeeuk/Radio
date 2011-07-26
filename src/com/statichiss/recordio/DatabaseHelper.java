@@ -140,6 +140,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
+
+    public RadioDetails getFavourite(long id) {
+        RadioDetails radioDetails = null;
+        Cursor cursor = myDataBase.query(FAVOURITES_TABLE, new String[]{FAVOURITES_ID, FAVOURITES_NAME, FAVOURITES_URL}, "_ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+        if (cursor.moveToFirst()) {
+            radioDetails = new RadioDetails(cursor.getInt(0), cursor.getString(1), cursor.getString(2), null);
+        }
+        return radioDetails;
+    }
+
     public Cursor getFavourites() {
         return myDataBase.query(FAVOURITES_TABLE, new String[]{FAVOURITES_ID, FAVOURITES_NAME, FAVOURITES_URL}, null, null, null, null, null);
     }
@@ -158,6 +168,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteFavourite(long id) {
         myDataBase.delete(FAVOURITES_TABLE, "_id=?", new String[]{Long.toString(id)});
+    }
+
+    public void updateFavourite(RadioDetails radioDetails) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FAVOURITES_NAME, radioDetails.getStationName());
+        contentValues.put(FAVOURITES_URL, StringUtils.IsNullOrEmpty(radioDetails.getPlaylistUrl()) ? radioDetails.getStreamUrl() : radioDetails.getPlaylistUrl());
+        myDataBase.update(FAVOURITES_TABLE, contentValues, "_id=?", new String[]{Long.toString(radioDetails.getId())});
     }
 
     public Cursor getRecordingTypes() {

@@ -41,6 +41,7 @@
     <string name="recording_string">Recording</string>
     <string name="no_recordings_available">No recordings available</string>
     <string name="edit_scheduled_recording_id">id</string>
+    <string name="edit_favourite_id">id</string>
     <string name="first_run_flag">SplashFlag</string>
     <string name="first_run_text">To play/record an mp3 stream, enter the URL (direct to the stream or to the m3u/pls
         file) in the textbox and press the arrow button or select a favourite from the list below.\n\nTo add a new

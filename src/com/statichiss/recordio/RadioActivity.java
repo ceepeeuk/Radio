@@ -106,28 +106,65 @@ public class RadioActivity extends RecordioBaseActivity {
 
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, final long id) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, final View view, int pos, final long id) {
                 favouritesCursor.moveToPosition(pos);
 
-                new AlertDialog.Builder(view.getContext())
-                        .setMessage("Delete " + favouritesCursor.getString(1))
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
-                                try {
-                                    dbHelper.openDataBase();
-                                } catch (IOException e) {
-                                    Log.e(TAG, "Unable to open db to delete favourite", e);
+//                new AlertDialog.Builder(view.getContext())
+//                        .setMessage("Delete " + favouritesCursor.getString(1))
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
+//                                try {
+//                                    dbHelper.openDataBase();
+//                                } catch (IOException e) {
+//                                    Log.e(TAG, "Unable to open db to delete favourite", e);
+//                                }
+//                                dbHelper.deleteFavourite(id);
+//                                favouritesCursor.requery();
+//                            }
+//                        })
+//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                            }
+//                        })
+//                        .show();
+
+                CharSequence[] favOptions = {"Edit", "Delete"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+
+                builder.setTitle(favouritesCursor.getString(1))
+                        .setItems(favOptions, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int item) {
+                                switch (item) {
+                                    case 0:
+                                        Intent confirmDetailsIntent = new Intent(RadioActivity.this, ConfirmDetailsActivity.class);
+                                        confirmDetailsIntent.putExtra(getString(R.string.edit_favourite_id), id);
+                                        startActivity(confirmDetailsIntent);
+                                        break;
+                                    case 1:
+                                        new AlertDialog.Builder(view.getContext())
+                                                .setMessage("Delete " + favouritesCursor.getString(1))
+                                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
+                                                        try {
+                                                            dbHelper.openDataBase();
+                                                        } catch (IOException e) {
+                                                            Log.e(TAG, "Unable to open db to delete favourite", e);
+                                                        }
+                                                        dbHelper.deleteFavourite(id);
+                                                        favouritesCursor.requery();
+                                                    }
+                                                })
+                                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                    }
+                                                })
+                                                .show();
+                                        break;
                                 }
-                                dbHelper.deleteFavourite(id);
-                                favouritesCursor.requery();
                             }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        })
-                        .show();
+                        }).show();
 
                 return false;
             }
