@@ -14,7 +14,7 @@ public class RadioApplication extends Application {
     private boolean _buffering = false;
     private PlayingFile _playingFileDetails;
     private int _playingType;
-
+    private LastPlayedFile _lastPlayedFile;
 
     public static final int StartPlayingRadio = 1;
     public static final int StartPlayingFile = 2;
@@ -95,5 +95,13 @@ public class RadioApplication extends Application {
 
     public void setPlayingType(int playingType) {
         _playingType = playingType;
+    }
+
+    public void setLastPlayedFile(LastPlayedFile lastPlayedFile) {
+        _lastPlayedFile = lastPlayedFile;
+    }
+
+    public LastPlayedFile getLastPlayedFile() {
+        return _lastPlayedFile;
     }
 }

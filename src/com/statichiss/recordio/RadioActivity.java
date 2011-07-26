@@ -74,7 +74,9 @@ public class RadioActivity extends RecordioBaseActivity {
         final EditText url = (EditText) findViewById(R.id.txt_url);
         url.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                url.setText("");
+                if (url.getText().toString().equals("Enter a stream/playlist url...")) {
+                    url.setText("");
+                }
             }
         });
 

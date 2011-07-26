@@ -233,6 +233,13 @@ public class PlayerService extends WakefulIntentService {
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     radioApplication.setPlayingType(RadioApplication.PlayingFile);
                     radioApplication.setPlayingFileDetails(new PlayingFile(mediaPlayer.getDuration(), file));
+                    // If filename is in session, then retrieve position and jump to it
+                    if (radioApplication.getLastPlayedFile() != null && file.equals(radioApplication.getLastPlayedFile().getName())) {
+                        if (mediaPlayer.getDuration() > radioApplication.getLastPlayedFile().getCurrentPosition()) {
+                            mediaPlayer.seekTo(radioApplication.getLastPlayedFile().getCurrentPosition());
+                        }
+                    }
+
                     mediaPlayer.start();
                     String status = getString(R.string.playing_string) + " " + file;
                     updateActivity(status);
@@ -277,6 +284,7 @@ public class PlayerService extends WakefulIntentService {
 
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
+                radioApplication.setLastPlayedFile(new LastPlayedFile(radioApplication.getPlayingFileDetails().getName(), mediaPlayer.getCurrentPosition()));
                 mediaPlayer.stop();
             }
             mediaPlayer.reset();
