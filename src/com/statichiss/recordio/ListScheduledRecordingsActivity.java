@@ -94,6 +94,7 @@ public class ListScheduledRecordingsActivity extends RecordioBaseActivity implem
     public void onBackPressed() {
         Intent RadioActivityIntent = new Intent(ListScheduledRecordingsActivity.this, RadioActivity.class);
         startActivity(RadioActivityIntent);
+        finish();
     }
 
     public void onClick(View view) {

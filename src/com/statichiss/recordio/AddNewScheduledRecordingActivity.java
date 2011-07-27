@@ -115,7 +115,8 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                 break;
 
             case R.id.add_new_scheduled_recording_cancel_button:
-                finish();
+
+                onBackPressed();
                 break;
         }
     }
@@ -185,6 +186,13 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         }
 
         return dbHelper;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent RadioActivityIntent = new Intent(AddNewScheduledRecordingActivity.this, ListScheduledRecordingsActivity.class);
+        startActivity(RadioActivityIntent);
+        finish();
     }
 
     private void showDateTimeDialog(int viewId) {

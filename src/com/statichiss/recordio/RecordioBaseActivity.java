@@ -21,19 +21,19 @@ public class RecordioBaseActivity extends Activity {
 
     @Override
     public void onResume() {
-        if (((RadioApplication) getApplication()).getExitFlag()) {
-            if (getClass().getSimpleName().equals("RadioActivity")) {
-                MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
-                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                    PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
-                }
-                if (RecorderService.alreadyRecording()) {
-                    RecorderService.cancelRecording();
-                }
-                ((RadioApplication) getApplication()).setExitFlag(false);
-            }
-            finish();
-        }
+//        if (((RadioApplication) getApplication()).getExitFlag()) {
+//            if (getClass().getSimpleName().equals("RadioActivity")) {
+//                MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
+//                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+//                    PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
+//                }
+//                if (RecorderService.alreadyRecording()) {
+//                    RecorderService.cancelRecording();
+//                }
+//                ((RadioApplication) getApplication()).setExitFlag(false);
+//            }
+//            finish();
+//        }
         super.onResume();
     }
 
@@ -67,18 +67,21 @@ public class RecordioBaseActivity extends Activity {
                 Intent confirmDetailsIntent = new Intent(RecordioBaseActivity.this, ConfirmDetailsActivity.class);
                 confirmDetailsIntent.putExtra(getString(R.string.radio_details_key), radioDetails);
                 startActivity(confirmDetailsIntent);
+                finish();
                 return true;
 
             case SCHEDULED_RECORDINGS:
 
                 Intent scheduledRecordingsIntent = new Intent(RecordioBaseActivity.this, ListScheduledRecordingsActivity.class);
                 startActivity(scheduledRecordingsIntent);
+                finish();
                 return true;
 
             case RECORDINGS:
 
                 Intent recordingsIntent = new Intent(RecordioBaseActivity.this, RecordingsActivity.class);
                 startActivity(recordingsIntent);
+                finish();
                 return true;
 
             case EXIT:
@@ -94,7 +97,6 @@ public class RecordioBaseActivity extends Activity {
                             }
                         });
                 builder.create().show();
-
                 return true;
 
             default:
@@ -103,17 +105,18 @@ public class RecordioBaseActivity extends Activity {
     }
 
     private void checkIfExitingFromRadioActivity() {
-        if (getClass().getSimpleName().equals("RadioActivity")) {
-            MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
-            }
-            if (RecorderService.alreadyRecording()) {
-                RecorderService.cancelRecording();
-            }
-        } else {
-            ((RadioApplication) getApplication()).setExitFlag(true);
+//        if (getClass().getSimpleName().equals("RadioActivity")) {
+        MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
         }
+        if (RecorderService.alreadyRecording()) {
+            RecorderService.cancelRecording();
+        }
+//        } else {
+//            ((RadioApplication) getApplication()).
+// (true);
+//        }
         finish();
     }
 

@@ -130,9 +130,17 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
                 break;
 
             case R.id.edit_fav_pop_up_btn_cancel:
-                finish();
+                onBackPressed();
+                break;
         }
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent RadioActivityIntent = new Intent(ConfirmDetailsActivity.this, RadioActivity.class);
+        startActivity(RadioActivityIntent);
+        finish();
     }
 }

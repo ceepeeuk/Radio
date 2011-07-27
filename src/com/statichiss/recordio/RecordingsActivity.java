@@ -184,4 +184,11 @@ public class RecordingsActivity extends RecordioBaseActivity {
         ((RadioApplication) getApplication()).setPlayingStatus(text);
         getApplicationContext().sendBroadcast(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent RadioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
+        startActivity(RadioActivityIntent);
+        finish();
+    }
 }
