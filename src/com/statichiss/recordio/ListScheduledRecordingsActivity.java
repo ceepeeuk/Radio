@@ -64,6 +64,7 @@ public class ListScheduledRecordingsActivity extends RecordioBaseActivity implem
                                         Intent addNewScheduledRecordingActivityIntent = new Intent(ListScheduledRecordingsActivity.this, AddNewScheduledRecordingActivity.class);
                                         addNewScheduledRecordingActivityIntent.putExtra(getString(R.string.edit_scheduled_recording_id), id);
                                         startActivity(addNewScheduledRecordingActivityIntent);
+                                        finish();
                                         break;
                                     case 1:
                                         DatabaseHelper databaseHelper = prepareDatabaseHelper();
@@ -100,6 +101,7 @@ public class ListScheduledRecordingsActivity extends RecordioBaseActivity implem
     public void onClick(View view) {
         Intent addNewScheduledRecordingActivityIntent = new Intent(ListScheduledRecordingsActivity.this, AddNewScheduledRecordingActivity.class);
         startActivity(addNewScheduledRecordingActivityIntent);
+        finish();
     }
 
     private DatabaseHelper prepareDatabaseHelper() {

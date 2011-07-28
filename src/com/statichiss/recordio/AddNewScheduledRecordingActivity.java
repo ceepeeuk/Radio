@@ -111,7 +111,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                     addNewScheduledRecording();
                 }
 
-                finish();
+                onBackPressed();
                 break;
 
             case R.id.add_new_scheduled_recording_cancel_button:
