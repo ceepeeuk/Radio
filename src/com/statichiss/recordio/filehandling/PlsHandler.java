@@ -1,17 +1,22 @@
 package com.statichiss.recordio.filehandling;
 
 import android.util.Log;
+
 import com.statichiss.recordio.RadioDetails;
 import com.statichiss.recordio.utils.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class PlsHandler extends FileHandler {
     private static final String PLSTAG = "com.statichiss.recordio.filehandling.PlsHandler";
 
-    public static RadioDetails parse(RadioDetails radioDetails) {
+    public static RadioDetails parse(RadioDetails radioDetails, String basePath) {
 
-        String plsFile = getFile(radioDetails.getPlaylistUrl());
+        String plsFile = getFile(radioDetails.getPlaylistUrl(), basePath);
 
         try {
 

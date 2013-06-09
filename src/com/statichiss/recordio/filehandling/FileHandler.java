@@ -2,19 +2,24 @@ package com.statichiss.recordio.filehandling;
 
 import android.os.Environment;
 import android.util.Log;
+
 import org.apache.http.util.ByteArrayBuffer;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
 public abstract class FileHandler {
-    private static final String PATH = "/data/data/com.statichiss/";  //put the downloaded file here
     private static final String TAG = "com.statichiss.recordio.filehandling.FileHandler";
 
-    public static String getFile(String plsUrl) {
-
-        String fileName = PATH + parseFileName(plsUrl);
+    public static String getFile(String plsUrl, String basePath) {
+        String path = String.format("%s/data/com.statichiss/", basePath);  //put the downloaded file here
+        String fileName = String.format("%s%s", path, parseFileName(plsUrl));
         File file = new File(fileName);
 
         try {

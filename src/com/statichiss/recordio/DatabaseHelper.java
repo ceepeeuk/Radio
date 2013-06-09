@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import com.statichiss.recordio.utils.DateUtils;
 import com.statichiss.recordio.utils.StringUtils;
 
@@ -17,7 +18,7 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static String DB_PATH = "/data/data/com.statichiss/databases/";
+    private String DB_PATH;
     private static final String DB_NAME = "db";
 
     private SQLiteDatabase myDataBase;
@@ -33,7 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String RECORDING_TYPES_TYPE = "type";
 
     public static final String STATIONS_TABLE = "stations";
-    public static final String STATIONS_ID = "_id";
     public static final String STATIONS_NAME = "name";
     public static final String STATIONS_URL = "url";
 
@@ -49,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
         this.myContext = context;
+        DB_PATH = context.getFilesDir().getPath() + "/data/com.statichiss/databases/";
     }
 
     // Creates a empty database on the system and rewrites it with your own database.

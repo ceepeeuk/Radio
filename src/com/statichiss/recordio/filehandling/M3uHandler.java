@@ -1,17 +1,22 @@
 package com.statichiss.recordio.filehandling;
 
 import android.util.Log;
+
 import com.statichiss.recordio.RadioDetails;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class M3uHandler extends FileHandler {
 
     private static final String M3UTAG = "com.statichiss.recordio.filehandling.M3uHandler";
 
-    public static RadioDetails parse(RadioDetails radioDetails) {
+    public static RadioDetails parse(RadioDetails radioDetails, String basePath) {
 
-        String m3uFile = getFile(radioDetails.getPlaylistUrl());
+        String m3uFile = getFile(radioDetails.getPlaylistUrl(), basePath);
 
         try {
 

@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.statichiss.R;
 import com.statichiss.recordio.NotificationHelper;
@@ -75,9 +76,9 @@ public class RecorderService extends WakefulIntentService {
 
         if (radioDetails.getPlaylistUrl().endsWith(".pls") || radioDetails.getPlaylistUrl().endsWith(".m3u")) {
             if (radioDetails.getPlaylistUrl().endsWith(".pls")) {
-                radioDetails = PlsHandler.parse(radioDetails);
+                radioDetails = PlsHandler.parse(radioDetails, getApplicationContext().getFilesDir().getPath());
             } else {
-                radioDetails = M3uHandler.parse(radioDetails);
+                radioDetails = M3uHandler.parse(radioDetails, this.getApplicationContext().getFilesDir().getPath());
             }
         } else {
             radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());

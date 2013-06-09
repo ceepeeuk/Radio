@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/list_recording_schedule_layout"
-                android:layout_width="fill_parent" android:layout_height="fill_parent"
-                xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListView android:id="@+id/list_recording_schedule_list_view" android:layout_width="fill_parent"
-              android:layout_height="fill_parent"/>
-    <Button android:layout_width="fill_parent" android:id="@+id/list_recording_schedule_new_button"
-            android:layout_height="wrap_content" android:text="Add new"
+<RelativeLayout
+        android:id="@+id/list_recording_schedule_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListView
+            android:id="@+id/list_recording_schedule_list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+
+    <Button
+            android:layout_width="fill_parent"
+            android:id="@+id/list_recording_schedule_new_button"
+            android:layout_height="wrap_content"
+            android:text="@string/add_new_string"
             android:layout_alignParentBottom="true"/>
 </RelativeLayout>

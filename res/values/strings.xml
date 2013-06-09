@@ -51,4 +51,13 @@
         on Scheduled Recordings.\n\nFrom the menu the "Recordings" page can be accessed, that allows playback, renaming
         and deleting of recordings.
     </string>
+    <string name="set_date_string">Set date</string>
+    <string name="add_new_string">Add new</string>
+    <string name="url_default_text_string">Enter a stream/playlist url…</string>
+    <string name="reset_string">Reset</string>
+    <string name="cancel_string">Cancel</string>
+    <string name="autocomplete_string">AutoComplete</string>
+    <string name="not_set_string">Not set</string>
+    <string name="go_string">Go</string>
+    <string name="edit_text_string">EditText</string>
 </resources>

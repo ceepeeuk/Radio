@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.statichiss.R;
 import com.statichiss.recordio.filehandling.M3uHandler;
@@ -121,10 +122,11 @@ public class PlayerService extends WakefulIntentService {
             });
 
             if (incomingRadioDetails.getPlaylistUrl().endsWith(".pls") || incomingRadioDetails.getPlaylistUrl().endsWith(".m3u")) {
+                String basePath = getApplicationContext().getFilesDir().getPath();
                 if (incomingRadioDetails.getPlaylistUrl().endsWith(".pls")) {
-                    radioDetails = PlsHandler.parse(radioDetails);
+                    radioDetails = PlsHandler.parse(radioDetails, basePath);
                 } else {
-                    radioDetails = M3uHandler.parse(radioDetails);
+                    radioDetails = M3uHandler.parse(radioDetails, basePath);
                 }
             } else {
                 radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());

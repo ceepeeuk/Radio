@@ -17,7 +17,7 @@
             android:id="@+id/edit_fav_pop_up_txt_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="AutoComplete"
+            android:text="@string/autocomplete_string"
             android:textSize="18sp"
             >
     </AutoCompleteTextView>
@@ -32,8 +32,9 @@
             android:id="@+id/edit_fav_pop_up_txt_url"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="EditText"
+            android:text="@string/edit_text_string"
             android:textSize="18sp"
+            android:inputType="textUri"
             >
     </EditText>
     <LinearLayout
