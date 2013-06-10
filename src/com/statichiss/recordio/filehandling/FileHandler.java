@@ -18,8 +18,8 @@ public abstract class FileHandler {
     private static final String TAG = "com.statichiss.recordio.filehandling.FileHandler";
 
     public static String getFile(String plsUrl, String basePath) {
-        String path = String.format("%s/data/com.statichiss/", basePath);  //put the downloaded file here
-        String fileName = String.format("%s%s", path, parseFileName(plsUrl));
+        //String path = String.format("%s/data/com.statichiss/", basePath);  //put the downloaded file here
+        String fileName = String.format("%s%s", basePath, parseFileName(plsUrl));
         File file = new File(fileName);
 
         try {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="13"
-          android:versionName="2.2.0" package="com.statichiss">
+          android:versionCode="14"
+          android:versionName="3.0" package="com.statichiss">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -45,11 +45,7 @@
                   android:configChanges="orientation|keyboardHidden|keyboard"
                   android:screenOrientation="portrait"/>
         <activity android:name=".recordio.RecordioBaseActivity"/>
-        <receiver android:name=".recordio.recording.RecordingBroadcastReceiver">
-            <intent-filter>
-                <action android:name="com.statichiss.recordio.recording.RecordingBroadcastReceiver"/>
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".recordio.recording.RecordingBroadcastReceiver"/>
         <receiver android:name=".recordio.RebootBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

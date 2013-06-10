@@ -18,7 +18,6 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private String DB_PATH;
     private static final String DB_NAME = "db";
 
     private SQLiteDatabase myDataBase;
@@ -49,7 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
         this.myContext = context;
-        DB_PATH = context.getFilesDir().getPath() + "/data/com.statichiss/databases/";
     }
 
     // Creates a empty database on the system and rewrites it with your own database.
@@ -67,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 copyDataBase();
             } catch (IOException e) {
-                throw new Error("Error copying database");
+                throw new Error("Error copying database - " + e.getMessage());
             }
         }
     }
@@ -79,8 +77,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
 
-            String myPath = DB_PATH + DB_NAME;
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+            String myDB = myContext.getDatabasePath(DB_NAME).toString();
+            checkDB = SQLiteDatabase.openDatabase(myDB, null, SQLiteDatabase.OPEN_READONLY);
 
         } catch (SQLiteException e) {
             Log.e(TAG, "SQLException occurred in checkDataBase()", e);
@@ -101,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         InputStream myInput = myContext.getAssets().open(DB_NAME);
 
         // Path to the just created empty db
-        String outFileName = DB_PATH + DB_NAME;
+        String outFileName = myContext.getDatabasePath(DB_NAME).toString();
 
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
@@ -122,8 +120,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void openDataBase() throws IOException {
         //Open the database
         createDataBase();
-        String myPath = DB_PATH + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
+        String myDB = myContext.getDatabasePath(DB_NAME).toString();
+        myDataBase = SQLiteDatabase.openDatabase(myDB, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
     @Override

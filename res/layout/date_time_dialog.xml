@@ -15,14 +15,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/DateTimePicker"
             android:padding="5dip">
-
         <Button
-                android:id="@+id/SetDateTime"
+                android:id="@+id/CancelDialog"
                 android:layout_width="0dip"
-                android:text="@android:string/ok"
+                android:text="@android:string/cancel"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>
-
         <Button
                 android:id="@+id/ResetDateTime"
                 android:layout_width="0dip"
@@ -31,9 +29,9 @@
                 android:layout_height="wrap_content"/>
 
         <Button
-                android:id="@+id/CancelDialog"
+                android:id="@+id/SetDateTime"
                 android:layout_width="0dip"
-                android:text="@android:string/cancel"
+                android:text="@android:string/ok"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>
     </LinearLayout>

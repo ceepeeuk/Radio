@@ -44,18 +44,18 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             >
         <Button
-                android:id="@+id/edit_fav_pop_up_btn_save"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/edit_fav_pop_up_btn_save"
-                android:layout_weight="0.5"
-                >
-        </Button>
-        <Button
                 android:id="@+id/edit_fav_pop_up_btn_cancel"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/edit_fav_pop_up_btn_cancel"
+                android:layout_weight="0.5"
+                >
+        </Button>
+        <Button
+                android:id="@+id/edit_fav_pop_up_btn_save"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_fav_pop_up_btn_save"
                 android:layout_weight="0.5"
                 >
         </Button>

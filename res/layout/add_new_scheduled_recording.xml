@@ -78,18 +78,18 @@
             android:layout_below="@id/add_new_scheduled_recording_recording_type_spinner"
             >
         <Button
-                android:id="@+id/add_new_scheduled_recording_ok_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/add_new_scheduled_recording_ok_button_text"
-                android:layout_weight="0.5"
-                >
-        </Button>
-        <Button
                 android:id="@+id/add_new_scheduled_recording_cancel_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/add_new_scheduled_recording_cancel_button_text"
+                android:layout_weight="0.5"
+                >
+        </Button>
+        <Button
+                android:id="@+id/add_new_scheduled_recording_ok_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_new_scheduled_recording_ok_button_text"
                 android:layout_weight="0.5"
                 >
         </Button>

@@ -14,12 +14,10 @@
                   android:text="@string/url_default_text_string"
                   android:textSize="15sp"
                   android:singleLine="true"
-                  android:layout_alignParentTop="true"
                   android:layout_weight="10"
                   android:inputType="textUri"/>
 
         <ImageButton android:id="@+id/btn_go"
-                     android:layout_alignParentRight="true"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:background="@drawable/ic_btn_play"
@@ -46,13 +44,10 @@
         <SeekBar android:id="@+id/seek_progress"
                  android:layout_width="0dip"
                  android:layout_height="wrap_content"
-                 android:layout_toRightOf="@+id/time_elapsed"
-                 android:layout_weight="1"
                  android:padding="2px"/>
         <TextView android:id="@+id/time_remaining"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_toRightOf="@+id/seek_progress"
                   android:padding="6dip"/>
     </LinearLayout>
 
@@ -81,7 +76,6 @@
     <TextView android:id="@+id/txt_status"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_alignParentBottom="true"
               android:padding="6dip"
               android:layout_weight="1"/>
 
