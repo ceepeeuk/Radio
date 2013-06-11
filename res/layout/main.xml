@@ -1,69 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/layout_main"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  xmlns:android="http://schemas.android.com/apk/res/android">
-        <EditText android:id="@+id/txt_url"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:text="@string/url_default_text_string"
-                  android:textSize="15sp"
-                  android:singleLine="true"
-                  android:layout_weight="10"
-                  android:inputType="textUri"/>
+<LinearLayout
+        android:id="@+id/layout_main"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <ImageButton android:id="@+id/btn_go"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:background="@drawable/ic_btn_play"
-                     android:scaleType="fitXY"
-                     android:onClick="goClick"
-                     android:layout_marginLeft="3dip"
-                     android:layout_weight="1"
-                     android:contentDescription="@string/go_string"/>
-    </LinearLayout>
-    <ListView android:id="@+id/lst_favourites"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:layout_weight="100"/>
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout android:id="@+id/progress_layout"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:visibility="gone"
-                  android:layout_weight="1">
-        <TextView android:id="@+id/time_elapsed"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:padding="6dip"/>
-        <SeekBar android:id="@+id/seek_progress"
-                 android:layout_width="0dip"
-                 android:layout_height="wrap_content"
-                 android:padding="2px"/>
-        <TextView android:id="@+id/time_remaining"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:padding="6dip"/>
+        <EditText
+                android:id="@+id/txt_url"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/url_default_text_string"
+                android:textSize="15sp"
+                android:singleLine="true"
+                android:layout_weight="10"
+                android:inputType="textUri"/>
+
+        <ImageButton
+                android:id="@+id/btn_go"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_btn_play"
+                android:scaleType="fitXY"
+                android:onClick="goClick"
+                android:layout_marginLeft="3dip"
+                android:layout_weight="1"
+                android:contentDescription="@string/go_string"/>
     </LinearLayout>
 
-    <LinearLayout android:id="@+id/main_stop_button_layout"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:layout_weight="1">
-        <Button android:id="@+id/main_stop_playing_btn"
+    <ListView
+            android:id="@+id/lst_favourites"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="100"/>
+
+    <LinearLayout
+            android:id="@+id/progress_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_weight="1">
+
+        <TextView
+                android:id="@+id/time_elapsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dip"/>
+
+        <SeekBar
+                android:id="@+id/seek_progress"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:padding="2dp"/>
+
+        <TextView
+                android:id="@+id/time_remaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dip"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/main_stop_button_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_weight="1">
+
+        <Button
+                android:id="@+id/main_stop_playing_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/main_stop_playing_btn"
                 android:layout_weight="0.5"
                 android:enabled="false"
                 android:background="@drawable/custom_stop_button"/>
-        <Button android:id="@+id/main_stop_recording_btn"
+
+        <Button
+                android:id="@+id/main_stop_recording_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/main_stop_recording_btn"
@@ -73,10 +93,11 @@
 
     </LinearLayout>
 
-    <TextView android:id="@+id/txt_status"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:padding="6dip"
-              android:layout_weight="1"/>
+    <TextView
+            android:id="@+id/txt_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="6dip"
+            android:layout_weight="1"/>
 
 </LinearLayout>

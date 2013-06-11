@@ -55,7 +55,7 @@
             >
     </TextView>
     <Button
-            android:id="@+id/add_new_scheduled_recording_end_time_button"
+            android:id="@+id/add_new_scheduled_recording_set_end_time_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_new_scheduled_recording_change_button_text"
@@ -67,7 +67,7 @@
             android:id="@+id/add_new_scheduled_recording_recording_type_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_new_scheduled_recording_end_time_button"
+            android:layout_below="@id/add_new_scheduled_recording_set_end_time_button"
             >
     </Spinner>
     <LinearLayout

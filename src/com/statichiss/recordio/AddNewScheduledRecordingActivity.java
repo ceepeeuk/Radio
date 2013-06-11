@@ -1,26 +1,38 @@
 package com.statichiss.recordio;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.statichiss.R;
 import com.statichiss.recordio.utils.DateUtils;
 
 import java.io.IOException;
+import java.util.Date;
 
-public class AddNewScheduledRecordingActivity extends Activity implements View.OnClickListener {
+public class AddNewScheduledRecordingActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     private long startDateTime = 0;
     private long endDateTime = 0;
     private static final String TAG = "com.statichiss.recordio.AddNewScheduledRecordingActivity";
     private boolean editMode = false;
     private long scheduledRecordingId;
+    private int callerId;
+    private int year;
+    private int month;
+    private int day;
+
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -28,7 +40,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         setContentView(R.layout.add_new_scheduled_recording);
 
         Button setStartTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_set_start_time_button);
-        Button setEndTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_end_time_button);
+        Button setEndTimeButton = (Button) findViewById(R.id.add_new_scheduled_recording_set_end_time_button);
         Button okButton = (Button) findViewById(R.id.add_new_scheduled_recording_ok_button);
         Button cancelButton = (Button) findViewById(R.id.add_new_scheduled_recording_cancel_button);
 
@@ -82,10 +94,12 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
 
         switch (view.getId()) {
             case R.id.add_new_scheduled_recording_set_start_time_button:
-                showDateTimeDialog(view.getId());
+//                showDateTimeDialog(view.getId());
+                showDatePickerDialog(view);
                 break;
-            case R.id.add_new_scheduled_recording_end_time_button:
-                showDateTimeDialog(view.getId());
+            case R.id.add_new_scheduled_recording_set_end_time_button:
+//                showDateTimeDialog(view.getId());
+                showDatePickerDialog(view);
                 break;
             case R.id.add_new_scheduled_recording_ok_button:
                 if (this.startDateTime < 1 && this.endDateTime < 1) {
@@ -195,104 +209,109 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         finish();
     }
 
-    private void showDateTimeDialog(int viewId) {
+    public void showDatePickerDialog(View v) {
+        callerId = v.getId();
 
-        final int originalViewId = viewId;
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+    }
 
-        // Create the dialog
-        final Dialog mDateTimeDialog = new Dialog(this);
-        // Inflate the root layout
-        final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.date_time_dialog, null);
-        // Grab widget instance
-        final com.ptashek.widgets.datetimepicker.DateTimePicker mDateTimePicker = (com.ptashek.widgets.datetimepicker.DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
-        // Check is system is set to use 24h time (this doesn't seem to work as expected though)
-        final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
-        final boolean is24h = !(timeS == null || timeS.equals("12"));
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
 
-        if (editMode) {
-            switch (originalViewId) {
-                case R.id.add_new_scheduled_recording_set_start_time_button:
-                    mDateTimePicker.updateDate(DateUtils.getYear(startDateTime), DateUtils.getMonth(startDateTime), DateUtils.getDay(startDateTime));
-                    mDateTimePicker.updateTime(DateUtils.getHour(startDateTime), DateUtils.getMinute(startDateTime));
-                    break;
-                case R.id.add_new_scheduled_recording_end_time_button:
-                    mDateTimePicker.updateDate(DateUtils.getYear(endDateTime), DateUtils.getMonth(endDateTime), DateUtils.getDay(endDateTime));
-                    mDateTimePicker.updateTime(DateUtils.getHour(endDateTime), DateUtils.getMinute(endDateTime));
-                    break;
-            }
+        Date date = new Date(year, month, day);
+
+        switch (callerId) {
+            case R.id.add_new_scheduled_recording_set_start_time_button:
+                ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(date.getTime()));
+                break;
+            case R.id.add_new_scheduled_recording_set_end_time_button:
+                ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(date.getTime()));
+                break;
         }
+    }
 
-        // Update demo TextViews when the "OK" button is clicked
-        mDateTimeDialogView.findViewById(R.id.SetDateTime).setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-//                StringBuilder date = new StringBuilder();
+//    private void showDateTimeDialog(int viewId) {
 //
-//                if (mDateTimePicker.is24HourView()) {
-//                    date.append(StringUtils.pad(mDateTimePicker.get(Calendar.HOUR_OF_DAY)))
-//                            .append(":")
-//                            .append(StringUtils.pad(mDateTimePicker.get(Calendar.MINUTE)))
-//                            .append(" ");
-//                } else {
-//                    date.append(StringUtils.pad(mDateTimePicker.get(Calendar.HOUR)))
-//                            .append(":")
-//                            .append(StringUtils.pad(mDateTimePicker.get(Calendar.MINUTE)))
-//                            .append(" ")
-//                            .append((mDateTimePicker.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"))
-//                            .append(" ");
+//        final int originalViewId = viewId;
+//
+//        // Create the dialog
+//        final Dialog mDateTimeDialog = new Dialog(this);
+//        // Inflate the root layout
+//        final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.date_time_dialog, null);
+//        // Grab widget instance
+//        final com.ptashek.widgets.datetimepicker.DateTimePicker mDateTimePicker = (com.ptashek.widgets.datetimepicker.DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
+//        // Check is system is set to use 24h time (this doesn't seem to work as expected though)
+//        final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
+//        final boolean is24h = !(timeS == null || timeS.equals("12"));
+//
+//        if (editMode) {
+//            switch (originalViewId) {
+//                case R.id.add_new_scheduled_recording_set_start_time_button:
+//                    mDateTimePicker.updateDate(DateUtils.getYear(startDateTime), DateUtils.getMonth(startDateTime), DateUtils.getDay(startDateTime));
+//                    mDateTimePicker.updateTime(DateUtils.getHour(startDateTime), DateUtils.getMinute(startDateTime));
+//                    break;
+//                case R.id.add_new_scheduled_recording_end_time_button:
+//                    mDateTimePicker.updateDate(DateUtils.getYear(endDateTime), DateUtils.getMonth(endDateTime), DateUtils.getDay(endDateTime));
+//                    mDateTimePicker.updateTime(DateUtils.getHour(endDateTime), DateUtils.getMinute(endDateTime));
+//                    break;
+//            }
+//        }
+//
+//        // Update demo TextViews when the "OK" button is clicked
+//        mDateTimeDialogView.findViewById(R.id.SetDateTime).setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//
+//                switch (originalViewId) {
+//                    case R.id.add_new_scheduled_recording_set_start_time_button:
+//                        startDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
+//                        ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(startDateTime));
+//                        break;
+//                    case R.id.add_new_scheduled_recording_end_time_button:
+//                        endDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
+//                        ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(endDateTime));
+//                        break;
 //                }
 //
-//                date.append(mDateTimePicker.get(Calendar.DAY_OF_MONTH))
-//                        .append("/")
-//                        .append(mDateTimePicker.get(Calendar.MONTH) + 1)
-//                        .append("/")
-//                        .append(mDateTimePicker.get(Calendar.YEAR));
-
-                switch (originalViewId) {
-                    case R.id.add_new_scheduled_recording_set_start_time_button:
-                        startDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
-                        ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(startDateTime));
-                        break;
-                    case R.id.add_new_scheduled_recording_end_time_button:
-                        endDateTime = roundDownToMinute(mDateTimePicker.getDateTimeMillis());
-                        ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(endDateTime));
-                        break;
-                }
-
-                mDateTimeDialog.dismiss();
-            }
-
-            private long roundDownToMinute(long dateTimeMillis) {
-                long MILLISECONDS_PER_MINUTE = 60 * 1000L;
-                long msRem = dateTimeMillis % MILLISECONDS_PER_MINUTE;
-                return dateTimeMillis - msRem;
-            }
-        });
-
-        // Cancel the dialog when the "Cancel" button is clicked
-        mDateTimeDialogView.findViewById(R.id.CancelDialog).setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                mDateTimeDialog.cancel();
-            }
-        });
-
-        // Reset Date and Time pickers when the "Reset" button is clicked
-        mDateTimeDialogView.findViewById(R.id.ResetDateTime).setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                mDateTimePicker.reset();
-            }
-        });
-
-        // Setup TimePicker
-        mDateTimePicker.setIs24HourView(is24h);
-        // No title on the dialog window
-        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // Set the dialog content view
-        mDateTimeDialog.setContentView(mDateTimeDialogView);
-        // Display the dialog
-        mDateTimeDialog.show();
-    }
+//                mDateTimeDialog.dismiss();
+//            }
+//
+//            private long roundDownToMinute(long dateTimeMillis) {
+//                long MILLISECONDS_PER_MINUTE = 60 * 1000L;
+//                long msRem = dateTimeMillis % MILLISECONDS_PER_MINUTE;
+//                return dateTimeMillis - msRem;
+//            }
+//        });
+//
+//        // Cancel the dialog when the "Cancel" button is clicked
+//        mDateTimeDialogView.findViewById(R.id.CancelDialog).setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                mDateTimeDialog.cancel();
+//            }
+//        });
+//
+//        // Reset Date and Time pickers when the "Reset" button is clicked
+//        mDateTimeDialogView.findViewById(R.id.ResetDateTime).setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                mDateTimePicker.reset();
+//            }
+//        });
+//
+//        // Setup TimePicker
+//        mDateTimePicker.setIs24HourView(is24h);
+//        // No title on the dialog window
+//        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        // Set the dialog content view
+//        mDateTimeDialog.setContentView(mDateTimeDialogView);
+//        // Display the dialog
+//        mDateTimeDialog.show();
+//
+//
+//    }
 }
