@@ -80,7 +80,9 @@
                 android:text="@string/main_stop_playing_btn"
                 android:layout_weight="0.5"
                 android:enabled="false"
-                android:background="@drawable/custom_stop_button"/>
+                android:background="@drawable/custom_stop_button"
+                style="?android:attr/buttonBarButtonStyle"
+                />
 
         <Button
                 android:id="@+id/main_stop_recording_btn"
@@ -89,7 +91,9 @@
                 android:text="@string/main_stop_recording_btn"
                 android:layout_weight="0.5"
                 android:enabled="false"
-                android:background="@drawable/custom_stop_button"/>
+                android:background="@drawable/custom_stop_button"
+                style="?android:attr/buttonBarButtonStyle"
+                />
 
     </LinearLayout>
 

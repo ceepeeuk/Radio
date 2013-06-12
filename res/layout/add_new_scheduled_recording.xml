@@ -35,6 +35,7 @@
             android:text="@string/add_new_scheduled_recording_change_button_text"
             android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_alignParentRight="true"
+            style="?android:attr/buttonBarButtonStyle"
             >
     </Button>
     <TextView
@@ -61,6 +62,7 @@
             android:text="@string/add_new_scheduled_recording_change_button_text"
             android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
             android:layout_alignParentRight="true"
+            style="?android:attr/buttonBarButtonStyle"
             >
     </Button>
     <Spinner
@@ -83,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_new_scheduled_recording_cancel_button_text"
                 android:layout_weight="0.5"
+                style="?android:attr/buttonBarButtonStyle"
                 >
         </Button>
         <Button
@@ -91,6 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_new_scheduled_recording_ok_button_text"
                 android:layout_weight="0.5"
+                style="?android:attr/buttonBarButtonStyle"
                 >
         </Button>
     </LinearLayout>

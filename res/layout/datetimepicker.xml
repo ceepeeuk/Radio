@@ -18,14 +18,18 @@
                 android:text="@string/set_date_string"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:enabled="false"/>
+                android:enabled="false"
+                style="?android:attr/buttonBarButtonStyle"
+                />
 
         <Button
                 android:id="@+id/SwitchToTime"
                 android:layout_width="0dip"
                 android:text="@string/add_new_string"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                />
     </LinearLayout>
 
     <ViewSwitcher

@@ -15,5 +15,7 @@
             android:id="@+id/list_recording_schedule_new_button"
             android:layout_height="wrap_content"
             android:text="@string/add_new_string"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            style="?android:attr/buttonBarButtonStyle"
+            />
 </RelativeLayout>
