@@ -4,5 +4,4 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:textSize="12pt"
-          android:textColor="#000000"
         />

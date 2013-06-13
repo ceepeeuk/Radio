@@ -65,16 +65,16 @@
         <service
                 android:name=".recordio.recording.RecorderService"
                 android:exported="false">
-        <intent-filter>
-                <action android:name="com.statichiss.recordio.recording.RecorderService"/>
+            <intent-filter>
+            <action android:name="com.statichiss.recordio.recording.RecorderService"/>
             </intent-filter>
         </service>
         <service
                 android:name=".recordio.PlayerService"
                 android:label="PlayerService"
                 android:exported="false">
-        <intent-filter>
-                <action android:name="com.statichiss.recordio.PlayerService"/>
+            <intent-filter>
+            <action android:name="com.statichiss.recordio.PlayerService"/>
             </intent-filter>
         </service>
     </application>
