@@ -116,7 +116,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                     Toast.makeText(this, R.string.add_new_scheduled_recording_end_time_not_set, Toast.LENGTH_SHORT).show();
                     break;
                 }
-                if (validateStartTimeIsNotAlreadyInUse(this.startDateTime, this.endDateTime)) {
+                if (validateStartTimeIsNotAlreadyInUse(this.startDateTime)) {
                     Toast.makeText(this, R.string.add_new_scheduled_recording_recording_already_scheduled, Toast.LENGTH_SHORT).show();
                     break;
                 }
@@ -137,7 +137,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
         }
     }
 
-    private boolean validateStartTimeIsNotAlreadyInUse(long startDateTime, long endDateTime) {
+    private boolean validateStartTimeIsNotAlreadyInUse(long startDateTime) {
 
         boolean result = false;
         DatabaseHelper dbhHelper = prepareDatabaseHelper();
