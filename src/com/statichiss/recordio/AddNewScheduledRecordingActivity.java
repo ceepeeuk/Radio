@@ -23,7 +23,6 @@ import com.statichiss.recordio.utils.DateUtils;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class AddNewScheduledRecordingActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -231,17 +230,17 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-        //Date date = new Date(year, month, day, hour, minute);
         Calendar date = new GregorianCalendar(this.year, this.month, this.day, hour, minute);
 
         switch (callerId) {
             case R.id.add_new_scheduled_recording_set_start_time_button:
-                ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(date.getTimeInMillis()));
+                startDateTime = date.getTimeInMillis();
+                ((TextView) findViewById(R.id.add_new_scheduled_recording_start_time_text)).setText(DateUtils.getDateTimeString(startDateTime));
                 break;
             case R.id.add_new_scheduled_recording_set_end_time_button:
-                ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(date.getTimeInMillis()));
+                endDateTime = date.getTimeInMillis();
+                ((TextView) findViewById(R.id.add_new_scheduled_recording_end_time_text)).setText(DateUtils.getDateTimeString(endDateTime));
                 break;
         }
-
     }
 }
