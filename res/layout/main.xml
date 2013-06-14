@@ -20,7 +20,8 @@
                 android:textSize="15sp"
                 android:singleLine="true"
                 android:layout_weight="10"
-                android:inputType="textUri"/>
+                android:inputType="textUri"
+                android:layout_gravity="center"/>
 
         <ImageButton
                 android:id="@+id/btn_go"
@@ -57,7 +58,9 @@
                 android:id="@+id/seek_progress"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:padding="2dp"/>
+                android:padding="2dp"
+                style="@style/SeekBarAppTheme"
+                />
 
         <TextView
                 android:id="@+id/time_remaining"

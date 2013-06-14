@@ -16,6 +16,6 @@
             android:layout_height="wrap_content"
             android:text="@string/add_new_string"
             android:layout_alignParentBottom="true"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/ButtonAppTheme"
             />
 </RelativeLayout>

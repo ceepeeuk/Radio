@@ -19,7 +19,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:enabled="false"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/ButtonAppTheme"
                 />
 
         <Button
@@ -28,7 +28,7 @@
                 android:text="@string/add_new_string"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/ButtonAppTheme"
                 />
     </LinearLayout>
 
