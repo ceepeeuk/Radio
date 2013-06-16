@@ -17,11 +17,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/url_default_text_string"
-                android:textSize="15sp"
+                android:textSize="20sp"
                 android:singleLine="true"
                 android:layout_weight="10"
                 android:inputType="textUri"
-                android:layout_gravity="center"/>
+                android:layout_gravity="bottom"
+                android:textIsSelectable="true"/>
 
         <ImageButton
                 android:id="@+id/btn_go"
