@@ -42,33 +42,47 @@
             android:layout_height="wrap_content"
             android:layout_weight="100"/>
 
-    <LinearLayout
+    <RelativeLayout
             android:id="@+id/progress_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_weight="1">
+            android:orientation="vertical"
+            android:visibility="gone">
 
         <TextView
                 android:id="@+id/time_elapsed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="6dip"/>
-
-        <SeekBar
-                android:id="@+id/seek_progress"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:padding="2dp"
-                style="@style/SeekBarAppTheme"
+                android:layout_marginRight="6dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/time_remaining"
+                android:layout_toRightOf="@+id/time_elapsed"
+                android:orientation="horizontal">
+
+            <SeekBar
+                    android:id="@+id/seek_progress"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:layout_marginRight="10dp"
+                    style="@style/SeekBarAppTheme"/>
+        </LinearLayout>
 
         <TextView
                 android:id="@+id/time_remaining"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="6dip"/>
-    </LinearLayout>
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="6dip"/>
+    </RelativeLayout>
 
     <LinearLayout
             android:id="@+id/main_stop_button_layout"
