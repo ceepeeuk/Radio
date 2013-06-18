@@ -9,7 +9,6 @@
             android:id="@+id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            style="@style/SpinnerAppTheme"
             >
     </Spinner>
     <TextView
@@ -18,6 +17,7 @@
             android:layout_height="wrap_content"
             android:text="@string/add_new_scheduled_recording_start_label_text"
             android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
+            android:paddingTop="10dip"
             >
     </TextView>
     <TextView
@@ -27,6 +27,7 @@
             android:text="@string/not_set_string"
             android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_centerHorizontal="true"
+            android:paddingTop="10dip"
             >
     </TextView>
     <Button
@@ -36,7 +37,7 @@
             android:text="@string/add_new_scheduled_recording_change_button_text"
             android:layout_below="@id/add_new_scheduled_recording_favourite_station_spinner"
             android:layout_alignParentRight="true"
-            style="@style/ButtonAppTheme"
+            android:background="?android:attr/selectableItemBackground"
             >
     </Button>
     <TextView
@@ -45,6 +46,7 @@
             android:layout_height="wrap_content"
             android:text="@string/add_new_scheduled_recording_end_label_text"
             android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
+            android:paddingTop="10dip"
             >
     </TextView>
     <TextView
@@ -54,6 +56,7 @@
             android:text="@string/not_set_string"
             android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
             android:layout_centerHorizontal="true"
+            android:paddingTop="10dip"
             >
     </TextView>
     <Button
@@ -63,7 +66,7 @@
             android:text="@string/add_new_scheduled_recording_change_button_text"
             android:layout_below="@id/add_new_scheduled_recording_set_start_time_button"
             android:layout_alignParentRight="true"
-            style="@style/ButtonAppTheme"
+            android:background="?android:attr/selectableItemBackground"
             >
     </Button>
     <Spinner
@@ -71,7 +74,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/add_new_scheduled_recording_set_end_time_button"
-            style="@style/SpinnerAppTheme"
             >
     </Spinner>
     <LinearLayout
@@ -80,6 +82,8 @@
             android:layout_height="wrap_content"
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_below="@id/add_new_scheduled_recording_recording_type_spinner"
+            android:orientation="horizontal"
+            style="?android:attr/buttonBarStyle"
             >
         <Button
                 android:id="@+id/add_new_scheduled_recording_cancel_button"
@@ -87,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_new_scheduled_recording_cancel_button_text"
                 android:layout_weight="0.5"
-                style="@style/ButtonAppTheme"
+                android:background="?android:attr/selectableItemBackground"
                 >
         </Button>
         <Button
@@ -96,8 +100,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_new_scheduled_recording_ok_button_text"
                 android:layout_weight="0.5"
-                style="@style/ButtonAppTheme"
+                android:background="?android:attr/selectableItemBackground"
                 >
         </Button>
     </LinearLayout>
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/add_new_scheduled_recording_new_recording_button_layout"
+            android:background="?android:attr/dividerVertical"/>
 </RelativeLayout>
