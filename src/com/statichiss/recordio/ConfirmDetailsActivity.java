@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.statichiss.R;
 import com.statichiss.recordio.utils.StringUtils;
 
@@ -91,6 +92,8 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
             radioDetails.setStreamUrl(txtUrl);
         }
 
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
         switch (view.getId()) {
 
             case R.id.edit_fav_pop_up_btn_save:
@@ -123,7 +126,6 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
                     dbHelper.close();
                 }
 
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(findViewById(R.id.edit_fav_pop_up_txt_name).getWindowToken(), 0);
 
                 finish();
@@ -131,6 +133,7 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
 
             case R.id.edit_fav_pop_up_btn_cancel:
                 onBackPressed();
+                imm.hideSoftInputFromWindow(findViewById(R.id.edit_fav_pop_up_txt_name).getWindowToken(), 0);
                 break;
         }
 
