@@ -28,7 +28,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 public class RecorderService extends WakefulIntentService {
 
@@ -218,12 +217,13 @@ public class RecorderService extends WakefulIntentService {
 
     private String getTimestamp() {
 
-        Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
+        Calendar calendar = new GregorianCalendar();
 
         StringBuilder timestamp = new StringBuilder();
         timestamp.append(calendar.get(Calendar.YEAR));
         timestamp.append(("."));
-        timestamp.append(StringUtils.pad(calendar.get(Calendar.MONTH)));
+        // As months are 0 indexed + 1
+        timestamp.append(StringUtils.pad(calendar.get(Calendar.MONTH) + 1));
         timestamp.append(("."));
         timestamp.append(StringUtils.pad(calendar.get(Calendar.DAY_OF_MONTH)));
         timestamp.append(("-"));
