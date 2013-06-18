@@ -2,7 +2,13 @@ package com.statichiss.recordio;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -10,7 +16,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.statichiss.R;
 import com.statichiss.recordio.recording.RecorderService;
 import com.statichiss.recordio.utils.DateUtils;
@@ -74,8 +89,13 @@ public class RadioActivity extends RecordioBaseActivity {
         final EditText url = (EditText) findViewById(R.id.txt_url);
         url.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (url.getText().toString().equals("Enter a stream/playlist url...")) {
+                if (url.getText().toString().equalsIgnoreCase(getString(R.string.url_default_text_string))) {
                     url.setText("");
+                }
+
+                InputMethodManager m = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (m != null) {
+                    m.toggleSoftInput(0, InputMethodManager.SHOW_IMPLICIT);
                 }
             }
         });
