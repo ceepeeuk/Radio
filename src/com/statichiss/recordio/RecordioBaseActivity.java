@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.statichiss.R;
 import com.statichiss.recordio.recording.RecorderService;
 
@@ -21,19 +22,6 @@ public class RecordioBaseActivity extends Activity {
 
     @Override
     public void onResume() {
-//        if (((RadioApplication) getApplication()).getExitFlag()) {
-//            if (getClass().getSimpleName().equals("RadioActivity")) {
-//                MediaPlayer mediaPlayer = ((RadioApplication) getApplication()).getMediaPlayer();
-//                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-//                    PlayerService.sendWakefulWork(getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
-//                }
-//                if (RecorderService.alreadyRecording()) {
-//                    RecorderService.cancelRecording();
-//                }
-//                ((RadioApplication) getApplication()).setExitFlag(false);
-//            }
-//            finish();
-//        }
         super.onResume();
     }
 
