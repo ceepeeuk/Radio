@@ -47,6 +47,15 @@
                   android:configChanges="orientation|keyboardHidden|keyboard"
                   android:screenOrientation="portrait"/>
         <activity android:name=".recordio.RecordioBaseActivity"/>
+        <activity
+                android:name=".recordio.MainActivity"
+                android:label="Recordio">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".recordio.recording.RecordingBroadcastReceiver"/>
         <receiver android:name=".recordio.RebootBroadcastReceiver">
             <intent-filter>
