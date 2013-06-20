@@ -41,6 +41,7 @@
             android:id="@+id/edit_fav_pop_up_button_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            style="?android:attr/buttonBarStyle"
             xmlns:android="http://schemas.android.com/apk/res/android"
             >
         <Button
@@ -49,17 +50,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/edit_fav_pop_up_btn_cancel"
                 android:layout_weight="0.5"
-                style="@style/ButtonAppTheme"
-                >
-        </Button>
+                android:background="?android:attr/selectableItemBackground"
+                />
+
         <Button
                 android:id="@+id/edit_fav_pop_up_btn_save"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/edit_fav_pop_up_btn_save"
                 android:layout_weight="0.5"
-                style="@style/ButtonAppTheme"
-                >
-        </Button>
+                android:background="?android:attr/selectableItemBackground"
+                />
     </LinearLayout>
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="?android:attr/dividerVertical"/>
 </LinearLayout>
