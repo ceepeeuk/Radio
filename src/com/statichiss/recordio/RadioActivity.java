@@ -182,6 +182,13 @@ public class RadioActivity extends RecordioBaseActivity {
         }
     }
 
+    public boolean alreadyPlaying() {
+        RadioApplication radioApplication = (RadioApplication) getApplication();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+        return mediaPlayer != null && mediaPlayer.isPlaying();
+    }
+
+
     private void ShowFirstRunPopUp() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.first_run_popup);

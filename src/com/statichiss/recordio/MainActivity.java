@@ -1,8 +1,16 @@
 package com.statichiss.recordio;
 
+import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.statichiss.R;
 import com.statichiss.recordio.fragments.PlayerFragment;
@@ -15,6 +23,8 @@ import com.statichiss.recordio.fragments.ScheduleFragment;
 public class MainActivity extends FragmentActivity {
     // Fragment TabHost as mTabHost
     private FragmentTabHost mTabHost;
+    private AudioManager mAudioManager;
+    private ComponentName mRemoteControlReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +42,8 @@ public class MainActivity extends FragmentActivity {
         mTabHost.addTab(mTabHost.newTabSpec("schedule").setIndicator("Schedule"), ScheduleFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("recordings").setIndicator("Recordings"), RecordingsFragment.class, null);
 
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mRemoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
     }
 
 //    @Override
@@ -40,4 +52,37 @@ public class MainActivity extends FragmentActivity {
 //        getMenuInflater().inflate(R.menu.main, menu);
 //        return true;
 //    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+        if (preferences.getBoolean(getString(R.string.first_run_flag), true)) {
+            ShowFirstRunPopUp();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(getString(R.string.first_run_flag), false);
+            editor.commit();
+        }
+
+    }
+
+    private void ShowFirstRunPopUp() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.first_run_popup);
+        dialog.setTitle(getString(R.string.app_name));
+        dialog.setCancelable(true);
+
+        TextView popUpText = (TextView) dialog.findViewById(R.id.popUpText);
+        popUpText.setText(R.string.first_run_text);
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.popUpCancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
 }
