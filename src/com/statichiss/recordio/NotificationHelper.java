@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
 import com.statichiss.R;
 
 public abstract class NotificationHelper {
@@ -28,7 +29,7 @@ public abstract class NotificationHelper {
         }
 
         CharSequence contentTitle = context.getString(R.string.app_name);
-        Intent notificationIntent = new Intent(context, RadioActivity.class);
+        Intent notificationIntent = new Intent(context, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
         notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
@@ -54,7 +55,7 @@ public abstract class NotificationHelper {
         }
 
         CharSequence contentTitle = context.getString(R.string.app_name);
-        Intent notificationIntent = new Intent(context, RadioActivity.class);
+        Intent notificationIntent = new Intent(context, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
         if (notification != null) {

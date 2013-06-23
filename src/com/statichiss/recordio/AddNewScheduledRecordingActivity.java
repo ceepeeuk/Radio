@@ -96,7 +96,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
     }
 
     public void onClick(View view) {
-        Intent listScheduledRecordingsIntent = new Intent(AddNewScheduledRecordingActivity.this, ListScheduledRecordingsActivity.class);
+        Intent listScheduledRecordingsIntent = new Intent(AddNewScheduledRecordingActivity.this, MainActivity.class);
 
         switch (view.getId()) {
             case R.id.add_new_scheduled_recording_set_start_time_button:
@@ -206,7 +206,7 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
 
     @Override
     public void onBackPressed() {
-        Intent RadioActivityIntent = new Intent(AddNewScheduledRecordingActivity.this, ListScheduledRecordingsActivity.class);
+        Intent RadioActivityIntent = new Intent(AddNewScheduledRecordingActivity.this, MainActivity.class);
         startActivity(RadioActivityIntent);
         finish();
     }

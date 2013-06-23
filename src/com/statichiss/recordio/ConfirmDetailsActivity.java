@@ -79,7 +79,7 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
 
     public void onClick(View view) {
 
-        Intent intent = new Intent(ConfirmDetailsActivity.this, RadioActivity.class);
+        Intent intent = new Intent(ConfirmDetailsActivity.this, MainActivity.class);
 
         String txtName = ((EditText) findViewById(R.id.edit_fav_pop_up_txt_name)).getText().toString();
         String txtUrl = ((EditText) findViewById(R.id.edit_fav_pop_up_txt_url)).getText().toString();
@@ -142,7 +142,7 @@ public class ConfirmDetailsActivity extends Activity implements View.OnClickList
 
     @Override
     public void onBackPressed() {
-        Intent RadioActivityIntent = new Intent(ConfirmDetailsActivity.this, RadioActivity.class);
+        Intent RadioActivityIntent = new Intent(ConfirmDetailsActivity.this, MainActivity.class);
         startActivity(RadioActivityIntent);
         finish();
     }
