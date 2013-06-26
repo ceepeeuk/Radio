@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "com.statichiss.recordio.fragments.ScheduleFragment";
     DatabaseHelper dbHelper;
     ScheduledRecordingsCursorAdaptor adapter;
+    private final Uri stationContentUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
