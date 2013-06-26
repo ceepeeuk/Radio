@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
 import com.statichiss.R;
 import com.statichiss.recordio.utils.StringUtils;
 
@@ -15,7 +16,7 @@ public class ScheduledRecordingsCursorAdaptor extends SimpleCursorAdapter {
     private int layout;
 
     public ScheduledRecordingsCursorAdaptor(Context context, int layout, Cursor c, String[] from, int[] to) {
-        super(context, layout, c, from, to);
+        super(context, layout, c, from, to, 0);
         this.layout = layout;
     }
 
