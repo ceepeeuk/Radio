@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.statichiss.R;
 import com.statichiss.recordio.AddNewScheduledRecordingActivity;
 import com.statichiss.recordio.AlarmHelper;
+import com.statichiss.recordio.DBContentProvider;
 import com.statichiss.recordio.DatabaseHelper;
 import com.statichiss.recordio.ScheduledRecordingsCursorAdaptor;
 
@@ -32,6 +33,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     DatabaseHelper dbHelper;
     ScheduledRecordingsCursorAdaptor adapter;
     private final Uri stationContentUri;
+
+    public ScheduleFragment() {
+        this.stationContentUri = Uri.withAppendedPath(DBContentProvider.CONTENT_URI, "recording_schedule");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
