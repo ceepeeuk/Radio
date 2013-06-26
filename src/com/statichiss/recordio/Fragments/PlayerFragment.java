@@ -10,9 +10,13 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +32,7 @@ import android.widget.Toast;
 
 import com.statichiss.R;
 import com.statichiss.recordio.ConfirmDetailsActivity;
+import com.statichiss.recordio.DBContentProvider;
 import com.statichiss.recordio.DatabaseHelper;
 import com.statichiss.recordio.PlayerService;
 import com.statichiss.recordio.RadioApplication;
@@ -42,14 +47,22 @@ import java.io.IOException;
 /**
  * Created by chris on 20/06/2013.
  */
-public class PlayerFragment extends Fragment {
+public class PlayerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int FAVOURITES_LIST_ID = 0;
     private String TAG = "com.statichiss.recordio.fragments.PlayerFragment";
     private AudioManager mAudioManager;
     private ComponentName mRemoteControlReceiver;
+    private SimpleCursorAdapter adapter;
+    private final Uri stationContentUri;
+
+    public PlayerFragment() {
+        stationContentUri = Uri.withAppendedPath(DBContentProvider.CONTENT_URI, "stations");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.player_view, container, false);
     }
 
@@ -74,20 +87,26 @@ public class PlayerFragment extends Fragment {
             Log.e(TAG, "IOException thrown when trying to access DB", e);
         }
 
-        final Cursor favouritesCursor = dbHelper.getFavourites();
+        getLoaderManager().initLoader(FAVOURITES_LIST_ID, null, this);
 
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+//        final Cursor favouritesCursor = dbHelper.getFavourites();
+
+        adapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.favourite_list_item,
-                favouritesCursor,
+//                favouritesCursor,
+                null,
                 new String[]{DatabaseHelper.FAVOURITES_NAME},
-                new int[]{R.id.name_entry});
+                new int[]{R.id.name_entry},
+                0);
 
         ListView lstFavourites = (ListView) getActivity().findViewById(R.id.lst_favourites);
 
         lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                favouritesCursor.moveToPosition(pos);
-                decideStreamOption(new RadioDetails(favouritesCursor.getString(1), null, favouritesCursor.getString(2)));
+//                favouritesCursor.moveToPosition(pos);
+                adapter.getCursor().moveToPosition(pos);
+//                decideStreamOption(new RadioDetails(favouritesCursor.getString(1), null, favouritesCursor.getString(2)));
+                decideStreamOption(new RadioDetails(adapter.getCursor().getString(1), null, adapter.getCursor().getString(2)));
             }
         });
 
@@ -132,12 +151,12 @@ public class PlayerFragment extends Fragment {
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             public boolean onItemLongClick(AdapterView<?> adapterView, final View view, int pos, final long id) {
-                favouritesCursor.moveToPosition(pos);
+                adapter.getCursor().moveToPosition(pos);
 
                 CharSequence[] favOptions = {"Edit", "Delete"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
 
-                builder.setTitle(favouritesCursor.getString(1))
+                builder.setTitle(adapter.getCursor().getString(1))
                         .setItems(favOptions, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int item) {
                                 switch (item) {
@@ -148,17 +167,19 @@ public class PlayerFragment extends Fragment {
                                         break;
                                     case 1:
                                         new AlertDialog.Builder(view.getContext())
-                                                .setMessage("Delete " + favouritesCursor.getString(1))
+                                                .setMessage("Delete " + adapter.getCursor().getString(1))
                                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                                        Log.d(TAG, "Deleting " + favouritesCursor.getString(1));
+                                                        Log.d(TAG, "Deleting " + adapter.getCursor().getString(1));
                                                         try {
                                                             dbHelper.openDataBase();
                                                         } catch (IOException e) {
                                                             Log.e(TAG, "Unable to open db to delete favourite", e);
                                                         }
-                                                        dbHelper.deleteFavourite(id);
-                                                        favouritesCursor.requery();
+//                                                        dbHelper.deleteFavourite(id);
+                                                        getActivity().getContentResolver().delete(stationContentUri, "_id = ?", new String[]{String.valueOf(id)});
+//                                                        favouritesCursor.requery();
+                                                        restartLoader();
                                                     }
                                                 })
                                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -185,6 +206,10 @@ public class PlayerFragment extends Fragment {
         if (RecorderService.alreadyRecording()) {
             getActivity().findViewById(R.id.main_stop_recording_btn).setEnabled(true);
         }
+    }
+
+    private void restartLoader() {
+        getLoaderManager().restartLoader(FAVOURITES_LIST_ID, null, this);
     }
 
     protected void updateUI() {
@@ -398,6 +423,21 @@ public class PlayerFragment extends Fragment {
         }
 
         updateUI();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity(), stationContentUri, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        adapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        adapter.swapCursor(null);
     }
 
     private class UpdateProgressTask extends AsyncTask<Void, Integer, Void> {
