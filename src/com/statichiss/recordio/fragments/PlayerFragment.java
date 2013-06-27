@@ -42,8 +42,6 @@ import com.statichiss.recordio.recording.RecorderService;
 import com.statichiss.recordio.utils.DateUtils;
 import com.statichiss.recordio.utils.StringUtils;
 
-import java.io.IOException;
-
 /**
  * Created by chris on 20/06/2013.
  */
@@ -79,22 +77,10 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         super.onStart();
         final RadioApplication radioApplication = (RadioApplication) getActivity().getApplication();
 
-        final DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-
-        try {
-            dbHelper.openDataBase();
-        } catch (IOException e) {
-            Log.e(TAG, "IOException thrown when trying to access DB", e);
-        }
-
         getLoaderManager().initLoader(FAVOURITES_LIST_ID, null, this);
-
-//        final Cursor favouritesCursor = dbHelper.getFavourites();
-
 
         adapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.favourite_list_item,
-//                favouritesCursor,
                 null,
                 new String[]{DatabaseHelper.FAVOURITES_NAME},
                 new int[]{R.id.name_entry},
@@ -104,9 +90,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
         lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-//                favouritesCursor.moveToPosition(pos);
                 adapter.getCursor().moveToPosition(pos);
-//                decideStreamOption(new RadioDetails(favouritesCursor.getString(1), null, favouritesCursor.getString(2)));
                 decideStreamOption(new RadioDetails(adapter.getCursor().getString(1), null, adapter.getCursor().getString(2)));
             }
         });
@@ -172,14 +156,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialogInterface, int i) {
                                                         Log.d(TAG, "Deleting " + adapter.getCursor().getString(1));
-                                                        try {
-                                                            dbHelper.openDataBase();
-                                                        } catch (IOException e) {
-                                                            Log.e(TAG, "Unable to open db to delete favourite", e);
-                                                        }
-//                                                        dbHelper.deleteFavourite(id);
                                                         getActivity().getContentResolver().delete(stationContentUri, "_id = ?", new String[]{String.valueOf(id)});
-//                                                        favouritesCursor.requery();
                                                         restartLoader();
                                                     }
                                                 })
@@ -198,7 +175,6 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         });
 
         lstFavourites.setAdapter(adapter);
-        //dbHelper.close();
 
         if (alreadyPlaying()) {
             getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(true);
@@ -541,5 +517,4 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
     }
-
 }

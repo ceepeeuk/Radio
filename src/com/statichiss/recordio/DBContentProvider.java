@@ -21,17 +21,6 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-//        db = new DatabaseHelper(getContext()).getWritableDatabase();
-//        if (db == null) {
-//            return false;
-//        }
-//        if (db.isReadOnly()) {
-//            db.close();
-//            db = null;
-//            return false;
-//        }
-//        return true;
-
         dbHelper = new DatabaseHelper(getContext());
         return true;
     }

@@ -48,6 +48,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
         this.myContext = context;
+        try {
+            createDataBase();
+        } catch (IOException e) {
+            Log.e(TAG, "Error thrown in DatabaseHelper constr", e);
+        }
     }
 
     // Creates a empty database on the system and rewrites it with your own database.
