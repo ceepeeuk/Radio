@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,39 +24,36 @@ import com.statichiss.recordio.DBContentProvider;
 import com.statichiss.recordio.DatabaseHelper;
 import com.statichiss.recordio.ScheduledRecordingsCursorAdaptor;
 
-import java.io.IOException;
-
 /**
  * Created by chris on 20/06/2013.
  */
-public class ScheduleFragment extends Fragment implements View.OnClickListener {
+public class ScheduleFragment extends Fragment implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "com.statichiss.recordio.fragments.ScheduleFragment";
-    DatabaseHelper dbHelper;
+    private static final int SCHEDULE_LIST_ID = 1;
+
     ScheduledRecordingsCursorAdaptor adapter;
-    private final Uri stationContentUri;
+    private final Uri scheduleContentUri;
 
     public ScheduleFragment() {
-        this.stationContentUri = Uri.withAppendedPath(DBContentProvider.CONTENT_URI, "recording_schedule");
+        this.scheduleContentUri = Uri.withAppendedPath(DBContentProvider.CONTENT_URI, "recording_schedule");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.schedule_view, container, false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        dbHelper = prepareDatabaseHelper();
 
-//        setContentView(R.layout.list_recording_schedule);
-
-        final Cursor scheduledRecordingsCursor = dbHelper.getScheduledRecordingsList();
+        getLoaderManager().initLoader(SCHEDULE_LIST_ID, null, this);
 
         adapter = new ScheduledRecordingsCursorAdaptor(getActivity(),
                 R.layout.list_recording_schedule_list,
-                scheduledRecordingsCursor,
+                null,
                 new String[]{DatabaseHelper.STATIONS_NAME,
                         DatabaseHelper.RECORDING_TYPES_TYPE,
                         DatabaseHelper.SCHEDULED_RECORDINGS_START_TIME,
@@ -83,13 +82,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                                         Intent addNewScheduledRecordingActivityIntent = new Intent(getActivity(), AddNewScheduledRecordingActivity.class);
                                         addNewScheduledRecordingActivityIntent.putExtra(getString(R.string.edit_scheduled_recording_id), id);
                                         startActivity(addNewScheduledRecordingActivityIntent);
-//                                        getActivity().finish();
                                         break;
                                     case 1:
-                                        DatabaseHelper databaseHelper = prepareDatabaseHelper();
-                                        databaseHelper.deleteScheduledRecording(id);
-                                        databaseHelper.close();
-                                        scheduledRecordingsCursor.requery();
+                                        getActivity().getContentResolver().delete(scheduleContentUri, "_id = ?", new String[]{String.valueOf(id)});
+                                        restartLoader();
                                         AlarmHelper.cancelAlarm(getActivity().getApplicationContext(), id);
                                         break;
                                 }
@@ -102,36 +98,27 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         addNewButton.setOnClickListener(this);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
+    private void restartLoader() {
+        getLoaderManager().restartLoader(SCHEDULE_LIST_ID, null, this);
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        Intent RadioActivityIntent = new Intent(ListScheduledRecordingsActivity.this, RadioActivity.class);
-//        startActivity(RadioActivityIntent);
-//        finish();
-//    }
 
     public void onClick(View view) {
         Intent addNewScheduledRecordingActivityIntent = new Intent(getActivity(), AddNewScheduledRecordingActivity.class);
         startActivity(addNewScheduledRecordingActivityIntent);
-//        getActivity().finish();
     }
 
-    private DatabaseHelper prepareDatabaseHelper() {
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity(), scheduleContentUri, null, null, null, null);
+    }
 
-        try {
-            dbHelper.openDataBase();
-        } catch (IOException e) {
-            Log.e(TAG, "IOException thrown when trying to access DB", e);
-        }
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        adapter.swapCursor(cursor);
+    }
 
-        return dbHelper;
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        adapter.swapCursor(null);
     }
 }

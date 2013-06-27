@@ -27,9 +27,22 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        String table = getTableName(uri);
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor cursor = database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+
+        Cursor cursor;
+
+        if (getTableName(uri).equals("recording_schedule")) {
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT RECORDING_SCHEDULE._ID, STATIONS.NAME, RECORDING_TYPE.TYPE, RECORDING_SCHEDULE.START_TIME, RECORDING_SCHEDULE.END_TIME ");
+            query.append("FROM RECORDING_SCHEDULE, RECORDING_TYPE, STATIONS ");
+            query.append("WHERE RECORDING_SCHEDULE.STATION = STATIONS._ID AND RECORDING_SCHEDULE.TYPE = RECORDING_TYPE._ID ");
+            query.append("ORDER BY RECORDING_SCHEDULE.START_TIME");
+            cursor = dbHelper.getWritableDatabase().rawQuery(query.toString(), new String[]{});
+        } else {
+            String table = getTableName(uri);
+            SQLiteDatabase database = dbHelper.getReadableDatabase();
+            cursor = database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+        }
+
         return cursor;
     }
 
