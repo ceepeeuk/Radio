@@ -91,6 +91,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
 //        final Cursor favouritesCursor = dbHelper.getFavourites();
 
+
         adapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.favourite_list_item,
 //                favouritesCursor,
