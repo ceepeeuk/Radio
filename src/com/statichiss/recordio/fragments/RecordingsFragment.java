@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by chris on 20/06/2013.
@@ -198,6 +199,15 @@ public class RecordingsFragment extends Fragment {
         } else {
             fileNames.add(getString(R.string.no_recordings_available));
         }
+
+        Collections.sort(fileNames, new Comparator<String>() {
+            @Override
+            public int compare(String s, String s2) {
+                return s.substring(s.indexOf("-") + 1).compareTo(s2.substring(s2.indexOf("-") + 1));
+            }
+        });
+
+        Collections.reverse(fileNames);
         return fileNames;
     }
 
