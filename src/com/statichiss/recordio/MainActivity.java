@@ -79,6 +79,10 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
     }
 
+    public void showTab(int i) {
+        mTabHost.setCurrentTab(i);
+    }
+
     private void ShowFirstRunPopUp() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.first_run_popup);

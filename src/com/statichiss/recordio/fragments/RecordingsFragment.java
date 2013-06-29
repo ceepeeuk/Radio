@@ -91,8 +91,10 @@ public class RecordingsFragment extends Fragment {
                                                                 playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
                                                                 PlayerService.sendWakefulWork(getActivity(), playerIntent);
 
-                                                                Intent radioActivityIntent = new Intent(getActivity(), MainActivity.class);
-                                                                startActivity(radioActivityIntent);
+                                                                ((MainActivity) getActivity()).showTab(0);
+
+//                                                                Intent radioActivityIntent = new Intent(getActivity(), MainActivity.class);
+//                                                                startActivity(radioActivityIntent);
                                                             }
                                                         })
                                                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
