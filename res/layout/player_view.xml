@@ -19,7 +19,7 @@
                 android:id="@+id/txt_url"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/url_default_text_string"
+                android:hint="@string/url_default_text_string"
                 android:textSize="20sp"
                 android:singleLine="true"
                 android:layout_weight="10"

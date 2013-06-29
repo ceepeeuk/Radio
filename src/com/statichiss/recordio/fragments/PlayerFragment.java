@@ -98,10 +98,6 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         final EditText url = (EditText) getActivity().findViewById(R.id.txt_url);
         url.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (url.getText().toString().equalsIgnoreCase(getString(R.string.url_default_text_string))) {
-                    url.setText("");
-                }
-
                 InputMethodManager m = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (m != null) {
                     m.toggleSoftInput(0, InputMethodManager.SHOW_IMPLICIT);
