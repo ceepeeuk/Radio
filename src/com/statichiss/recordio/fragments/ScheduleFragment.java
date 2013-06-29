@@ -50,6 +50,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
         super.onResume();
 
         getLoaderManager().initLoader(SCHEDULE_LIST_ID, null, this);
+        restartLoader();
 
         adapter = new ScheduledRecordingsCursorAdaptor(getActivity(),
                 R.layout.list_recording_schedule_list,
@@ -79,6 +80,8 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener, 
                             public void onClick(DialogInterface dialogInterface, int item) {
                                 switch (item) {
                                     case 0:
+
+
                                         Intent addNewScheduledRecordingActivityIntent = new Intent(getActivity(), AddNewScheduledRecordingActivity.class);
                                         addNewScheduledRecordingActivityIntent.putExtra(getString(R.string.edit_scheduled_recording_id), id);
                                         startActivity(addNewScheduledRecordingActivityIntent);

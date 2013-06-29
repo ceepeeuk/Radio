@@ -25,6 +25,7 @@ public class MainActivity extends FragmentActivity {
     private FragmentTabHost mTabHost;
     private AudioManager mAudioManager;
     private ComponentName mRemoteControlReceiver;
+    private static int tabIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,11 @@ public class MainActivity extends FragmentActivity {
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mRemoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
+
+        if (savedInstanceState != null && savedInstanceState.getInt("CurrentTab") > 0) {
+            savedInstanceState.getInt("CurrentTab");
+        }
+        mTabHost.setCurrentTab(tabIndex);
     }
 
 //    @Override
@@ -64,7 +70,13 @@ public class MainActivity extends FragmentActivity {
             editor.putBoolean(getString(R.string.first_run_flag), false);
             editor.commit();
         }
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        tabIndex = mTabHost.getCurrentTab();
+        outState.putInt("CurrentTab", tabIndex);
+        super.onSaveInstanceState(outState);
     }
 
     private void ShowFirstRunPopUp() {

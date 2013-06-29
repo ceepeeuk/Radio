@@ -209,7 +209,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         }
 
         TextView txtStatus = (TextView) getActivity().findViewById(R.id.txt_status);
-        txtStatus.setText(sb.toString());
+        if (txtStatus != null)
+            txtStatus.setText(sb.toString());
 
         getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()));
         getActivity().findViewById(R.id.main_stop_recording_btn).setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus()));
@@ -350,6 +351,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
     public void onResume() {
         super.onResume();
 
+        restartLoader();
+
         IntentFilter statusIntentFilter = new IntentFilter();
         statusIntentFilter.addAction(getString(R.string.player_service_update_playing_key));
         getActivity().registerReceiver(this.updateStatusBroadcastReceiver, statusIntentFilter);
@@ -446,8 +449,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
             if (currentPosition[0] == -1) {
                 //Reset UI
-                getActivity().findViewById(R.id.progress_layout).setVisibility(View.GONE);
-                updateUI();
+                if (getActivity().findViewById(R.id.progress_layout) != null)
+                    getActivity().findViewById(R.id.progress_layout).setVisibility(View.GONE);
             }
         }
     }
