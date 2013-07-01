@@ -72,4 +72,12 @@
     <string name="go_string">Go</string>
     <string name="edit_text_string">EditText</string>
     <string name="add_new_station">Add new station</string>
+    <string name="recorder_service_update_recording_key">
+        com.statichiss.recordio.recorder.status.update
+    </string>
+    <string name="recorder_service_update_recording_error_key">
+        com.statichiss.recordio.recorder.error
+    </string>
+    <string name="recorder_service_update_recording_error_exception">exception message</string>
+    <string name="recorder_service_update_recording_error_radio_details">radio details</string>
 </resources>

@@ -391,6 +391,11 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         errorIntentFilter.addAction(getString(R.string.player_service_update_playing_error_key));
         getActivity().registerReceiver(this.sendErrorBroadcastReceiver, errorIntentFilter);
 
+        IntentFilter errorRecordingIntentFilter = new IntentFilter();
+        errorRecordingIntentFilter.addAction(getString(R.string.recorder_service_update_recording_error_key));
+        getActivity().registerReceiver(this.sendErrorBroadcastReceiver, errorRecordingIntentFilter);
+
+
         mAudioManager.registerMediaButtonEventReceiver(mRemoteControlReceiver);
 
         if (alreadyPlaying()) {
@@ -530,13 +535,20 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
-                String exception = bundle.getString(getString(R.string.player_service_update_playing_error_exception));
-                reportError(radioDetails, exception);
+                if (intent.getAction().equals(getString(R.string.player_service_update_playing_error_key))) {
+                    String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
+                    String exception = bundle.getString(getString(R.string.player_service_update_playing_error_exception));
+                    reportError(radioDetails, exception);
+                    getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(false);
+                }
+
+                if (intent.getAction().equals(getString(R.string.recorder_service_update_recording_error_key))) {
+                    String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
+                    ((RadioApplication) getActivity().getApplication()).setRecordingStatus("Error recording " + radioDetails);
+                    updateUI();
+                    getActivity().findViewById(R.id.main_stop_recording_btn).setEnabled(false);
+                }
             }
-
-            getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(false);
-
         }
     };
 

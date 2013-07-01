@@ -148,6 +148,7 @@ public class RecorderService extends WakefulIntentService {
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Uri malformed: " + e.getMessage(), e);
+            sendError(radioDetails.getStationName(), "MalformedURLException caught");
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + e.getMessage(), e);
             // Expected when stream closes
@@ -173,6 +174,16 @@ public class RecorderService extends WakefulIntentService {
             }
 
         }
+    }
+
+    private void sendError(String radioDetails, String exceptionMessage) {
+        Log.e(TAG, "Error occurred trying to record: " + radioDetails);
+        updateActivity("Error recording");
+
+        Intent intent = new Intent(getString(R.string.recorder_service_update_recording_error_key));
+        intent.putExtra(getString(R.string.recorder_service_update_recording_error_radio_details), radioDetails);
+        intent.putExtra(getString(R.string.recorder_service_update_recording_error_exception), exceptionMessage);
+        getApplicationContext().sendBroadcast(intent);
     }
 
     private void record(RadioDetails radioDetails, String outputSource, byte[] buffer, long endTime) {
@@ -246,7 +257,7 @@ public class RecorderService extends WakefulIntentService {
     }
 
     private void updateActivity(String text) {
-        Intent intent = new Intent(getString(R.string.player_service_update_playing_key));
+        Intent intent = new Intent(getString(R.string.recorder_service_update_recording_key));
         ((RadioApplication) getApplication()).setRecordingStatus(text);
         getApplicationContext().sendBroadcast(intent);
     }
