@@ -131,6 +131,11 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
         getActivity().findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null)
+                    imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
                 final String source = ((EditText) getActivity().findViewById(R.id.txt_url)).getText().toString();
                 Log.d(TAG, "url is: " + source);
 
@@ -139,6 +144,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 } else {
                     decideStreamOption(new RadioDetails(null, null, source));
                 }
+
             }
         });
 
