@@ -3,7 +3,8 @@
     <string name="app_name">Recordio</string>
     <string name="app_name_confirm_details_activity">Recordio - Confirm New Favourite</string>
     <string name="app_name_list_scheduled_recordings">Recordio - Scheduled Recordings</string>
-    <string name="app_name_add_new_scheduled_recordings">Recordio - Add New Scheduled Recording</string>
+    <string name="app_name_add_new_scheduled_recordings">Recordio - Add New Scheduled Recording
+    </string>
     <string name="app_name_recordings">Recordio - Recordings</string>
     <string name="radio_details_key">radioDetails</string>
     <string name="radio_details_name_key">radioDetails name</string>
@@ -16,10 +17,12 @@
     <string name="edit_fav_pop_up_lbl_name">Name</string>
     <string name="edit_fav_pop_up_lbl_url">URL</string>
     <string name="player_service_operation_key">Operation</string>
-    <string name="player_service_update_playing_error_key">com.statichiss.recordio.player.error</string>
+    <string name="player_service_update_playing_error_key">com.statichiss.recordio.player.error
+    </string>
     <string name="player_service_update_playing_error_radio_details">radio details</string>
     <string name="player_service_update_playing_error_exception">exception message</string>
-    <string name="player_service_update_playing_key">com.statichiss.recordio.player.status.update</string>
+    <string name="player_service_update_playing_key">com.statichiss.recordio.player.status.update
+    </string>
     <string name="player_service_file_name_key">file</string>
     <string name="timed_recorder_service_database_id_key">databaseId</string>
     <string name="timed_recorder_service_operation_key">Operation</string>
@@ -29,11 +32,14 @@
     <string name="add_new_scheduled_recording_change_button_text">" Change "</string>
     <string name="add_new_scheduled_recording_ok_button_text">OK</string>
     <string name="add_new_scheduled_recording_cancel_button_text">Cancel</string>
-    <string name="add_new_scheduled_recording_start_time_not_set">Please enter an start time</string>
-    <string name="add_new_scheduled_recording_end_time_not_set">Please enter an end time</string>
-    <string name="add_new_scheduled_recording_start_and_end_time_not_set">Please enter both a start and end time
+    <string name="add_new_scheduled_recording_start_time_not_set">Please enter an start time
     </string>
-    <string name="add_new_scheduled_recording_recording_already_scheduled">Sorry, there is already a recording schedule
+    <string name="add_new_scheduled_recording_end_time_not_set">Please enter an end time</string>
+    <string name="add_new_scheduled_recording_start_and_end_time_not_set">Please enter both a start
+        and end time
+    </string>
+    <string name="add_new_scheduled_recording_recording_already_scheduled">Sorry, there is already a
+        recording schedule
         for this time period.
     </string>
     <string name="playing_string">Playing</string>
@@ -43,12 +49,17 @@
     <string name="edit_scheduled_recording_id">id</string>
     <string name="edit_favourite_id">id</string>
     <string name="first_run_flag">SplashFlag</string>
-    <string name="first_run_text">To play/record an mp3 stream, enter the URL (direct to the stream or to the m3u/pls
-        file) in the textbox and press the arrow button or select a favourite from the list below.\n\nTo add a new
+    <string name="first_run_text">To play/record an mp3 stream, enter the URL (direct to the stream
+        or to the m3u/pls
+        file) in the textbox and press the arrow button or select a favourite from the list
+        below.\n\nTo add a new
         favourite, press menu and select "Add New
-        Favourite" (if a stream is currently playing it will be prepopulated).\n\nTo set a new scheduled recording (or
-        list existing ones), press menu and select "Scheduled Recordings". To edit or delete, press on it from the list
-        on Scheduled Recordings.\n\nFrom the menu the "Recordings" page can be accessed, that allows playback, renaming
+        Favourite" (if a stream is currently playing it will be prepopulated).\n\nTo set a new
+        scheduled recording (or
+        list existing ones), press menu and select "Scheduled Recordings". To edit or delete, press
+        on it from the list
+        on Scheduled Recordings.\n\nFrom the menu the "Recordings" page can be accessed, that allows
+        playback, renaming
         and deleting of recordings.
     </string>
     <string name="set_date_string">Set date</string>
@@ -60,4 +71,5 @@
     <string name="not_set_string">Not set</string>
     <string name="go_string">Go</string>
     <string name="edit_text_string">EditText</string>
+    <string name="add_new_station">Add new station</string>
 </resources>

@@ -142,6 +142,21 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
+        getActivity().findViewById(R.id.add_new_fav).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RadioDetails radioDetails = new RadioDetails();
+
+                if (alreadyPlaying()) {
+                    radioDetails = radioApplication.getPlayingStation();
+                }
+
+                Intent confirmDetailsIntent = new Intent(getActivity(), ConfirmDetailsActivity.class);
+                confirmDetailsIntent.putExtra(getString(R.string.radio_details_key), radioDetails);
+                startActivity(confirmDetailsIntent);
+            }
+        });
+
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             public boolean onItemLongClick(AdapterView<?> adapterView, final View view, int pos, final long id) {

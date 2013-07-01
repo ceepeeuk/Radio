@@ -44,6 +44,27 @@
             android:layout_height="wrap_content"
             android:layout_weight="100"/>
 
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_marginBottom="5dip"
+            android:background="?android:attr/dividerVertical"
+            />
+
+    <Button
+            android:id="@+id/add_new_fav"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_new_station"
+            android:background="?android:attr/selectableItemBackground"
+            />
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="?android:attr/dividerVertical"
+            />
+
     <RelativeLayout
             android:id="@+id/progress_layout"
             android:layout_width="fill_parent"

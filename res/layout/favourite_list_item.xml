@@ -4,6 +4,5 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:gravity="center_vertical"
-          android:padding="6dip"
           android:minHeight="?android:attr/listPreferredItemHeight"
-          android:textSize="20sp"/>
+          android:textSize="15sp"/>
