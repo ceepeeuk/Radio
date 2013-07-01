@@ -117,6 +117,8 @@ public class PlayerService extends WakefulIntentService {
                     Log.e(TAG, "Error occurred trying to play: " + incomingRadioDetails);
                     updateActivity("Error playing");
                     sendError(incomingRadioDetails.toString(), "onError invoked");
+                    radioApplication.setBuffering(false);
+                    mediaPlayer.reset();
                     return false;
                 }
             });

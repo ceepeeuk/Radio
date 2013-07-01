@@ -529,9 +529,14 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
-            String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
-            String exception = bundle.getString(getString(R.string.player_service_update_playing_error_exception));
-            reportError(radioDetails, exception);
+            if (bundle != null) {
+                String radioDetails = bundle.getString(getString(R.string.player_service_update_playing_error_radio_details));
+                String exception = bundle.getString(getString(R.string.player_service_update_playing_error_exception));
+                reportError(radioDetails, exception);
+            }
+
+            getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(false);
+
         }
     };
 
