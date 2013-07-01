@@ -129,6 +129,19 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
+        getActivity().findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                final String source = ((EditText) getActivity().findViewById(R.id.txt_url)).getText().toString();
+                Log.d(TAG, "url is: " + source);
+
+                if (StringUtils.IsNullOrEmpty(source)) {
+                    showToast("Please supply a URL");
+                } else {
+                    decideStreamOption(new RadioDetails(null, null, source));
+                }
+            }
+        });
+
         lstFavourites.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             public boolean onItemLongClick(AdapterView<?> adapterView, final View view, int pos, final long id) {
@@ -455,17 +468,6 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
     public void onDestroy() {
         super.onDestroy();
         mAudioManager.unregisterMediaButtonEventReceiver(mRemoteControlReceiver);
-    }
-
-    public void goClick(View view) {
-        final String source = ((EditText) getActivity().findViewById(R.id.txt_url)).getText().toString();
-        Log.d(TAG, "url is: " + source);
-
-        if (StringUtils.IsNullOrEmpty(source)) {
-            showToast("Please supply a URL");
-        } else {
-            decideStreamOption(new RadioDetails(null, null, source));
-        }
     }
 
     private void reportError(final String radioDetails, final String exception) {

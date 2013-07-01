@@ -33,7 +33,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_btn_play"
                 android:scaleType="fitXY"
-                android:onClick="goClick"
                 android:layout_marginLeft="3dip"
                 android:layout_weight="1"
                 android:contentDescription="@string/go_string"/>
