@@ -121,6 +121,11 @@ public class AddNewScheduledRecordingActivity extends Activity implements View.O
                     break;
                 }
 
+                if (this.startDateTime > this.endDateTime) {
+                    Toast.makeText(this, "Please enter an end time after the start time", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
                 if (editMode) {
                     updateScheduledRecording();
                 } else {
