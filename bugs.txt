@@ -1,4 +1,3 @@
 Fix text in first run popup and button styling
-NotificationHelper - fix warnings
 Broadcast error when attempting to record invalid url - Handles malformed URL when recording, still need to offer email
 have to press twice on url box to bring up softkeyboard
