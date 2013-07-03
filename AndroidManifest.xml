@@ -72,6 +72,7 @@
 
         <provider
                 android:authorities="com.statichiss.recordio.provider"
-                android:name=".recordio.DBContentProvider"/>
+                android:name=".recordio.DBContentProvider"
+                android:exported="false"/>
     </application>
 </manifest>

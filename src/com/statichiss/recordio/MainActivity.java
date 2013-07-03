@@ -23,8 +23,6 @@ import com.statichiss.recordio.fragments.ScheduleFragment;
 public class MainActivity extends FragmentActivity {
     // Fragment TabHost as mTabHost
     private FragmentTabHost mTabHost;
-    private AudioManager mAudioManager;
-    private ComponentName mRemoteControlReceiver;
     private static int tabIndex;
 
     @Override
@@ -43,8 +41,8 @@ public class MainActivity extends FragmentActivity {
         mTabHost.addTab(mTabHost.newTabSpec("schedule").setIndicator("Schedule"), ScheduleFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("recordings").setIndicator("Recordings"), RecordingsFragment.class, null);
 
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mRemoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        ComponentName remoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
 
         if (savedInstanceState != null && savedInstanceState.getInt("CurrentTab") > 0) {
             savedInstanceState.getInt("CurrentTab");
