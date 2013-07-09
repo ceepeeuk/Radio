@@ -80,4 +80,5 @@
     </string>
     <string name="recorder_service_update_recording_error_exception">exception message</string>
     <string name="recorder_service_update_recording_error_radio_details">radio details</string>
+    <string name="ok_string">OK</string>
 </resources>
