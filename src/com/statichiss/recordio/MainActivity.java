@@ -27,11 +27,10 @@ import java.util.Vector;
  * Created by chris on 20/06/2013.
  */
 public class MainActivity extends FragmentActivity implements ViewPager.OnPageChangeListener, TabHost.OnTabChangeListener {
-    // Fragment TabHost as mTabHost
+
     private FragmentTabHost mTabHost;
     private static int tabIndex;
     private ViewPager mViewPager;
-    private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +51,6 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         ComponentName remoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
 
-//        if (savedInstanceState != null && savedInstanceState.getInt("CurrentTab") > 0) {
-//            savedInstanceState.getInt("CurrentTab");
-//        }
         mTabHost.setCurrentTab(tabIndex);
         mTabHost.setOnTabChangedListener(this);
 
@@ -63,18 +59,11 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
         fragments.add(Fragment.instantiate(this, ScheduleFragment.class.getName()));
         fragments.add(Fragment.instantiate(this, RecordingsFragment.class.getName()));
 
-        this.mPagerAdapter = new PagerAdapter(super.getSupportFragmentManager(), fragments);
+        PagerAdapter pagerAdapter = new PagerAdapter(super.getSupportFragmentManager(), fragments);
         this.mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        this.mViewPager.setAdapter(this.mPagerAdapter);
+        this.mViewPager.setAdapter(pagerAdapter);
         this.mViewPager.setOnPageChangeListener(this);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
 
     @Override
     public void onStart() {

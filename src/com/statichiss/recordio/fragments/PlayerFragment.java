@@ -219,12 +219,6 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         mRemoteControlReceiver = new ComponentName(getActivity().getPackageName(), RemoteControlReceiver.class.getName());
     }
 
-    @Override
-    public void onStart() {
-
-        super.onStart();
-    }
-
     private void restartLoader() {
         getLoaderManager().restartLoader(FAVOURITES_LIST_ID, null, this);
     }
@@ -317,11 +311,9 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             RadioApplication radioApplication = (RadioApplication) getActivity().getApplication();
-            StringBuilder sb = new StringBuilder("Stop playing ")
-                    .append(radioApplication.getPlayingType() == RadioApplication.PlayingStream ? radioApplication.getPlayingStation().getStationName() : radioApplication.getPlayingFileDetails().getName())
-                    .append("?");
+            String text = "Stop playing " + (radioApplication.getPlayingType() == RadioApplication.PlayingStream ? radioApplication.getPlayingStation().getStationName() : radioApplication.getPlayingFileDetails().getName()) + "?";
 
-            builder.setMessage(sb.toString())
+            builder.setMessage(text)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             PlayerService.sendWakefulWork(getActivity().getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
@@ -512,17 +504,13 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         builder.setMessage("Sorry, cannot connect to this stream, would you like to send an error report so support can be added please?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        StringBuilder stringBuilder = new StringBuilder()
-                                .append("Exception caught trying to play stream: ")
-                                .append(exception)
-                                .append("\n\n")
-                                .append(radioDetails);
+                        String text = "Exception caught trying to play stream: " + exception + "\n\n" + radioDetails;
 
                         Intent emailIntent = new Intent(Intent.ACTION_SEND);
                         emailIntent.setType("plain/text");
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"statichiss@gmail.com"});
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Stream Error Report");
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, text.toString());
                         startActivity(Intent.createChooser(emailIntent, "Send Error Report"));
                     }
                 })

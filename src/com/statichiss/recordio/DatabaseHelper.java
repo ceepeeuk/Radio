@@ -48,15 +48,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
         this.myContext = context;
-        try {
-            createDataBase();
-        } catch (IOException e) {
-            Log.e(TAG, "Error thrown in DatabaseHelper constr", e);
-        }
+        createDataBase();
     }
 
     // Creates a empty database on the system and rewrites it with your own database.
-    private void createDataBase() throws IOException {
+    private void createDataBase() {
 
         boolean dbExist = checkDataBase();
 
@@ -97,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Copies your database from your local assets-folder to the just created empty database in the
-    // system folder, from where it can be accessed and handled.This is done by transfering bytestream.
+    // system folder, from where it can be accessed and handled.This is done by transferring byte stream.
     private void copyDataBase() throws IOException {
 
         //Open your local db as the input stream
@@ -109,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
 
-        //transfer bytes from the inputfile to the outputfile
+        //transfer bytes from the input file to the output file
         byte[] buffer = new byte[1024];
         int length;
         while ((length = myInput.read(buffer)) > 0) {
@@ -168,10 +164,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(FAVOURITES_URL, radioDetails.getPlaylistUrl());
         }
         myDataBase.insert(FAVOURITES_TABLE, FAVOURITES_NAME, contentValues);
-    }
-
-    public void deleteFavourite(long id) {
-        myDataBase.delete(FAVOURITES_TABLE, "_id=?", new String[]{Long.toString(id)});
     }
 
     public void updateFavourite(RadioDetails radioDetails) {
@@ -252,15 +244,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(SCHEDULED_RECORDINGS_END_TIME, DateUtils.addWeek(scheduledRecording.endDateTime));
             myDataBase.update(SCHEDULED_RECORDINGS_TABLE, contentValues, "_id=?", new String[]{Long.toString(databaseId)});
         }
-    }
-
-    public Cursor getScheduledRecordingsList() {
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT RECORDING_SCHEDULE._ID, STATIONS.NAME, RECORDING_TYPE.TYPE, RECORDING_SCHEDULE.START_TIME, RECORDING_SCHEDULE.END_TIME ");
-        query.append("FROM RECORDING_SCHEDULE, RECORDING_TYPE, STATIONS ");
-        query.append("WHERE RECORDING_SCHEDULE.STATION = STATIONS._ID AND RECORDING_SCHEDULE.TYPE = RECORDING_TYPE._ID ");
-        query.append("ORDER BY RECORDING_SCHEDULE.START_TIME");
-        return myDataBase.rawQuery(query.toString(), new String[]{});
     }
 
     public Cursor getAllScheduledRecordings() {

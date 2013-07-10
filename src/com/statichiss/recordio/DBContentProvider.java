@@ -11,8 +11,6 @@ import android.net.Uri;
  */
 public class DBContentProvider extends ContentProvider {
 
-//    private SQLiteDatabase db = null;
-
     private DatabaseHelper dbHelper;
 
     // public constants for client development

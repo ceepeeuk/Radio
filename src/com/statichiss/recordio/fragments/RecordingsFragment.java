@@ -184,11 +184,6 @@ public class RecordingsFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     private ArrayList<String> getFileList() {
         final File recFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name));
         final String[] files = recFolder.list(new FilenameFilter() {
@@ -227,11 +222,4 @@ public class RecordingsFragment extends Fragment {
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
         return mediaPlayer != null && mediaPlayer.isPlaying();
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        Intent RadioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
-//        startActivity(RadioActivityIntent);
-//        finish();
-//    }
 }

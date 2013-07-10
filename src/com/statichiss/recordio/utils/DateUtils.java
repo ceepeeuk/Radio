@@ -26,36 +26,6 @@ public class DateUtils {
         return dateString.toString();
     }
 
-    public static int getYear(long dateTimeMillis) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        StringBuilder dateString = new StringBuilder(format.format(dateTimeMillis));
-        return Integer.parseInt(dateString.toString());
-    }
-
-    public static int getMonth(long dateTimeMillis) {
-        SimpleDateFormat format = new SimpleDateFormat("MM");
-        StringBuilder dateString = new StringBuilder(format.format(dateTimeMillis));
-        return Integer.parseInt(dateString.toString()) - 1;
-    }
-
-    public static int getDay(long dateTimeMillis) {
-        SimpleDateFormat format = new SimpleDateFormat("dd");
-        StringBuilder dateString = new StringBuilder(format.format(dateTimeMillis));
-        return Integer.parseInt(dateString.toString());
-    }
-
-    public static int getHour(long dateTimeMillis) {
-        SimpleDateFormat format = new SimpleDateFormat("HH");
-        StringBuilder dateString = new StringBuilder(format.format(dateTimeMillis));
-        return Integer.parseInt(dateString.toString());
-    }
-
-    public static int getMinute(long dateTimeMillis) {
-        SimpleDateFormat format = new SimpleDateFormat("mm");
-        StringBuilder dateString = new StringBuilder(format.format(dateTimeMillis));
-        return Integer.parseInt(dateString.toString());
-    }
-
     public static String getHoursAndMinutes(long dateTimeMillis) {
         String format = String.format("%%0%dd", 2);
         long elapsedTime = dateTimeMillis / 1000;

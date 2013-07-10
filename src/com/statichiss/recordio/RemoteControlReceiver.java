@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.KeyEvent;
+
 import com.statichiss.R;
 
 
@@ -30,7 +31,7 @@ public class RemoteControlReceiver extends BroadcastReceiver {
             return;
         }
 
-        KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+        KeyEvent event = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
         if (event == null) {
             return;
         }

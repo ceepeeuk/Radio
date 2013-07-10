@@ -1,6 +1,5 @@
 package com.statichiss.recordio.filehandling;
 
-import android.os.Environment;
 import android.util.Log;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -8,7 +7,6 @@ import org.apache.http.util.ByteArrayBuffer;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,7 +16,7 @@ public abstract class FileHandler {
     private static final String TAG = "com.statichiss.recordio.filehandling.FileHandler";
 
     public static String getFile(String plsUrl, String basePath) {
-        //String path = String.format("%s/data/com.statichiss/", basePath);  //put the downloaded file here
+
         String fileName = String.format("%s%s", basePath, parseFileName(plsUrl));
         File file = new File(fileName);
 
@@ -56,12 +54,4 @@ public abstract class FileHandler {
         return filename.toString();
     }
 
-    public static String[] getListOfRecordings(String appName) {
-        File recFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + appName);
-        return recFolder.list(new FilenameFilter() {
-            public boolean accept(File file, String name) {
-                return name.endsWith("mp3");
-            }
-        });
-    }
 }
