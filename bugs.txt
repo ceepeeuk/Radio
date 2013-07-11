@@ -1,5 +1,3 @@
 - Fix text in first run popup and button styling
 - Broadcast error when attempting to record invalid url - Handles malformed URL when recording, still need to offer email
 - have to press twice on url box to bring up softkeyboard
-- softkeyboard when pops up squashes url box
-- player fragment fcc's when horizontal

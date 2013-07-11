@@ -30,8 +30,11 @@
                   android:screenOrientation="portrait"/>
         <activity
                 android:name=".recordio.MainActivity"
-                android:label="Recordio">
-            <intent-filter>
+                android:label="Recordio"
+                android:windowSoftInputMode="adjustPan"
+                android:configChanges="orientation|keyboardHidden|keyboard"
+                android:screenOrientation="portrait">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
