@@ -65,7 +65,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.player_view, container, false);
+        final View view = inflater.inflate(R.layout.player_view, container, false);
         btnPlay = (Button) view.findViewById(R.id.main_stop_playing_btn);
         btnRecord = (Button) view.findViewById(R.id.main_stop_recording_btn);
 
@@ -124,7 +124,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         });
 
         view.findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
+            public void onClick(View button) {
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null)

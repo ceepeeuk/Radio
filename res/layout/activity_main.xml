@@ -13,7 +13,6 @@
 
         <TabWidget
                 android:id="@android:id/tabs"
-
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -24,13 +23,6 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="0"/>
-
-        <!--<FrameLayout-->
-        <!--android:id="@+id/realtabcontent"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1">-->
-        <!--</FrameLayout>-->
 
         <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"

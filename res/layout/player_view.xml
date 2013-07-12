@@ -5,8 +5,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<LinearLayout
@@ -25,9 +23,8 @@
                 android:layout_weight="10"
                 android:inputType="textUri"
                 android:layout_gravity="bottom"
-                android:textIsSelectable="true"
-				android:focusableInTouchMode="false"
-		/>
+                android:focusable="true"
+                />
 
 		<ImageButton
                 android:id="@+id/btn_go"
