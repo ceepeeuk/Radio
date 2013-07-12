@@ -9,13 +9,13 @@
         android:focusableInTouchMode="true"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+	<LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <EditText
+		<EditText
                 android:id="@+id/txt_url"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -25,9 +25,11 @@
                 android:layout_weight="10"
                 android:inputType="textUri"
                 android:layout_gravity="bottom"
-                android:textIsSelectable="true"/>
+                android:textIsSelectable="true"
+				android:focusableInTouchMode="false"
+		/>
 
-        <ImageButton
+		<ImageButton
                 android:id="@+id/btn_go"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,22 +38,22 @@
                 android:layout_marginLeft="3dip"
                 android:layout_weight="1"
                 android:contentDescription="@string/go_string"/>
-    </LinearLayout>
+	</LinearLayout>
 
-    <ListView
+	<ListView
             android:id="@+id/lst_favourites"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="100"/>
 
-    <View
+	<View
             android:layout_width="fill_parent"
             android:layout_height="1dip"
             android:layout_marginBottom="5dip"
             android:background="?android:attr/dividerVertical"
             />
 
-    <Button
+	<Button
             android:id="@+id/add_new_fav"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -59,20 +61,20 @@
             android:background="?android:attr/selectableItemBackground"
             />
 
-    <View
+	<View
             android:layout_width="fill_parent"
             android:layout_height="1dip"
             android:background="?android:attr/dividerVertical"
             />
 
-    <RelativeLayout
+	<RelativeLayout
             android:id="@+id/progress_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone">
 
-        <TextView
+		<TextView
                 android:id="@+id/time_elapsed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,7 +83,7 @@
                 android:layout_centerVertical="true"
                 />
 
-        <LinearLayout
+		<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -89,31 +91,31 @@
                 android:layout_toRightOf="@+id/time_elapsed"
                 android:orientation="horizontal">
 
-            <SeekBar
+			<SeekBar
                     android:id="@+id/seek_progress"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="15dp"
                     android:layout_marginRight="10dp"/>
-        </LinearLayout>
+		</LinearLayout>
 
-        <TextView
+		<TextView
                 android:id="@+id/time_remaining"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="6dip"/>
-    </RelativeLayout>
+	</RelativeLayout>
 
-    <LinearLayout
+	<LinearLayout
             android:id="@+id/main_stop_button_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_weight="1">
 
-        <Button
+		<Button
                 android:id="@+id/main_stop_playing_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -124,7 +126,7 @@
                 style="?android:attr/buttonBarButtonStyle"
                 />
 
-        <Button
+		<Button
                 android:id="@+id/main_stop_recording_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -135,9 +137,9 @@
                 style="?android:attr/buttonBarButtonStyle"
                 />
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <TextView
+	<TextView
             android:id="@+id/txt_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
