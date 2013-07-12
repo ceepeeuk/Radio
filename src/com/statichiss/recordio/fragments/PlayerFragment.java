@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -53,6 +54,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
     private ComponentName mRemoteControlReceiver;
     private SimpleCursorAdapter adapter;
     private final Uri stationContentUri;
+    private Button btnPlay;
+    private Button btnRecord;
 
     public PlayerFragment() {
         stationContentUri = Uri.withAppendedPath(DBContentProvider.CONTENT_URI, "stations");
@@ -60,21 +63,12 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.player_view, container, false);
-    }
+        View view = inflater.inflate(R.layout.player_view, container, false);
+        btnPlay = (Button) view.findViewById(R.id.main_stop_playing_btn);
+        btnRecord = (Button) view.findViewById(R.id.main_stop_recording_btn);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
-        mRemoteControlReceiver = new ComponentName(getActivity().getPackageName(), RemoteControlReceiver.class.getName());
-    }
-
-    @Override
-    public void onStart() {
-
-        super.onStart();
         final RadioApplication radioApplication = (RadioApplication) getActivity().getApplication();
 
         getLoaderManager().initLoader(FAVOURITES_LIST_ID, null, this);
@@ -86,7 +80,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 new int[]{R.id.name_entry},
                 0);
 
-        ListView lstFavourites = (ListView) getActivity().findViewById(R.id.lst_favourites);
+        ListView lstFavourites = (ListView) view.findViewById(R.id.lst_favourites);
 
         lstFavourites.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
@@ -95,7 +89,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
-        final EditText url = (EditText) getActivity().findViewById(R.id.txt_url);
+        final EditText url = (EditText) view.findViewById(R.id.txt_url);
         url.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 InputMethodManager m = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -105,7 +99,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
-        getActivity().findViewById(R.id.main_stop_playing_btn).setOnClickListener(new View.OnClickListener() {
+        btnPlay.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
                 // Bit of a hack looking at status!
@@ -113,30 +107,30 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                     radioApplication.setPlayingStatus("");
                     updateUI();
                     PlayerService.sendWakefulWork(getActivity().getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
-                    getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(false);
+                    view.findViewById(R.id.main_stop_playing_btn).setEnabled(false);
                 }
             }
         });
 
-        getActivity().findViewById(R.id.main_stop_recording_btn).setOnClickListener(new View.OnClickListener() {
+        btnRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (RecorderService.alreadyRecording()) {
                     radioApplication.setRecordingStatus("");
                     updateUI();
                     RecorderService.cancelRecording();
-                    getActivity().findViewById(R.id.main_stop_recording_btn).setEnabled(false);
+                    view.findViewById(R.id.main_stop_recording_btn).setEnabled(false);
                 }
             }
         });
 
-        getActivity().findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null)
                     imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-                final String source = ((EditText) getActivity().findViewById(R.id.txt_url)).getText().toString();
+                final String source = ((EditText) view.findViewById(R.id.txt_url)).getText().toString();
                 Log.d(TAG, "url is: " + source);
 
                 if (StringUtils.IsNullOrEmpty(source)) {
@@ -148,7 +142,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
-        getActivity().findViewById(R.id.add_new_fav).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.add_new_fav).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 RadioDetails radioDetails = new RadioDetails();
@@ -207,12 +201,22 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         lstFavourites.setAdapter(adapter);
 
         if (alreadyPlaying()) {
-            getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(true);
+            btnPlay.setEnabled(true);
         }
 
         if (RecorderService.alreadyRecording()) {
-            getActivity().findViewById(R.id.main_stop_recording_btn).setEnabled(true);
+            btnRecord.setEnabled(true);
         }
+
+
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        mRemoteControlReceiver = new ComponentName(getActivity().getPackageName(), RemoteControlReceiver.class.getName());
     }
 
     private void restartLoader() {
@@ -242,8 +246,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         if (txtStatus != null)
             txtStatus.setText(sb.toString());
 
-        getActivity().findViewById(R.id.main_stop_playing_btn).setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()));
-        getActivity().findViewById(R.id.main_stop_recording_btn).setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus()));
+        btnPlay.setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getPlayingStatus()));
+        btnRecord.setEnabled(!StringUtils.IsNullOrEmpty(radioApplication.getRecordingStatus()));
     }
 
     private void decideStreamOption(RadioDetails radioDetails) {
@@ -307,11 +311,9 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             RadioApplication radioApplication = (RadioApplication) getActivity().getApplication();
-            StringBuilder sb = new StringBuilder("Stop playing ")
-                    .append(radioApplication.getPlayingType() == RadioApplication.PlayingStream ? radioApplication.getPlayingStation().getStationName() : radioApplication.getPlayingFileDetails().getName())
-                    .append("?");
+            String text = "Stop playing " + (radioApplication.getPlayingType() == RadioApplication.PlayingStream ? radioApplication.getPlayingStation().getStationName() : radioApplication.getPlayingFileDetails().getName()) + "?";
 
-            builder.setMessage(sb.toString())
+            builder.setMessage(text)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             PlayerService.sendWakefulWork(getActivity().getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
@@ -502,17 +504,13 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         builder.setMessage("Sorry, cannot connect to this stream, would you like to send an error report so support can be added please?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        StringBuilder stringBuilder = new StringBuilder()
-                                .append("Exception caught trying to play stream: ")
-                                .append(exception)
-                                .append("\n\n")
-                                .append(radioDetails);
+                        String text = "Exception caught trying to play stream: " + exception + "\n\n" + radioDetails;
 
                         Intent emailIntent = new Intent(Intent.ACTION_SEND);
                         emailIntent.setType("plain/text");
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"statichiss@gmail.com"});
                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Stream Error Report");
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, text.toString());
                         startActivity(Intent.createChooser(emailIntent, "Send Error Report"));
                     }
                 })

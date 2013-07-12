@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class M3uHandler extends FileHandler {
 
-    private static final String M3UTAG = "com.statichiss.recordio.filehandling.M3uHandler";
+    private static final String TAG = "com.statichiss.recordio.filehandling.M3uHandler";
 
     public static RadioDetails parse(RadioDetails radioDetails, String basePath) {
 
@@ -27,16 +27,16 @@ public class M3uHandler extends FileHandler {
             while ((line = bufferedReader.readLine()) != null) {
                 if (!line.startsWith("#") && line.startsWith("http")) {
                     radioDetails.setStreamUrl(line);
-                    Log.d(M3UTAG, ".m3u contained these details: " + line);
+                    Log.d(TAG, ".m3u contained these details: " + line);
                 }
             }
             bufferedReader.close();
             fileReader.close();
 
         } catch (FileNotFoundException e) {
-            Log.e(M3UTAG, m3uFile + " cannot be found", e);
+            Log.e(TAG, m3uFile + " cannot be found", e);
         } catch (IOException e) {
-            Log.e(M3UTAG, m3uFile + " cannot be read", e);
+            Log.e(TAG, m3uFile + " cannot be read", e);
         } finally {
             new File(m3uFile).delete();
         }

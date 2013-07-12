@@ -12,7 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class PlsHandler extends FileHandler {
-    private static final String PLSTAG = "com.statichiss.recordio.filehandling.PlsHandler";
+    private static final String TAG = "com.statichiss.recordio.filehandling.PlsHandler";
 
     public static RadioDetails parse(RadioDetails radioDetails, String basePath) {
 
@@ -36,9 +36,9 @@ public class PlsHandler extends FileHandler {
             fileReader.close();
 
         } catch (FileNotFoundException e) {
-            Log.e(PLSTAG, plsFile + " cannot be found", e);
+            Log.e(TAG, plsFile + " cannot be found", e);
         } catch (IOException e) {
-            Log.e(PLSTAG, plsFile + " cannot be read", e);
+            Log.e(TAG, plsFile + " cannot be read", e);
         } finally {
             new File(plsFile).delete();
         }

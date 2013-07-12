@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.statichiss.R;
@@ -17,13 +20,17 @@ import com.statichiss.recordio.fragments.PlayerFragment;
 import com.statichiss.recordio.fragments.RecordingsFragment;
 import com.statichiss.recordio.fragments.ScheduleFragment;
 
+import java.util.List;
+import java.util.Vector;
+
 /**
  * Created by chris on 20/06/2013.
  */
-public class MainActivity extends FragmentActivity {
-    // Fragment TabHost as mTabHost
+public class MainActivity extends FragmentActivity implements ViewPager.OnPageChangeListener, TabHost.OnTabChangeListener {
+
     private FragmentTabHost mTabHost;
     private static int tabIndex;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +38,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+        mTabHost.setup(this, getSupportFragmentManager());
 
 //        mTabHost.addTab(mTabHost.newTabSpec("battery").setIndicator("Battery",
 //                getResources().getDrawable(R.drawable.ic_battery_tab)),
@@ -44,18 +51,19 @@ public class MainActivity extends FragmentActivity {
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         ComponentName remoteControlReceiver = new ComponentName(getPackageName(), RemoteControlReceiver.class.getName());
 
-        if (savedInstanceState != null && savedInstanceState.getInt("CurrentTab") > 0) {
-            savedInstanceState.getInt("CurrentTab");
-        }
         mTabHost.setCurrentTab(tabIndex);
-    }
+        mTabHost.setOnTabChangedListener(this);
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+        List<Fragment> fragments = new Vector<Fragment>();
+        fragments.add(Fragment.instantiate(this, PlayerFragment.class.getName()));
+        fragments.add(Fragment.instantiate(this, ScheduleFragment.class.getName()));
+        fragments.add(Fragment.instantiate(this, RecordingsFragment.class.getName()));
+
+        PagerAdapter pagerAdapter = new PagerAdapter(super.getSupportFragmentManager(), fragments);
+        this.mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        this.mViewPager.setAdapter(pagerAdapter);
+        this.mViewPager.setOnPageChangeListener(this);
+    }
 
     @Override
     public void onStart() {
@@ -98,5 +106,26 @@ public class MainActivity extends FragmentActivity {
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i2) {
+
+    }
+
+    @Override
+    public void onPageSelected(int index) {
+        this.mTabHost.setCurrentTab(index);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
+    }
+
+    @Override
+    public void onTabChanged(String s) {
+        int pos = this.mTabHost.getCurrentTab();
+        this.mViewPager.setCurrentItem(pos);
     }
 }

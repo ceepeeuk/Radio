@@ -40,13 +40,13 @@ public class RecordingsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         final File recFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + getString(R.string.app_name));
         final ArrayList<String> fileNames = getFileList();
 
-        final ListView fileList = (ListView) getActivity().findViewById(R.id.recordings_lst_files);
+        final ListView fileList = (ListView) view.findViewById(R.id.recordings_lst_files);
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.recordings_list_item, fileNames);
         fileList.setAdapter(adapter);
 
@@ -222,11 +222,4 @@ public class RecordingsFragment extends Fragment {
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
         return mediaPlayer != null && mediaPlayer.isPlaying();
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        Intent RadioActivityIntent = new Intent(RecordingsActivity.this, RadioActivity.class);
-//        startActivity(RadioActivityIntent);
-//        finish();
-//    }
 }

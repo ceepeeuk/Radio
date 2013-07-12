@@ -87,7 +87,7 @@ public class PlayerService extends WakefulIntentService {
         if (connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnected()) {
             // No network connection
             String error = "Failed to play " + incomingRadioDetails.getStationName() + ", network unavailable";
-            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID, incomingRadioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
+            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_PLAYING_ID, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_PLAYING_ID, errorNotification);
             updateActivity("Network Unavailable");
             Log.e(TAG, error);

@@ -53,7 +53,7 @@ public class RecorderService extends WakefulIntentService {
         if (!android.os.Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             // Cannot write to SDCARD, so stuffed!
             String error = "Failed to record " + radioDetails.getStationName() + " cannot write to SD Card";
-            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
+            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
             updateActivity(error);
             Log.e(TAG, error);
@@ -64,7 +64,7 @@ public class RecorderService extends WakefulIntentService {
         if (connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnected()) {
             // No network connection
             String error = "Failed to record " + radioDetails.getStationName() + ", no network available";
-            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
+            Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
             updateActivity(error);
             Log.e(TAG, error);
@@ -83,13 +83,9 @@ public class RecorderService extends WakefulIntentService {
             radioDetails.setStreamUrl(radioDetails.getPlaylistUrl());
         }
 
-        CharSequence ticketText = new StringBuilder()
-                .append(getString(R.string.recording_string))
-                .append(" ")
-                .append(radioDetails.getStationName())
-                .toString();
+        CharSequence ticketText = getString(R.string.recording_string) + " " + radioDetails.getStationName();
 
-        Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, ticketText, ticketText, Notification.FLAG_ONGOING_EVENT);
+        Notification notification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, ticketText, ticketText, Notification.FLAG_ONGOING_EVENT);
         startForeground(NotificationHelper.NOTIFICATION_RECORDING_ID, notification);
         updateActivity(ticketText.toString());
 
@@ -99,7 +95,7 @@ public class RecorderService extends WakefulIntentService {
             if (!(new File(recFolder).mkdir())) {
                 //Failed to create dir, so have to quit
                 String error = "Failed to record " + radioDetails.getStationName() + " cannot create directory to store recordings";
-                Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, radioDetails, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
+                Notification errorNotification = NotificationHelper.getNotification(this, NotificationHelper.NOTIFICATION_RECORDING_ID, error, error, Notification.FLAG_ONLY_ALERT_ONCE);
                 ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NotificationHelper.NOTIFICATION_RECORDING_ID, errorNotification);
                 updateActivity(error);
                 return;
@@ -213,11 +209,6 @@ public class RecorderService extends WakefulIntentService {
                 Log.d(TAG, "Sleep interrupted");
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

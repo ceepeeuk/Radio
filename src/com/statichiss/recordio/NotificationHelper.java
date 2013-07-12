@@ -13,7 +13,7 @@ public abstract class NotificationHelper {
     public static final int NOTIFICATION_PLAYING_ID = 1;
     public static final int NOTIFICATION_RECORDING_ID = 2;
 
-    public static Notification getNotification(Context context, int notificationId, RadioDetails radioDetails, CharSequence tickerText, CharSequence contentText, int flag) {
+    public static Notification getNotification(Context context, int notificationId, CharSequence tickerText, CharSequence contentText, int flag) {
         Notification notification;
 
         switch (notificationId) {
