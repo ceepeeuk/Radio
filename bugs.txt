@@ -1,2 +1,3 @@
 - Fix text in first run popup and button styling
 - Broadcast error when attempting to record invalid url - Handles malformed URL when recording, still need to offer email
+- stop playback of other media when playing file
