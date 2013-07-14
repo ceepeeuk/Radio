@@ -225,6 +225,9 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 seekProgress.setMax(duration);
                 seekProgress.setProgress(mp.getCurrentPosition());
 
+                timeElapsed.setText(DateUtils.getHoursAndMinutes(mp.getCurrentPosition()));
+                timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - mp.getCurrentPosition()));
+
                 seekProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
