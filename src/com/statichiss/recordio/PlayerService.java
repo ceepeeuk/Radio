@@ -19,7 +19,7 @@ import com.statichiss.recordio.filehandling.PlsHandler;
 import java.io.File;
 import java.io.IOException;
 
-public class PlayerService extends WakefulIntentService {
+public class PlayerService extends WakefulIntentService implements AudioManager.OnAudioFocusChangeListener {
 
     private static final String TAG = "com.statichiss.recordio.PlayerService";
 
@@ -159,12 +159,14 @@ public class PlayerService extends WakefulIntentService {
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.start();
-                    radioApplication.setBuffering(false);
-                    radioApplication.setPlayingType(RadioApplication.PlayingStream);
-                    String status = getString(R.string.playing_string) + " " + radioDetailsToPlay.getStationName();
-                    updateActivity(status);
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status, status);
+                    if (getFocus()) {
+                        mediaPlayer.start();
+                        radioApplication.setBuffering(false);
+                        radioApplication.setPlayingType(RadioApplication.PlayingStream);
+                        String status = getString(R.string.playing_string) + " " + radioDetailsToPlay.getStationName();
+                        updateActivity(status);
+                        NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status, status);
+                    }
                 }
             });
 
@@ -182,6 +184,12 @@ public class PlayerService extends WakefulIntentService {
             //radioApplication.setMediaPlayer(mediaPlayer);
             radioApplication.setPlayingStation(radioDetails);
         }
+    }
+
+    private boolean getFocus() {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
     private void playFile(final String file) {
@@ -236,20 +244,22 @@ public class PlayerService extends WakefulIntentService {
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
-                    radioApplication.setPlayingType(RadioApplication.PlayingFile);
-                    radioApplication.setPlayingFileDetails(new PlayingFile(mediaPlayer.getDuration(), file));
+                    if (getFocus()) {
+                        radioApplication.setPlayingType(RadioApplication.PlayingFile);
+                        radioApplication.setPlayingFileDetails(new PlayingFile(mediaPlayer.getDuration(), file));
 
-                    // If filename is in session, then retrieve position and jump to it
-                    if (radioApplication.getLastPlayedFile() != null && file.equals(radioApplication.getLastPlayedFile().getName())) {
-                        if (mediaPlayer.getDuration() > radioApplication.getLastPlayedFile().getCurrentPosition()) {
-                            mediaPlayer.seekTo(radioApplication.getLastPlayedFile().getCurrentPosition());
+                        // If filename is in session, then retrieve position and jump to it
+                        if (radioApplication.getLastPlayedFile() != null && file.equals(radioApplication.getLastPlayedFile().getName())) {
+                            if (mediaPlayer.getDuration() > radioApplication.getLastPlayedFile().getCurrentPosition()) {
+                                mediaPlayer.seekTo(radioApplication.getLastPlayedFile().getCurrentPosition());
+                            }
                         }
-                    }
 
-                    mediaPlayer.start();
-                    String status = getString(R.string.playing_string) + " " + file;
-                    updateActivity(status);
-                    NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status, status);
+                        mediaPlayer.start();
+                        String status = getString(R.string.playing_string) + " " + file;
+                        updateActivity(status);
+                        NotificationHelper.showNotification(getApplicationContext(), NotificationHelper.NOTIFICATION_PLAYING_ID, status, status);
+                    }
                 }
             });
 
@@ -302,4 +312,45 @@ public class PlayerService extends WakefulIntentService {
     }
 
 
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+
+        final RadioApplication radioApplication = (RadioApplication) getApplicationContext();
+        MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
+
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+                // resume playback
+                if (mediaPlayer == null) {
+                    mediaPlayer = new MediaPlayer();
+                    radioApplication.setMediaPlayer(mediaPlayer);
+                }
+                mediaPlayer.setVolume(1.0f, 1.0f);
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS:
+                // Lost focus for an unbounded amount of time: stop playback and release media player
+//                if (mediaPlayer.isPlaying())
+//                    mediaPlayer.stop();
+////                mediaPlayer.release();
+//                radioApplication.setMediaPlayer(null);
+                stop();
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                // Lost focus for a short time, but we have to stop
+                // playback. We don't release the media player because playback
+                // is likely to resume
+                if (mediaPlayer.isPlaying())
+                    mediaPlayer.pause();
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // Lost focus for a short time, but it's ok to keep playing
+                // at an attenuated level
+                if (mediaPlayer.isPlaying())
+                    mediaPlayer.setVolume(0.1f, 0.1f);
+                break;
+        }
+    }
 }
