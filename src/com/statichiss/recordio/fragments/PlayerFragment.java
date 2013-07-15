@@ -107,8 +107,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 if (mediaPlayer != null && mediaPlayer.isPlaying() || radioApplication.getPlayingStatus().contains("Paused")) {
                     radioApplication.setPlayingStatus("");
                     updateUI();
-                    PlayerService.sendWakefulWork(getActivity().getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
                     view.findViewById(R.id.main_stop_playing_btn).setEnabled(false);
+                    PlayerService.sendWakefulWork(getActivity().getApplicationContext(), createPlayingIntent(null, RadioApplication.StopPlaying));
                 }
             }
         });
@@ -231,7 +231,9 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 seekProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
+                            Log.d(TAG, String.valueOf(progress));
                             mp.seekTo(progress);
+                            seekBar.setProgress(progress);
                             timeElapsed.setText(DateUtils.getHoursAndMinutes(progress));
                             timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - progress));
                         }
@@ -463,7 +465,6 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
     private class UpdateProgressTask extends AsyncTask<Object, Integer, Void> {
 
         RadioApplication radioApplication = (RadioApplication) getActivity().getApplication();
-        MediaPlayer mp = radioApplication.getMediaPlayer();
         int duration = radioApplication.getPlayingFileDetails().getDuration();
 
         SeekBar seekProgress;
@@ -474,12 +475,15 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         @Override
         protected Void doInBackground(Object... objects) {
             setUpUIHelpers((View) objects[0]);
+            MediaPlayer mp = radioApplication.getMediaPlayer();
 
             while (mp != null && mp.isPlaying() && mp.getCurrentPosition() < duration) {
                 publishProgress(mp.getCurrentPosition());
             }
             // Send final msg to reset UI to non playing state?
             publishProgress(-1);
+
+            radioApplication.getMediaPlayer().release();
             return null;
         }
 
