@@ -231,12 +231,11 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 seekProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
-                            Log.d(TAG, String.valueOf(progress));
                             mp.seekTo(progress);
-                            seekBar.setProgress(progress);
-                            timeElapsed.setText(DateUtils.getHoursAndMinutes(progress));
-                            timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - progress));
                         }
+                        seekBar.setProgress(progress);
+                        timeElapsed.setText(DateUtils.getHoursAndMinutes(progress));
+                        timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - progress));
                     }
 
                     public void onStartTrackingTouch(SeekBar seekBar) {
