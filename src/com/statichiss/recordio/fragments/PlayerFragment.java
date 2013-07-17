@@ -232,10 +232,9 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
                             mp.seekTo(progress);
+                            timeElapsed.setText(DateUtils.getHoursMinutesAndSeconds(progress));
+                            timeRemaining.setText(DateUtils.getHoursMinutesAndSeconds(duration - progress));
                         }
-                        seekBar.setProgress(progress);
-                        timeElapsed.setText(DateUtils.getHoursAndMinutes(progress));
-                        timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - progress));
                     }
 
                     public void onStartTrackingTouch(SeekBar seekBar) {
@@ -245,9 +244,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                     }
                 });
 
-                Object[] objects = new Object[1];
-                objects[0] = view;
-                new UpdateProgressTask().execute(view);
+                new UpdateProgressTask().execute();
             }
         }
 
@@ -461,19 +458,13 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         adapter.swapCursor(null);
     }
 
-    private class UpdateProgressTask extends AsyncTask<Object, Integer, Void> {
+    private class UpdateProgressTask extends AsyncTask<Void, Integer, Void> {
 
         RadioApplication radioApplication = (RadioApplication) getActivity().getApplication();
         int duration = radioApplication.getPlayingFileDetails().getDuration();
 
-        SeekBar seekProgress;
-        TextView timeElapsed;
-        TextView timeRemaining;
-        RelativeLayout progressLayout;
-
         @Override
-        protected Void doInBackground(Object... objects) {
-            setUpUIHelpers((View) objects[0]);
+        protected Void doInBackground(Void... voids) {
             MediaPlayer mp = radioApplication.getMediaPlayer();
 
             while (mp != null && mp.isPlaying() && mp.getCurrentPosition() < duration) {
@@ -482,19 +473,21 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
             // Send final msg to reset UI to non playing state?
             publishProgress(-1);
 
-            radioApplication.getMediaPlayer().release();
             return null;
-        }
-
-        private void setUpUIHelpers(View view) {
-            seekProgress = (SeekBar) view.findViewById(R.id.seek_progress);
-            timeElapsed = (TextView) view.findViewById(R.id.time_elapsed);
-            timeRemaining = (TextView) view.findViewById(R.id.time_remaining);
-            progressLayout = (RelativeLayout) view.findViewById(R.id.progress_layout);
         }
 
         @Override
         protected void onProgressUpdate(Integer... currentPosition) {
+
+            if (getActivity() == null)
+                return;
+
+            SeekBar seekProgress = (SeekBar) getActivity().findViewById(R.id.seek_progress);
+            TextView timeElapsed = (TextView) getActivity().findViewById(R.id.time_elapsed);
+            TextView timeRemaining = (TextView) getActivity().findViewById(R.id.time_remaining);
+            RelativeLayout progressLayout = (RelativeLayout) getActivity().findViewById(R.id.progress_layout);
+
+
             if (currentPosition[0] > 0) {
                 seekProgress.setProgress(currentPosition[0]);
                 timeElapsed.setText(DateUtils.getHoursAndMinutes(currentPosition[0]));
