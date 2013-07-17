@@ -232,8 +232,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser) {
                             mp.seekTo(progress);
-                            timeElapsed.setText(DateUtils.getHoursMinutesAndSeconds(progress));
-                            timeRemaining.setText(DateUtils.getHoursMinutesAndSeconds(duration - progress));
+                            timeElapsed.setText(DateUtils.getHoursAndMinutes(progress));
+                            timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - progress));
                         }
                     }
 
