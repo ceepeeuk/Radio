@@ -35,11 +35,6 @@ public class PlayerService extends WakefulIntentService implements AudioManager.
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
         super.onCreate();
 
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-        }
-        radioApplication.setMediaPlayer(mediaPlayer);
-
         Bundle bundle = intent.getExtras();
         int operation = bundle.getInt(getString(R.string.player_service_operation_key));
 
@@ -304,6 +299,7 @@ public class PlayerService extends WakefulIntentService implements AudioManager.
                 mediaPlayer.stop();
             }
             mediaPlayer.reset();
+            mediaPlayer.release();
         }
 
         radioApplication.setMediaPlayer(null);
@@ -330,11 +326,8 @@ public class PlayerService extends WakefulIntentService implements AudioManager.
 
             case AudioManager.AUDIOFOCUS_LOSS:
                 // Lost focus for an unbounded amount of time: stop playback and release media player
-//                if (mediaPlayer.isPlaying())
-//                    mediaPlayer.stop();
-////                mediaPlayer.release();
-//                radioApplication.setMediaPlayer(null);
-                stop();
+                if (mediaPlayer.isPlaying())
+                    stop();
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:

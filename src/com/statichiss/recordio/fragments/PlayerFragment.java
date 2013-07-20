@@ -489,9 +489,12 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
 
             if (currentPosition[0] > 0) {
-                seekProgress.setProgress(currentPosition[0]);
-                timeElapsed.setText(DateUtils.getHoursAndMinutes(currentPosition[0]));
-                timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - currentPosition[0]));
+                if (seekProgress != null)
+                    seekProgress.setProgress(currentPosition[0]);
+                if (timeElapsed != null)
+                    timeElapsed.setText(DateUtils.getHoursAndMinutes(currentPosition[0]));
+                if (timeRemaining != null)
+                    timeRemaining.setText(DateUtils.getHoursAndMinutes(duration - currentPosition[0]));
             }
 
             if (currentPosition[0] == -1) {
