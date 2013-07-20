@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.statichiss.R;
-import com.statichiss.recordio.MainActivity;
 import com.statichiss.recordio.PlayerService;
 import com.statichiss.recordio.RadioApplication;
 
@@ -87,15 +86,18 @@ public class RecordingsFragment extends Fragment {
                                                                     }
                                                                 }
                                                                 radioApplication.getMediaPlayer().reset();
+
+                                                                Intent stopPlayerIntent = new Intent("com.statichiss.recordio.PlayerService");
+                                                                stopPlayerIntent.putExtra(getString(R.string.player_service_operation_key), RadioApplication.StopPlaying);
+                                                                PlayerService.sendWakefulWork(getActivity(), stopPlayerIntent);
+
                                                                 Intent playerIntent = new Intent("com.statichiss.recordio.PlayerService");
                                                                 playerIntent.putExtra(getString(R.string.player_service_operation_key), RadioApplication.StartPlayingFile);
                                                                 playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
                                                                 PlayerService.sendWakefulWork(getActivity(), playerIntent);
 
-                                                                ((MainActivity) getActivity()).showTab(0);
+//                                                                ((MainActivity) getActivity()).showTab(0);
 
-//                                                                Intent radioActivityIntent = new Intent(getActivity(), MainActivity.class);
-//                                                                startActivity(radioActivityIntent);
                                                             }
                                                         })
                                                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -111,8 +113,6 @@ public class RecordingsFragment extends Fragment {
                                                 playerIntent.putExtra(getString(R.string.player_service_file_name_key), fileNames.get((int) id));
                                                 PlayerService.sendWakefulWork(getActivity(), playerIntent);
 
-                                                Intent radioActivityIntent = new Intent(getActivity(), MainActivity.class);
-                                                startActivity(radioActivityIntent);
                                             }
 
                                             break;
