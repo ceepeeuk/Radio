@@ -314,6 +314,7 @@ public class PlayerService extends WakefulIntentService implements AudioManager.
         final RadioApplication radioApplication = (RadioApplication) getApplicationContext();
         MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
 
+
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
                 // resume playback
@@ -326,7 +327,7 @@ public class PlayerService extends WakefulIntentService implements AudioManager.
 
             case AudioManager.AUDIOFOCUS_LOSS:
                 // Lost focus for an unbounded amount of time: stop playback and release media player
-                if (mediaPlayer.isPlaying())
+                if (mediaPlayer != null && mediaPlayer.isPlaying())
                     stop();
                 break;
 
@@ -334,14 +335,14 @@ public class PlayerService extends WakefulIntentService implements AudioManager.
                 // Lost focus for a short time, but we have to stop
                 // playback. We don't release the media player because playback
                 // is likely to resume
-                if (mediaPlayer.isPlaying())
+                if (mediaPlayer != null && mediaPlayer.isPlaying())
                     mediaPlayer.pause();
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 // Lost focus for a short time, but it's ok to keep playing
                 // at an attenuated level
-                if (mediaPlayer.isPlaying())
+                if (mediaPlayer != null && mediaPlayer.isPlaying())
                     mediaPlayer.setVolume(0.1f, 0.1f);
                 break;
         }

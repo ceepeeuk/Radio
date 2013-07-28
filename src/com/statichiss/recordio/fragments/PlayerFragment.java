@@ -469,16 +469,18 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
         @Override
         protected Void doInBackground(Void... voids) {
 
-            if (isCancelled())
-                return null;
+            // Added many checks to isCancelled to prevent invaild state exceptions as this is threaded
+            if (!isCancelled()) {
+                MediaPlayer mp = radioApplication.getMediaPlayer();
 
-            MediaPlayer mp = radioApplication.getMediaPlayer();
+                while (mp != null && mp.isPlaying() && !isCancelled()) {
+                    if (!isCancelled() && mp.getCurrentPosition() < duration)
+                        publishProgress(mp.getCurrentPosition());
+                }
 
-            while (mp != null && mp.isPlaying() && mp.getCurrentPosition() < duration) {
-                publishProgress(mp.getCurrentPosition());
+                // Send final msg to reset UI to non playing state?
+                publishProgress(-1);
             }
-            // Send final msg to reset UI to non playing state?
-            publishProgress(-1);
 
             return null;
         }
