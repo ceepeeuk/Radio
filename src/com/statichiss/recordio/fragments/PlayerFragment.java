@@ -57,6 +57,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
     private final Uri stationContentUri;
     private Button btnPlay;
     private Button btnRecord;
+    private PlayerFragment.UpdateProgressTask updateProgressTask;
 
     public PlayerFragment() {
         stationContentUri = Uri.withAppendedPath(DBContentProvider.CONTENT_URI, "stations");
@@ -105,6 +106,7 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                 MediaPlayer mediaPlayer = radioApplication.getMediaPlayer();
                 // Bit of a hack looking at status!
                 if (mediaPlayer != null && mediaPlayer.isPlaying() || radioApplication.getPlayingStatus().contains("Paused")) {
+                    updateProgressTask.cancel(true);
                     radioApplication.setPlayingStatus("");
                     updateUI();
                     view.findViewById(R.id.main_stop_playing_btn).setEnabled(false);
@@ -244,7 +246,8 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
                     }
                 });
 
-                new UpdateProgressTask().execute();
+                updateProgressTask = new UpdateProgressTask();
+                updateProgressTask.execute();
             }
         }
 
@@ -465,6 +468,10 @@ public class PlayerFragment extends Fragment implements LoaderManager.LoaderCall
 
         @Override
         protected Void doInBackground(Void... voids) {
+
+            if (isCancelled())
+                return null;
+
             MediaPlayer mp = radioApplication.getMediaPlayer();
 
             while (mp != null && mp.isPlaying() && mp.getCurrentPosition() < duration) {
